@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import MagneticElement from './MagneticElement'
 
 const LINKS = ['home', 'about', 'skills', 'projects', 'contact']
 
@@ -31,13 +32,15 @@ export default function Navbar() {
       transition={{ duration: 0.6, ease: 'easeOut' }}
       style={{ borderBottomColor: scrolled ? 'rgba(168,85,247,0.22)' : 'rgba(255,255,255,0.07)' }}
     >
-      <motion.div
-        className="nav-logo"
-        whileHover={{ scale: 1.05 }}
-        transition={{ type: 'spring', stiffness: 400 }}
-      >
-        faizan.dev
-      </motion.div>
+      <MagneticElement>
+        <motion.div
+          className="nav-logo interactive"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: 'spring', stiffness: 400 }}
+        >
+          faizan.dev
+        </motion.div>
+      </MagneticElement>
       <ul className="nav-links">
         {LINKS.map((id, i) => (
           <motion.li
@@ -46,12 +49,14 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 + i * 0.07 }}
           >
-            <button
-              className={active === id ? 'active' : ''}
-              onClick={() => scrollTo(id)}
-            >
-              {id.charAt(0).toUpperCase() + id.slice(1)}
-            </button>
+            <MagneticElement>
+              <button
+                className={`interactive ${active === id ? 'active' : ''}`}
+                onClick={() => scrollTo(id)}
+              >
+                {id.charAt(0).toUpperCase() + id.slice(1)}
+              </button>
+            </MagneticElement>
           </motion.li>
         ))}
       </ul>

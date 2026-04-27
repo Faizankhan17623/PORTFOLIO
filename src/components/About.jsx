@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion'
+import MagneticElement from './MagneticElement'
 
 const fade = (delay = 0) => ({
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay },
-  viewport: { once: true },
+  initial: { opacity: 0, y: 28, filter: 'blur(10px)' },
+  whileInView: { opacity: 1, y: 0, filter: 'blur(0px)' },
+  transition: { duration: 0.8, delay, type: 'spring', bounce: 0.4 },
+  viewport: { once: true, margin: '-50px' },
 })
 
 export default function About() {
@@ -17,7 +18,16 @@ export default function About() {
       </motion.div>
 
       <div className="about-wrap">
-        <motion.div {...fade(0.1)} className="about-avatar">
+        <motion.div 
+          className="about-avatar"
+          initial={{ opacity: 0, y: 28 }}
+          whileInView={{ opacity: 1, y: [-5, 5, -5] }}
+          transition={{
+             opacity: { duration: 0.6, delay: 0.1 },
+             y: { duration: 4, repeat: Infinity, ease: 'easeInOut' }
+          }}
+          viewport={{ once: true }}
+        >
           <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="140" height="140">
             {/* Monitor */}
             <rect x="30" y="30" width="140" height="100" rx="10" fill="none" stroke="#a855f7" strokeWidth="4"/>
@@ -57,26 +67,44 @@ export default function About() {
             contribute, grow, and make a real impact from day one.
           </motion.p>
 
-          <motion.div {...fade(0.42)} className="about-stats">
+          <motion.div 
+            className="about-stats"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true }}
+            variants={{
+              hidden: {},
+              show: { transition: { staggerChildren: 0.15, delayChildren: 0.3 } }
+            }}
+          >
             {[
               ['5+', 'Projects Built'],
               ['15+', 'Technologies'],
               ['🚀', 'Open to Work'],
             ].map(([n, label]) => (
-              <div key={label} className="stat-item">
+              <motion.div 
+                key={label} 
+                className="stat-item"
+                variants={{
+                  hidden: { opacity: 0, scale: 0.8, y: 20 },
+                  show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 100 } }
+                }}
+              >
                 <h4>{n}</h4>
                 <p>{label}</p>
-              </div>
+              </motion.div>
             ))}
           </motion.div>
 
-          <motion.button
-            {...fade(0.5)}
-            className="btn-glow primary"
-            onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            Let's Talk →
-          </motion.button>
+          <MagneticElement>
+            <motion.button
+              {...fade(0.5)}
+              className="btn-glow primary interactive"
+              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Let's Talk →
+            </motion.button>
+          </MagneticElement>
         </div>
       </div>
     </div>

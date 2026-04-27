@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import Lenis from 'lenis'
+import CustomCursor from './components/CustomCursor'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
 import About from './components/About'
@@ -12,6 +14,30 @@ import { defaultSkills, defaultProjects } from './data/portfolioData'
 function App() {
   const [adminOpen, setAdminOpen] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false)
+
+  // Initialize smooth scrolling
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // https://www.desmos.com/calculator/brs54l4xou
+      direction: 'vertical',
+      gestureDirection: 'vertical',
+      smooth: true,
+      mouseMultiplier: 1,
+      smoothTouch: false,
+      touchMultiplier: 2,
+      infinite: false,
+    })
+
+    function raf(time) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+
+    return () => lenis.destroy()
+  }, [])
 
   const [skills, setSkills] = useState(() => {
     try { return JSON.parse(localStorage.getItem('fk_skills')) || defaultSkills }
@@ -27,6 +53,7 @@ function App() {
 
   return (
     <>
+      <CustomCursor />
       <Navbar />
       <main>
         <section id="home"><Hero /></section>

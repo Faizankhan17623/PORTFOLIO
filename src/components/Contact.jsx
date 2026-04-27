@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import MagneticElement from './MagneticElement'
 
 const SOCIALS = [
   {
@@ -123,18 +124,20 @@ export default function Contact() {
                 ✅ Message sent! I'll get back to you soon.
               </motion.div>
             ) : (
-              <motion.button
-                key="btn"
-                type="submit"
-                className="btn-glow primary full-w"
-                disabled={sending}
-                whileTap={{ scale: 0.97 }}
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              >
-                {sending ? (
-                  <span className="sending-dots">Sending<span>.</span><span>.</span><span>.</span></span>
-                ) : 'Send Message →'}
-              </motion.button>
+              <MagneticElement className="full-w">
+                <motion.button
+                  key="btn"
+                  type="submit"
+                  className="btn-glow primary full-w interactive"
+                  disabled={sending}
+                  whileTap={{ scale: 0.97 }}
+                  initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                >
+                  {sending ? (
+                    <span className="sending-dots">Sending<span>.</span><span>.</span><span>.</span></span>
+                  ) : 'Send Message →'}
+                </motion.button>
+              </MagneticElement>
             )}
           </AnimatePresence>
         </motion.form>
@@ -142,42 +145,47 @@ export default function Contact() {
         {/* Right: info + socials */}
         <motion.div
           className="contact-info"
-          initial={{ opacity: 0, x: 30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          initial="hidden"
+          whileInView="show"
           viewport={{ once: true }}
+          variants={{
+             hidden: {},
+             show: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } }
+          }}
         >
-          <div className="ci-block">
+          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
             <h4>Email</h4>
             <a href="mailto:faizankhan901152@gmail.com" className="ci-link">faizankhan901152@gmail.com</a>
-          </div>
-          <div className="ci-block">
+          </motion.div>
+          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
             <h4>Location</h4>
             <p>India 🇮🇳</p>
-          </div>
-          <div className="ci-block">
+          </motion.div>
+          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
             <h4>Status</h4>
             <p className="ci-available"><span className="dot pulse" />Available for opportunities</p>
-          </div>
-          <div className="ci-block">
+          </motion.div>
+          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
             <h4>Find me on</h4>
             <div className="social-row">
               {SOCIALS.map(s => (
-                <motion.a
-                  key={s.label}
-                  href={s.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="social-btn"
-                  title={s.label}
-                  whileHover={{ scale: 1.12, y: -2 }}
-                  transition={{ type: 'spring', stiffness: 380 }}
-                >
-                  {s.icon}
-                </motion.a>
+                <MagneticElement key={s.label}>
+                  <motion.a
+                    href={s.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="social-btn interactive"
+                    title={s.label}
+                    whileHover={{ scale: 1.15, y: -4, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
+                  >
+                    {s.icon}
+                  </motion.a>
+                </MagneticElement>
               ))}
             </div>
-          </div>
+          </motion.div>
         </motion.div>
       </div>
     </div>

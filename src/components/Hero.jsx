@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
+import MagneticElement from './MagneticElement'
+import TiltCard from './TiltCard'
 
 const ROLES = [
   'Full Stack Developer',
@@ -56,35 +58,76 @@ function ParticleCanvas() {
     resize()
     window.addEventListener('resize', resize)
 
-    const N = 65
+    // Mouse interaction
+    let mouse = { x: null, y: null, radius: 150 }
+    const handleMouseMove = (e) => {
+      const rect = canvas.getBoundingClientRect()
+      mouse.x = e.clientX - rect.left
+      mouse.y = e.clientY - rect.top
+    }
+    const handleMouseLeave = () => {
+      mouse.x = null
+      mouse.y = null
+    }
+    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('mouseleave', handleMouseLeave)
+
+    const N = 80 // Increased particle count slightly for better effect
     const pts = Array.from({ length: N }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.45,
-      vy: (Math.random() - 0.5) * 0.45,
-      r: Math.random() * 1.4 + 0.5,
+      vx: (Math.random() - 0.5) * 0.6, // Slightly faster
+      vy: (Math.random() - 0.5) * 0.6,
+      r: Math.random() * 1.8 + 0.8, // Slightly larger
+      baseX: 0,
+      baseY: 0
     }))
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
+      
       pts.forEach(p => {
         p.x += p.vx; p.y += p.vy
+        
+        // Bounce off edges
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1
+
+        // Mouse interaction (repel)
+        if (mouse.x != null && mouse.y != null) {
+          let dx = mouse.x - p.x
+          let dy = mouse.y - p.y
+          let distance = Math.hypot(dx, dy)
+          
+          if (distance < mouse.radius) {
+            const forceDirectionX = dx / distance
+            const forceDirectionY = dy / distance
+            const force = (mouse.radius - distance) / mouse.radius
+            const directionX = forceDirectionX * force * -2 // Push away
+            const directionY = forceDirectionY * force * -2
+            
+            p.x += directionX
+            p.y += directionY
+          }
+        }
+
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(168,85,247,0.55)'
+        ctx.fillStyle = 'rgba(168, 85, 247, 0.7)' // Brighter dot
         ctx.fill()
       })
+      
       for (let i = 0; i < N; i++) {
         for (let j = i + 1; j < N; j++) {
           const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y)
-          if (d < 130) {
+          if (d < 140) {
             ctx.beginPath()
             ctx.moveTo(pts[i].x, pts[i].y)
             ctx.lineTo(pts[j].x, pts[j].y)
-            ctx.strokeStyle = `rgba(168,85,247,${0.22 * (1 - d / 130)})`
-            ctx.lineWidth = 0.6
+            // Gradient lines depending on distance
+            const opacity = 0.3 * (1 - d / 140)
+            ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})` // Cyan lines for contrast
+            ctx.lineWidth = 0.8
             ctx.stroke()
           }
         }
@@ -92,10 +135,15 @@ function ParticleCanvas() {
       animId = requestAnimationFrame(draw)
     }
     draw()
-    return () => { cancelAnimationFrame(animId); window.removeEventListener('resize', resize) }
+    return () => { 
+      cancelAnimationFrame(animId)
+      window.removeEventListener('resize', resize)
+      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('mouseleave', handleMouseLeave)
+    }
   }, [])
 
-  return <canvas ref={ref} className="hero-canvas" />
+  return <canvas ref={ref} className="hero-canvas" style={{ pointerEvents: 'none' }} />
 }
 
 export default function Hero() {
@@ -115,12 +163,27 @@ export default function Hero() {
             <span className="dot" /> Available for opportunities
           </motion.div>
 
-          <motion.h1
-            className="hero-name"
-            initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.38, duration: 0.7 }}
-          >
-            Hi, I'm<br />
-            <span className="gradient">Faizan Khan</span>
+          <motion.h1 className="hero-name">
+            <motion.span
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+            >
+              Hi, I'm<br />
+            </motion.span>
+            <span className="gradient">
+              {"Faizan Khan".split('').map((char, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  transition={{ delay: 0.4 + index * 0.05, duration: 0.4, type: 'spring' }}
+                  style={{ display: 'inline-block', whiteSpace: char === ' ' ? 'pre' : 'normal' }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+            </span>
           </motion.h1>
 
           <motion.div
@@ -144,44 +207,58 @@ export default function Hero() {
             className="hero-btns"
             initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.88 }}
           >
-            <button
-              className="btn-glow primary"
-              onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              View My Work ↓
-            </button>
-            <button
-              className="btn-glow outline"
-              onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Contact Me
-            </button>
+            <MagneticElement>
+              <button
+                className="btn-glow primary"
+                onClick={() => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                View My Work ↓
+              </button>
+            </MagneticElement>
+            <MagneticElement>
+              <button
+                className="btn-glow outline"
+                onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Contact Me
+              </button>
+            </MagneticElement>
           </motion.div>
         </div>
 
         {/* ── Right: Terminal ── */}
         <motion.div
-          className="hero-terminal"
-          initial={{ opacity: 0, x: 40 }} animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5, duration: 0.8, ease: 'easeOut' }}
+          initial={{ opacity: 0, x: 40, y: 0 }} 
+          animate={{ 
+            opacity: 1, 
+            x: 0, 
+            y: [-8, 8, -8] 
+          }}
+          transition={{ 
+            opacity: { delay: 0.5, duration: 0.8, ease: 'easeOut' },
+            x: { delay: 0.5, duration: 0.8, ease: 'easeOut' },
+            y: { duration: 5, repeat: Infinity, ease: 'easeInOut' } 
+          }}
         >
-          <div className="terminal-bar">
-            <div className="t-dot r" /><div className="t-dot y" /><div className="t-dot g" />
-            <span className="t-filename">developer.config.js</span>
-          </div>
-          <div className="terminal-body">
-            <span><span className="t-p">const</span> <span className="t-c">developer</span> <span className="t-w">= &#123;</span></span>
-            <span className="t-i"><span className="t-g">name</span><span className="t-w">: </span><span className="t-o">"Faizan Khan"</span><span className="t-w">,</span></span>
-            <span className="t-i"><span className="t-g">role</span><span className="t-w">: </span><span className="t-o">"Full Stack Developer"</span><span className="t-w">,</span></span>
-            <span className="t-i"><span className="t-g">stack</span><span className="t-w">: [</span></span>
-            <span className="t-i2"><span className="t-o">"React"</span><span className="t-w">, </span><span className="t-o">"Node.js"</span><span className="t-w">, </span><span className="t-o">"MongoDB"</span><span className="t-w">,</span></span>
-            <span className="t-i2"><span className="t-o">"Express"</span><span className="t-w">, </span><span className="t-o">"JavaScript"</span></span>
-            <span className="t-i"><span className="t-w">],</span></span>
-            <span className="t-i"><span className="t-g">passion</span><span className="t-w">: </span><span className="t-o">"Building cool stuff"</span><span className="t-w">,</span></span>
-            <span className="t-i"><span className="t-g">openToWork</span><span className="t-w">: </span><span className="t-c">true</span><span className="t-w">,</span></span>
-            <span className="t-i"><span className="t-g">coffee</span><span className="t-w">: </span><span className="t-o">"always"</span></span>
-            <span><span className="t-w">&#125;</span></span>
-          </div>
+          <TiltCard className="hero-terminal">
+            <div className="terminal-bar">
+              <div className="t-dot r" /><div className="t-dot y" /><div className="t-dot g" />
+              <span className="t-filename">developer.config.js</span>
+            </div>
+            <div className="terminal-body">
+              <span><span className="t-p">const</span> <span className="t-c">developer</span> <span className="t-w">= &#123;</span></span>
+              <span className="t-i"><span className="t-g">name</span><span className="t-w">: </span><span className="t-o">"Faizan Khan"</span><span className="t-w">,</span></span>
+              <span className="t-i"><span className="t-g">role</span><span className="t-w">: </span><span className="t-o">"Full Stack Developer"</span><span className="t-w">,</span></span>
+              <span className="t-i"><span className="t-g">stack</span><span className="t-w">: [</span></span>
+              <span className="t-i2"><span className="t-o">"React"</span><span className="t-w">, </span><span className="t-o">"Node.js"</span><span className="t-w">, </span><span className="t-o">"MongoDB"</span><span className="t-w">,</span></span>
+              <span className="t-i2"><span className="t-o">"Express"</span><span className="t-w">, </span><span className="t-o">"JavaScript"</span></span>
+              <span className="t-i"><span className="t-w">],</span></span>
+              <span className="t-i"><span className="t-g">passion</span><span className="t-w">: </span><span className="t-o">"Building cool stuff"</span><span className="t-w">,</span></span>
+              <span className="t-i"><span className="t-g">openToWork</span><span className="t-w">: </span><span className="t-c">true</span><span className="t-w">,</span></span>
+              <span className="t-i"><span className="t-g">coffee</span><span className="t-w">: </span><span className="t-o">"always"</span></span>
+              <span><span className="t-w">&#125;</span></span>
+            </div>
+          </TiltCard>
         </motion.div>
 
       </div>

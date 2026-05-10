@@ -171,19 +171,14 @@ export default function Hero() {
             >
               Hi, I'm<br />
             </motion.span>
-            <span className="gradient">
-              {"Faizan Khan".split('').map((char, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  transition={{ delay: 0.4 + index * 0.05, duration: 0.4, type: 'spring' }}
-                  style={{ display: 'inline-block', whiteSpace: char === ' ' ? 'pre' : 'normal' }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </span>
+            <motion.span
+              className="gradient"
+              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+              transition={{ delay: 0.4, duration: 0.6, type: 'spring' }}
+            >
+              Faizan Khan
+            </motion.span>
           </motion.h1>
 
           <motion.div

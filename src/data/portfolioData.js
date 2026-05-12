@@ -56,4 +56,24 @@ export const defaultProjects = [
     github: '',
     live: '',
   },
+  {
+    id: 7,
+    title: 'Eye Blink & Finger Counter',
+    description:
+      'Real-time computer vision app that tracks eye blinks per minute, calculates attention/focus score (0–100%), detects drowsiness, counts raised fingers, and recognizes hand gestures — all from a live webcam feed.',
+    tags: ['Python', 'OpenCV', 'MediaPipe', 'NumPy', 'Computer Vision'],
+    emoji: '👁️',
+    github: 'https://github.com/Faizankhan17623/eye-blink-finger-counter',
+    live: '',
+  },
+  {
+    id: 6,
+    title: 'Second Brain / Knowledge Base',
+    description:
+      'A personal wiki built with Obsidian and Claude — covering dev notes, learnings, research, and ideas all in one place. My external memory system for everything I learn.',
+    tags: ['Obsidian', 'Claude', 'Knowledge Management', 'Markdown'],
+    emoji: '🧠',
+    github: '',
+    live: 'https://faizankhan17623.github.io/Quarts/',
+  },
 ]

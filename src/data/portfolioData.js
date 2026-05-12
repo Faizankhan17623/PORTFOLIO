@@ -57,6 +57,16 @@ export const defaultProjects = [
     live: '',
   },
   {
+    id: 8,
+    title: 'ByteFeed',
+    description:
+      'Free, open-source blog aggregator that collects real-time posts from 22 top AI, ML & software engineering blogs via RSS feeds. Features search, bookmarks, trending posts, dark mode, and zero login required.',
+    tags: ['React', 'Vite', 'RSS', 'Axios', 'Vercel'],
+    emoji: '📡',
+    github: 'https://github.com/Faizankhan17623/ByteFeed',
+    live: 'https://www.bytefeed.store/',
+  },
+  {
     id: 7,
     title: 'Eye Blink & Finger Counter',
     description:

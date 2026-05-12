@@ -14,7 +14,7 @@ export const defaultProjects = [
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Razorpay', 'JWT'],
     emoji: '🎬',
     github: '',
-    live: '',
+    live: 'https://mw-bay.vercel.app/',
   },
   {
     id: 2,
@@ -24,7 +24,7 @@ export const defaultProjects = [
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Razorpay', 'Cloudinary'],
     emoji: '📚',
     github: '',
-    live: '',
+    live: 'https://study-notion-project-phi.vercel.app/',
   },
   {
     id: 3,

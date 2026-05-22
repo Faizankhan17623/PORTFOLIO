@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 5000
 
 // ── Middleware ──────────────────────────────────────────
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL || 'http://localhost:5174',
   methods: ['GET', 'POST'],
 }))
 app.use(express.json())
@@ -36,6 +36,10 @@ app.post('/api/contact', async (req, res) => {
   }
 
   try {
+    const existing = await Message.findOne({ email: email.trim().toLowerCase() })
+    if (existing) {
+      return res.status(409).json({ error: 'This email has already sent a message. I will get back to you soon!' })
+    }
     await Message.create({ name: name.trim(), email: email.trim(), message: message.trim() })
     res.status(201).json({ success: true, message: 'Message saved successfully.' })
   } catch (err) {

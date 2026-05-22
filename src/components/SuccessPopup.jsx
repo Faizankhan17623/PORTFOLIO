@@ -14,12 +14,12 @@ export default function SuccessPopup({ show, onClose }) {
             onClick={onClose}
           />
 
-          {/* Card */}
+          {/* Card — x/y keep it centered; scale/opacity animate on top */}
           <motion.div
             className="popup-card"
-            initial={{ opacity: 0, scale: 0.7, y: 40 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.85, y: 20 }}
+            initial={{ opacity: 0, scale: 0.7, x: '-50%', y: '-40%' }}
+            animate={{ opacity: 1, scale: 1, x: '-50%', y: '-50%' }}
+            exit={{ opacity: 0, scale: 0.85, x: '-50%', y: '-44%' }}
             transition={{ type: 'spring', stiffness: 320, damping: 22 }}
           >
             {/* Animated check circle */}

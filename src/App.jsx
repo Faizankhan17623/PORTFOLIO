@@ -10,11 +10,16 @@ import SecondBrain from './components/SecondBrain'
 import Contact from './components/Contact'
 import Footer from './components/Footer'
 import AdminPanel from './components/AdminPanel'
+import MaintenanceScreen from './components/MaintenanceScreen'
+import TerminalOverlay from './components/TerminalOverlay'
+import ScrollProgressBar from './components/ScrollProgressBar'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 
 function App() {
   const [adminOpen, setAdminOpen] = useState(false)
   const [loggedIn, setLoggedIn] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [terminalOpen, setTerminalOpen] = useState(false)
 
   // Initialize smooth scrolling
   useEffect(() => {
@@ -40,6 +45,17 @@ function App() {
     return () => lenis.destroy()
   }, [])
 
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === '/' && !terminalOpen && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+        e.preventDefault()
+        setTerminalOpen(true)
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [terminalOpen])
+
   const [skills, setSkills] = useState(() => {
     try { return JSON.parse(localStorage.getItem('fk_skills')) || defaultSkills }
     catch { return defaultSkills }
@@ -54,8 +70,10 @@ function App() {
 
   return (
     <>
+      {loading && <MaintenanceScreen onDone={() => setLoading(false)} />}
+      <ScrollProgressBar />
       <CustomCursor />
-      <Navbar />
+      <Navbar onTerminalOpen={() => setTerminalOpen(true)} />
       <main>
         <section id="home"><Hero /></section>
         <div className="divider" />
@@ -74,6 +92,9 @@ function App() {
         <section id="contact"><Contact /></section>
       </main>
       <Footer onAdminClick={() => setAdminOpen(true)} />
+
+      <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
+
       {adminOpen && (
         <AdminPanel
           loggedIn={loggedIn}

@@ -94,7 +94,7 @@ export default function Contact() {
         initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }} viewport={{ once: true }}
       >
-        <div className="sec-badge">// contact.init()</div>
+        <div className="sec-badge">// get in touch</div>
         <h2 className="sec-title">Get In <span className="hl">Touch</span></h2>
         <p className="sec-sub">Have a project in mind or just want to say hi? I'd love to hear from you.</p>
       </motion.div>

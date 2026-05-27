@@ -4,7 +4,7 @@ import MagneticElement from './MagneticElement'
 
 const LINKS = ['home', 'about', 'skills', 'projects', 'brain', 'contact']
 
-export default function Navbar() {
+export default function Navbar({ onTerminalOpen }) {
   const [active, setActive] = useState('home')
   const [scrolled, setScrolled] = useState(false)
 
@@ -60,6 +60,9 @@ export default function Navbar() {
           </motion.li>
         ))}
       </ul>
+      <button className="nav-terminal-btn interactive" onClick={onTerminalOpen}>
+        <span className="nav-terminal-icon">&gt;_</span> Terminal
+      </button>
     </motion.nav>
   )
 }

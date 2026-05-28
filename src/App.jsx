@@ -13,6 +13,8 @@ import AdminPanel from './components/AdminPanel'
 import MaintenanceScreen from './components/MaintenanceScreen'
 import TerminalOverlay from './components/TerminalOverlay'
 import ScrollProgressBar from './components/ScrollProgressBar'
+import GitHubStats from './components/GitHubStats'
+import AIChat from './components/AIChat'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 
 function App() {
@@ -87,12 +89,15 @@ function App() {
           <Projects projects={projects} isAdmin={loggedIn} onUpdate={saveProjects} />
         </section>
         <div className="divider" />
+        <section id="github"><GitHubStats /></section>
+        <div className="divider" />
         <section id="brain"><SecondBrain /></section>
         <div className="divider" />
         <section id="contact"><Contact /></section>
       </main>
       <Footer onAdminClick={() => setAdminOpen(true)} />
 
+      <AIChat />
       <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
 
       {adminOpen && (

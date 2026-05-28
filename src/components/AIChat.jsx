@@ -20,7 +20,7 @@ const RESPONSES = {
   'are you available for hire?':
     "Yes! I'm actively open to full-time, contract, and freelance opportunities. Remote-friendly, India-based. Let's build something great together.",
   'how can i contact you?':
-    "📧 fk3701@gmail.com\n🔗 linkedin.com/in/faizan-khan-dev\n💻 github.com/Faizankhan17623\n\nFastest reply: drop an email — I respond within 24 hours.",
+    "📧 faizankhan901152@gmail.com\n🔗 linkedin.com/in/faizan-khan-dev\n💻 github.com/Faizankhan17623\n\nFastest reply: drop an email — I respond within 24 hours.",
   'why should i hire you?':
     "I ship. I've built and deployed multiple full-stack apps with real payment integrations (Razorpay), real auth (JWT + OTP), and real users. I learn fast, communicate clearly, and care about clean code AND great UX. Plus — I'm hungry.",
 }
@@ -37,7 +37,7 @@ function getResponse(q) {
   if (key.includes('contact') || key.includes('email') || key.includes('reach')) return RESPONSES['how can i contact you?']
   if (key.includes('skill') || key.includes('stack') || key.includes('tech')) return RESPONSES['what is your tech stack?']
   if (key.includes('project') || key.includes('work') || key.includes('build')) return RESPONSES['best project?']
-  return "Great question! For anything I haven't covered here, just email me at fk3701@gmail.com — I'd love to chat directly. Or try one of the quick questions below 👇"
+  return "Great question! For anything I haven't covered here, just email me at faizankhan901152@gmail.com — I'd love to chat directly. Or try one of the quick questions below 👇"
 }
 
 function TypingDots() {

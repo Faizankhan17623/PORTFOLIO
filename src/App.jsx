@@ -14,7 +14,6 @@ import MaintenanceScreen from './components/MaintenanceScreen'
 import TerminalOverlay from './components/TerminalOverlay'
 import ScrollProgressBar from './components/ScrollProgressBar'
 import GitHubStats from './components/GitHubStats'
-import Testimonials from './components/Testimonials'
 import AIChat from './components/AIChat'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 
@@ -91,8 +90,6 @@ function App() {
         </section>
         <div className="divider" />
         <section id="github"><GitHubStats /></section>
-        <div className="divider" />
-        <section id="testimonials"><Testimonials /></section>
         <div className="divider" />
         <section id="brain"><SecondBrain /></section>
         <div className="divider" />

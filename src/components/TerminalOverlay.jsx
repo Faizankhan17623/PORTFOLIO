@@ -18,6 +18,12 @@ const COMMANDS = {
       { t: 'row', k: 'skills', v: 'Tech stack' },
       { t: 'row', k: 'projects', v: 'My projects' },
       { t: 'row', k: 'contact', v: 'Get in touch' },
+      { t: 'row', k: 'hire-me', v: 'Why you should hire me' },
+      { t: 'row', k: 'resume', v: 'Open / download resume' },
+      { t: 'row', k: 'joke', v: 'A dev joke' },
+      { t: 'row', k: 'coffee', v: 'Buy me a coffee' },
+      { t: 'row', k: 'matrix', v: 'Enter the Matrix' },
+      { t: 'row', k: 'sudo', v: 'Try to gain root access' },
       { t: 'row', k: 'clear', v: 'Clear terminal' },
       { t: 'row', k: 'exit', v: 'Close terminal' },
       { t: 'gap' },
@@ -84,6 +90,99 @@ const COMMANDS = {
       { t: 'dim', v: "Best way to reach me: shoot me an email or scroll to Contact section." },
     ],
   }),
+
+  'hire-me': () => ({
+    output: [
+      { t: 'hl', v: '$ Why hire Faizan?' },
+      { t: 'gap' },
+      { t: 'cm', v: '✓ Ships fast — full-stack apps in weeks, not months' },
+      { t: 'cm', v: '✓ End-to-end ownership — design → code → deploy' },
+      { t: 'cm', v: '✓ Real payments (Razorpay), real auth (JWT), real users' },
+      { t: 'cm', v: '✓ Clean code, clear communication, zero ego' },
+      { t: 'cm', v: '✓ Available immediately — remote, contract, full-time' },
+      { t: 'gap' },
+      { t: 'row', k: 'Status', v: '● Open to work — let\'s talk', c: 'green' },
+      { t: 'row', k: 'Email', v: 'fk3701@gmail.com' },
+    ],
+  }),
+
+  resume: () => ({
+    output: [
+      { t: 'hl', v: '$ Resume' },
+      { t: 'gap' },
+      { t: 'cm', v: 'Fetching latest resume… ✓' },
+      { t: 'dim', v: 'Email fk3701@gmail.com to request the PDF, or check the Contact section.' },
+    ],
+  }),
+
+  joke: () => {
+    const jokes = [
+      ['Why do programmers prefer dark mode?', 'Because light attracts bugs. 🐛'],
+      ['How many programmers does it take to change a light bulb?', "None — that's a hardware problem."],
+      ['Why did the developer go broke?', 'Because he used up all his cache. 💸'],
+      ['What\'s a programmer\'s favorite hangout place?', 'The Foo Bar. 🍻'],
+      ['Why do Java developers wear glasses?', "Because they don't C#. 👓"],
+    ]
+    const j = jokes[Math.floor(Math.random() * jokes.length)]
+    return {
+      output: [
+        { t: 'cm', v: j[0] },
+        { t: 'gap' },
+        { t: 'hl', v: j[1] },
+      ],
+    }
+  },
+
+  coffee: () => ({
+    output: [
+      { t: 'ascii', v: `
+       ( (
+        ) )
+     ........
+     |      |]
+     \\      /
+      \`----'` },
+      { t: 'gap' },
+      { t: 'hl', v: 'Coffee = fuel ☕' },
+      { t: 'dim', v: 'If my work helped you, ping me on email — coffee chats welcome!' },
+    ],
+  }),
+
+  matrix: () => ({
+    matrix: true,
+    output: [
+      { t: 'cm', v: 'Wake up, Neo…' },
+      { t: 'dim', v: 'Press any key to exit the Matrix.' },
+    ],
+  }),
+
+  sudo: () => ({
+    output: [
+      { t: 'error', v: 'Permission denied: nice try 😏' },
+      { t: 'dim', v: 'Faizan is the only sudoer on this system.' },
+    ],
+  }),
+
+  ls: () => ({
+    output: [
+      { t: 'cm', v: 'about/  skills/  projects/  contact/  resume.pdf  README.md' },
+    ],
+  }),
+
+  'rm -rf /': () => ({
+    output: [
+      { t: 'hl', v: '🔥 Nice try.' },
+      { t: 'dim', v: "Permission denied. Also — please don't do that to your real machine." },
+    ],
+  }),
+
+  date: () => ({
+    output: [{ t: 'cm', v: new Date().toString() }],
+  }),
+
+  echo: () => ({
+    output: [{ t: 'cm', v: 'echo what? Try `echo hello`' }],
+  }),
 }
 
 function OutputLine({ line }) {
@@ -98,6 +197,8 @@ function OutputLine({ line }) {
       return <div className="t-output-dim">{line.v}</div>
     case 'gap':
       return <div className="t-output-gap" />
+    case 'error':
+      return <div className="t-error">{line.v}</div>
     case 'cat':
       return <div className="t-output-cat">{line.v}</div>
     case 'tags':
@@ -159,6 +260,38 @@ function TerminalLine({ entry }) {
   return null
 }
 
+function MatrixRain() {
+  const ref = useRef(null)
+  useEffect(() => {
+    const canvas = ref.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    canvas.width = canvas.offsetWidth
+    canvas.height = canvas.offsetHeight
+    const chars = 'アァカサタナハマヤラワ0123456789ABCDEF{}[]<>'.split('')
+    const size = 14
+    const cols = Math.floor(canvas.width / size)
+    const drops = Array(cols).fill(1)
+    let anim
+    const draw = () => {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      ctx.fillStyle = '#22d3ee'
+      ctx.font = `${size}px Fira Code, monospace`
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)]
+        ctx.fillText(text, i * size, drops[i] * size)
+        if (drops[i] * size > canvas.height && Math.random() > 0.975) drops[i] = 0
+        drops[i]++
+      }
+      anim = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => cancelAnimationFrame(anim)
+  }, [])
+  return <canvas ref={ref} className="t-matrix-canvas" />
+}
+
 export default function TerminalOverlay({ open, onClose }) {
   const [history, setHistory] = useState([
     { type: 'output', lines: [
@@ -182,6 +315,8 @@ export default function TerminalOverlay({ open, onClose }) {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [history])
 
+  const [matrixOn, setMatrixOn] = useState(false)
+
   const runCommand = useCallback((raw) => {
     const cmd = raw.trim().toLowerCase()
     if (!cmd) return
@@ -200,12 +335,24 @@ export default function TerminalOverlay({ open, onClose }) {
       return
     }
 
+    // echo <anything>
+    if (cmd.startsWith('echo ')) {
+      const msg = raw.trim().slice(5)
+      setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: [{ t: 'cm', v: msg }] }])
+      return
+    }
+
     const fn = COMMANDS[cmd]
-    setHistory(h => [
-      ...h,
-      { type: 'input', text: raw },
-      fn ? { type: 'output', lines: fn().output } : { type: 'error', text: raw },
-    ])
+    if (fn) {
+      const result = fn()
+      if (result.matrix) {
+        setMatrixOn(true)
+        setTimeout(() => setMatrixOn(false), 4000)
+      }
+      setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: result.output }])
+    } else {
+      setHistory(h => [...h, { type: 'input', text: raw }, { type: 'error', text: raw }])
+    }
   }, [onClose])
 
   const handleKey = (e) => {
@@ -255,6 +402,7 @@ export default function TerminalOverlay({ open, onClose }) {
               <kbd className="t-hint">ESC to close</kbd>
             </div>
 
+            {matrixOn && <MatrixRain />}
             <div className="t-body" onClick={() => inputRef.current?.focus()}>
               {history.map((entry, i) => <TerminalLine key={i} entry={entry} />)}
 

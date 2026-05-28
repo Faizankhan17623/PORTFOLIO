@@ -709,3 +709,74 @@ ul { list-style: none; }
   font-family: 'Fira Code', monospace;
   box-shadow: 0 1px 0 rgba(255,255,255,0.1);
 }
+
+/* ─── MAINTENANCE / BOOT SCREEN ──────────────────── */
+.maint-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  background: #030712;
+  display: flex; align-items: center; justify-content: center;
+}
+.maint-scanlines {
+  position: absolute; inset: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255,255,255,0.015) 2px,
+    rgba(255,255,255,0.015) 4px
+  );
+}
+.maint-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 20px; width: 100%; max-width: 440px; padding: 0 24px;
+}
+.maint-logo {
+  font-family: 'Fira Code', monospace;
+  font-size: 2rem; font-weight: 700; letter-spacing: 0.06em;
+  color: #c084fc;
+  text-shadow: 0 0 30px rgba(192,132,252,0.5);
+}
+.maint-status {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text2); font-size: 0.85rem;
+  font-family: 'Fira Code', monospace;
+}
+.maint-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: #4ade80;
+  box-shadow: 0 0 8px #4ade80;
+  animation: maint-blink 1s ease-in-out infinite;
+}
+@keyframes maint-blink {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+.maint-bar-wrap {
+  width: 100%; display: flex; align-items: center; gap: 14px;
+}
+.maint-bar-track {
+  flex: 1; height: 3px; background: rgba(255,255,255,0.08);
+  border-radius: 99px; overflow: hidden;
+}
+.maint-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c084fc, #22d3ee);
+  border-radius: 99px;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 10px rgba(192,132,252,0.5);
+}
+.maint-pct {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.75rem; color: var(--text3); min-width: 36px; text-align: right;
+}
+.maint-terminal {
+  width: 100%; padding: 14px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.78rem;
+  display: flex; flex-direction: column; gap: 6px;
+  min-height: 96px;
+}
+.maint-line { color: var(--text2); }

@@ -85,7 +85,7 @@ const COMMANDS = {
       { t: 'gap' },
       { t: 'row', k: 'Email', v: 'fk3701@gmail.com' },
       { t: 'row', k: 'GitHub', v: 'github.com/Faizankhan17623' },
-      { t: 'row', k: 'LinkedIn', v: 'linkedin.com/in/faizan-khan-dev' },
+      { t: 'row', k: 'LinkedIn', v: 'linkedin.com/in/faizankhan-fullstack' },
       { t: 'gap' },
       { t: 'dim', v: "Best way to reach me: shoot me an email or scroll to Contact section." },
     ],

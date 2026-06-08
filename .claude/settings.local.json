@@ -4,7 +4,20 @@
       "Bash(npm install:*)",
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "WebSearch",
+      "Bash(npm run *)",
+      "Bash(git checkout *)",
+      "Bash(npx vite *)",
+      "Bash(start cmd *)",
+      "Bash(npx concurrently *)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill *)",
+      "PowerShell(Stop-Process *)",
+      "Bash(git merge backend --no-ff -m ' *)",
+      "Bash(git commit *)",
+      "Bash(git merge *)",
+      "PowerShell(git *)"
     ]
   }
 }

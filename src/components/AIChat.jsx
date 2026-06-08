@@ -20,7 +20,7 @@ const RESPONSES = {
   'are you available for hire?':
     "Yes! I'm actively open to full-time, contract, and freelance opportunities. Remote-friendly, India-based. Let's build something great together.",
   'how can i contact you?':
-    "📧 faizankhan901152@gmail.com\n🔗 linkedin.com/in/faizan-khan-dev\n💻 github.com/Faizankhan17623\n\nFastest reply: drop an email — I respond within 24 hours.",
+    "📧 faizankhan901152@gmail.com\n🔗 linkedin.com/in/faizankhan-fullstack\n💻 github.com/Faizankhan17623\n\nFastest reply: drop an email — I respond within 24 hours.",
   'why should i hire you?':
     "I ship. I've built and deployed multiple full-stack apps with real payment integrations (Razorpay), real auth (JWT + OTP), and real users. I learn fast, communicate clearly, and care about clean code AND great UX. Plus — I'm hungry.",
 }

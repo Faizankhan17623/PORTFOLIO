@@ -86,4 +86,14 @@ export const defaultProjects = [
     github: '',
     live: 'https://faizankhan17623.github.io/Quarts/',
   },
+  {
+    id: 9,
+    title: 'ChatGPT Clone',
+    description:
+      'A ChatGPT-style chat app with a clean ChatGPT-like UI, word-by-word typewriter replies, and persistent chat history. Backed by a Node/Express server using the Groq LLM, with live web search powered by Tavily and short-term conversation memory.',
+    tags: ['Node.js', 'Express', 'JavaScript', 'Tailwind CSS', 'Groq', 'Tavily'],
+    emoji: '💬',
+    github: 'https://github.com/Faizankhan17623/Chat-gpt-clone',
+    live: 'https://chat-gpt-clone-y2qt.onrender.com/',
+  },
 ]

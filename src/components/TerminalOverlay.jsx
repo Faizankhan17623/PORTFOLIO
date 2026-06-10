@@ -398,7 +398,7 @@ export default function TerminalOverlay({ open, onClose }) {
                 <div className="t-dot-btn y" />
                 <div className="t-dot-btn g" />
               </div>
-              <span className="t-title">faizan@portfolio — zsh — 80×24</span>
+              <span className="t-title">Faizan Khan portfolio</span>
               <kbd className="t-hint">ESC to close</kbd>
             </div>
 

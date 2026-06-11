@@ -96,4 +96,24 @@ export const defaultProjects = [
     github: 'https://github.com/Faizankhan17623/Chat-gpt-clone',
     live: 'https://chat-gpt-clone-y2qt.onrender.com/',
   },
+  {
+    id: 10,
+    title: 'GTA Clone',
+    description:
+      'Open-world GTA-style action game running entirely in the browser with Three.js and zero build step. Features driving, helicopters, weapons, a 5-star wanted system with police chase AI, day/night cycle, and procedural sound.',
+    tags: ['Three.js', 'JavaScript', 'WebGL', 'Game Dev', 'Web Audio'],
+    emoji: '🚗',
+    github: 'https://github.com/Faizankhan17623/Gta-Clone',
+    live: 'https://faizankhan17623.github.io/Gta-Clone/',
+  },
+  {
+    id: 11,
+    title: 'Neon Blaster',
+    description:
+      'Neon arcade space shooter in a single HTML file — pilot a rocket against pixel-art alien invaders. Combos, boss fights, power-ups, particle explosions, and synthesized Web Audio sound. Pure HTML/CSS/JS with zero dependencies.',
+    tags: ['JavaScript', 'HTML5 Canvas', 'CSS', 'Game Dev', 'Web Audio'],
+    emoji: '🚀',
+    github: 'https://github.com/Faizankhan17623/Neon-Blaster',
+    live: 'https://faizankhan17623.github.io/Neon-Blaster/',
+  },
 ]

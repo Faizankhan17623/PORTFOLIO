@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useScramble } from '../hooks/useScramble'
 
 const ICONS = {
   frontend: '🖥️',
@@ -19,6 +20,10 @@ const tag = {
 
 export default function Skills({ skills, isAdmin, onUpdate }) {
   const [newSkill, setNewSkill] = useState({ cat: 'frontend', val: '' })
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const t1 = useScramble('TECH', { trigger: inView, speed: 35, delay: 80 })
+  const t2 = useScramble('STACK', { trigger: inView, speed: 35, delay: 280 })
 
   const addSkill = () => {
     const v = newSkill.val.trim()
@@ -34,13 +39,15 @@ export default function Skills({ skills, isAdmin, onUpdate }) {
   }
 
   return (
-    <div className="section">
+    <div className="section" ref={ref}>
       <motion.div
         initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }} viewport={{ once: true }}
       >
-        <div className="sec-badge">// skills.config</div>
-        <h2 className="sec-title">Tech <span className="hl">Stack</span></h2>
+        <div className="sec-badge">skills.config</div>
+        <h2 className="sec-title scramble-text">
+          <span>{t1}</span> <span className="hl">{t2}</span>
+        </h2>
         <p className="sec-sub">Tools and technologies I work with daily.</p>
       </motion.div>
 
@@ -48,7 +55,7 @@ export default function Skills({ skills, isAdmin, onUpdate }) {
         {Object.entries(skills).map(([cat, list], ci) => (
           <motion.div
             key={cat}
-            className="skill-card"
+            className="skill-card corner-box"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: ci * 0.12 }}

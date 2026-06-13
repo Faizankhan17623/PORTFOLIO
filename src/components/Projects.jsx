@@ -1,10 +1,15 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { motion, AnimatePresence, useInView } from 'framer-motion'
 import TiltCard from './TiltCard'
+import { useScramble } from '../hooks/useScramble'
 
 export default function Projects({ projects, isAdmin, onUpdate }) {
   const [form, setForm] = useState({ title: '', description: '', tags: '', emoji: '🚀', github: '', live: '' })
   const [adding, setAdding] = useState(false)
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const t1 = useScramble('MY', { trigger: inView, speed: 35, delay: 80 })
+  const t2 = useScramble('PROJECTS', { trigger: inView, speed: 35, delay: 260 })
 
   const addProject = () => {
     if (!form.title.trim()) return
@@ -25,13 +30,15 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
   const removeProject = (id) => onUpdate(projects.filter(p => p.id !== id))
 
   return (
-    <div className="section">
+    <div className="section" ref={ref}>
       <motion.div
         initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }} viewport={{ once: true }}
       >
-        <div className="sec-badge">// projects.json</div>
-        <h2 className="sec-title">My <span className="hl">Projects</span></h2>
+        <div className="sec-badge">projects.json</div>
+        <h2 className="sec-title scramble-text">
+          <span>{t1}</span> <span className="hl">{t2}</span>
+        </h2>
         <p className="sec-sub">Real-world applications I've built from scratch.</p>
       </motion.div>
 
@@ -84,7 +91,7 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
               viewport={{ once: true }}
               whileHover={{ y: -8, scale: 1.02, transition: { type: 'spring', stiffness: 300 } }}
             >
-              <TiltCard className="project-card">
+              <TiltCard className="project-card corner-box corner-box-inner">
                 {isAdmin && (
                   <button className="proj-del" onClick={() => removeProject(p.id)}>×</button>
                 )}

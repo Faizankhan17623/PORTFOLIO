@@ -35,7 +35,7 @@ export default function Navbar({ onTerminalOpen }) {
       <MagneticElement>
         <motion.div
           className="nav-logo interactive"
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: 1.03 }}
           transition={{ type: 'spring', stiffness: 400 }}
         >
           faizan.dev

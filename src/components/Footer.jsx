@@ -9,7 +9,7 @@ export default function Footer({ onAdminClick }) {
           initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
           transition={{ duration: 0.6 }} viewport={{ once: true }}
         >
-          <span className="gradient">faizan.dev</span>
+          faizan.dev
         </motion.div>
 
         <motion.p

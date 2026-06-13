@@ -72,62 +72,50 @@ function ParticleCanvas() {
     window.addEventListener('mousemove', handleMouseMove)
     window.addEventListener('mouseleave', handleMouseLeave)
 
-    const N = 80 // Increased particle count slightly for better effect
+    const N = 70
     const pts = Array.from({ length: N }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.6, // Slightly faster
-      vy: (Math.random() - 0.5) * 0.6,
-      r: Math.random() * 1.8 + 0.8, // Slightly larger
-      baseX: 0,
-      baseY: 0
+      vx: (Math.random() - 0.5) * 0.5,
+      vy: (Math.random() - 0.5) * 0.5,
+      r: Math.random() * 1.5 + 0.5,
     }))
 
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      
+
       pts.forEach(p => {
         p.x += p.vx; p.y += p.vy
-        
-        // Bounce off edges
         if (p.x < 0 || p.x > canvas.width) p.vx *= -1
         if (p.y < 0 || p.y > canvas.height) p.vy *= -1
 
-        // Mouse interaction (repel)
         if (mouse.x != null && mouse.y != null) {
-          let dx = mouse.x - p.x
-          let dy = mouse.y - p.y
-          let distance = Math.hypot(dx, dy)
-          
+          const dx = mouse.x - p.x
+          const dy = mouse.y - p.y
+          const distance = Math.hypot(dx, dy)
           if (distance < mouse.radius) {
-            const forceDirectionX = dx / distance
-            const forceDirectionY = dy / distance
             const force = (mouse.radius - distance) / mouse.radius
-            const directionX = forceDirectionX * force * -2 // Push away
-            const directionY = forceDirectionY * force * -2
-            
-            p.x += directionX
-            p.y += directionY
+            p.x -= (dx / distance) * force * 2
+            p.y -= (dy / distance) * force * 2
           }
         }
 
         ctx.beginPath()
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = 'rgba(168, 85, 247, 0.7)' // Brighter dot
+        ctx.rect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2)
+        ctx.fillStyle = 'rgba(57, 255, 20, 0.75)'
         ctx.fill()
       })
-      
+
       for (let i = 0; i < N; i++) {
         for (let j = i + 1; j < N; j++) {
           const d = Math.hypot(pts[i].x - pts[j].x, pts[i].y - pts[j].y)
-          if (d < 140) {
+          if (d < 130) {
             ctx.beginPath()
             ctx.moveTo(pts[i].x, pts[i].y)
             ctx.lineTo(pts[j].x, pts[j].y)
-            // Gradient lines depending on distance
-            const opacity = 0.3 * (1 - d / 140)
-            ctx.strokeStyle = `rgba(34, 211, 238, ${opacity})` // Cyan lines for contrast
-            ctx.lineWidth = 0.8
+            const opacity = 0.25 * (1 - d / 130)
+            ctx.strokeStyle = `rgba(57, 255, 20, ${opacity})`
+            ctx.lineWidth = 0.6
             ctx.stroke()
           }
         }
@@ -150,8 +138,10 @@ export default function Hero() {
   const role = useTypewriter(ROLES)
 
   return (
-    <div className="hero">
+    <div className="hero crt-flicker">
       <ParticleCanvas />
+      <div className="hero-noise" />
+      <div className="hero-scan-line" />
       <div className="hero-inner">
 
         {/* ── Left ── */}
@@ -168,24 +158,35 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
+              style={{ display: 'block', fontSize: '0.55em', letterSpacing: '0.1em', color: 'var(--text2)', fontFamily: "'Share Tech Mono', monospace" }}
             >
-              Hi, I'm<br />
+              &gt; HELLO_WORLD
             </motion.span>
             <motion.span
-              className="gradient"
-              initial={{ opacity: 0, y: 20, filter: 'blur(10px)' }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              transition={{ delay: 0.4, duration: 0.6, type: 'spring' }}
+              className="glitch"
+              data-text="FAIZAN KHAN"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              style={{ display: 'block' }}
             >
-              Faizan Khan
+              FAIZAN KHAN
+            </motion.span>
+            <motion.span
+              className="neon-line"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+            >
+              // DEVELOPER
             </motion.span>
           </motion.h1>
 
           <motion.div
             className="hero-role"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
           >
-            <span className="prompt">{'>'}</span>
+            <span className="prompt">$&nbsp;</span>
             <span>{role}</span>
             <span className="cursor" />
           </motion.div>

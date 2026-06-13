@@ -16,6 +16,7 @@ import ScrollProgressBar from './components/ScrollProgressBar'
 import GitHubStats from './components/GitHubStats'
 import AIChat from './components/AIChat'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
+import Ticker from './components/Ticker'
 
 function App() {
   const [adminOpen, setAdminOpen] = useState(false)
@@ -76,6 +77,7 @@ function App() {
       <ScrollProgressBar />
       <CustomCursor />
       <Navbar onTerminalOpen={() => setTerminalOpen(true)} />
+      {/* <Ticker /> */}
       <main>
         <section id="home"><Hero /></section>
         <div className="divider" />

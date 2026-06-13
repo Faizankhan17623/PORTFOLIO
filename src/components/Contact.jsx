@@ -1,7 +1,8 @@
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import MagneticElement from './MagneticElement'
 import SuccessPopup from './SuccessPopup'
+import { useScramble } from '../hooks/useScramble'
 
 const SOCIALS = [
   {
@@ -59,6 +60,10 @@ export default function Contact() {
   const [sending, setSending] = useState(false)
   const [showPopup, setShowPopup] = useState(false)
   const [error, setError] = useState('')
+  const ref = useRef(null)
+  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const t1 = useScramble('GET IN', { trigger: inView, speed: 35, delay: 80 })
+  const t2 = useScramble('TOUCH', { trigger: inView, speed: 35, delay: 320 })
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -94,12 +99,14 @@ export default function Contact() {
         initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }} viewport={{ once: true }}
       >
-        <div className="sec-badge">// get in touch</div>
-        <h2 className="sec-title">Get In <span className="hl">Touch</span></h2>
+        <div className="sec-badge">get in touch</div>
+        <h2 className="sec-title scramble-text">
+          <span>{t1}</span> <span className="hl">{t2}</span>
+        </h2>
         <p className="sec-sub">Have a project in mind or just want to say hi? I'd love to hear from you.</p>
       </motion.div>
 
-      <div className="contact-wrap">
+      <div className="contact-wrap" ref={ref}>
         {/* Left: form */}
         <motion.form
           className="contact-form"

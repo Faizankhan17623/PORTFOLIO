@@ -19,7 +19,7 @@ export default function About() {
   return (
     <div className="section" ref={ref}>
       <motion.div {...fade()}>
-        <div className="sec-badge">about_me.json</div>
+        <div className="sec-badge">About Me</div>
         <h2 className="sec-title scramble-text">
           <span>{title1}</span> <span className="hl">{title2}</span>
         </h2>

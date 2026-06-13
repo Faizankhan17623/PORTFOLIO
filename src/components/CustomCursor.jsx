@@ -11,7 +11,13 @@ export default function CustomCursor() {
     }
 
     const handleMouseOver = (e) => {
-      // Check if hovering over interactive elements
+      const inChat =
+        e.target.closest('.ai-fab') ||
+        e.target.closest('.ai-chat-panel')
+      if (inChat) {
+        setIsHovering(false)
+        return
+      }
       if (
         e.target.tagName.toLowerCase() === 'button' ||
         e.target.tagName.toLowerCase() === 'a' ||

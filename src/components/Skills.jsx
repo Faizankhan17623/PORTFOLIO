@@ -44,7 +44,7 @@ export default function Skills({ skills, isAdmin, onUpdate }) {
         initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }} viewport={{ once: true }}
       >
-        <div className="sec-badge">skills.config</div>
+        <div className="sec-badge">Tech Stack</div>
         <h2 className="sec-title scramble-text">
           <span>{t1}</span> <span className="hl">{t2}</span>
         </h2>

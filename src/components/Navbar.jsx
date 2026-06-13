@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MagneticElement from './MagneticElement'
 
-const LINKS = ['home', 'about', 'skills', 'projects', 'brain', 'contact']
+const LINKS = ['home', 'about', 'skills', 'projects', 'contact']
 
 export default function Navbar({ onTerminalOpen }) {
   const [active, setActive] = useState('home')
@@ -54,7 +54,7 @@ export default function Navbar({ onTerminalOpen }) {
                 className={`interactive ${active === id ? 'active' : ''}`}
                 onClick={() => scrollTo(id)}
               >
-                {id === 'brain' ? 'Second Brain' : id.charAt(0).toUpperCase() + id.slice(1)}
+                {id.charAt(0).toUpperCase() + id.slice(1)}
               </button>
             </MagneticElement>
           </motion.li>

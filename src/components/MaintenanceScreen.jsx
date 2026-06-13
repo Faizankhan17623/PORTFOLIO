@@ -1,12 +1,19 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import bootSound from '../assets/bootSound3.js'
 
-// How long the maintenance screen shows (ms)
 const DURATION = 3500
 
 export default function MaintenanceScreen({ onDone }) {
   const [progress, setProgress] = useState(0)
   const [visible, setVisible] = useState(true)
+
+  useEffect(() => {
+    const audio = new Audio(bootSound)
+    audio.volume = 0.7
+    audio.play().catch(() => {})
+    return () => { audio.pause(); audio.src = '' }
+  }, [])
 
   useEffect(() => {
     const start = Date.now()
@@ -34,11 +41,9 @@ export default function MaintenanceScreen({ onDone }) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.7, ease: 'easeInOut' }}
         >
-          {/* Subtle scanline overlay */}
           <div className="maint-scanlines" />
 
           <div className="maint-content">
-            {/* Logo */}
             <motion.div
               className="maint-logo"
               initial={{ opacity: 0, y: -20 }}
@@ -48,7 +53,6 @@ export default function MaintenanceScreen({ onDone }) {
               faizan.dev
             </motion.div>
 
-            {/* Status line */}
             <motion.div
               className="maint-status"
               initial={{ opacity: 0 }}
@@ -59,7 +63,6 @@ export default function MaintenanceScreen({ onDone }) {
               Initializing portfolio...
             </motion.div>
 
-            {/* Progress bar */}
             <motion.div
               className="maint-bar-wrap"
               initial={{ opacity: 0, scaleX: 0.8 }}
@@ -75,7 +78,6 @@ export default function MaintenanceScreen({ onDone }) {
               <span className="maint-pct">{Math.floor(progress)}%</span>
             </motion.div>
 
-            {/* Terminal lines */}
             <motion.div
               className="maint-terminal"
               initial={{ opacity: 0 }}

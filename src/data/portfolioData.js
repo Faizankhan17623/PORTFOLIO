@@ -12,6 +12,7 @@ export const defaultProjects = [
     description:
       'Full-stack movie ticketing platform with multi-role dashboards (Admin, Theatre, Organizer, User), Razorpay payment integration, JWT auth, real-time seat booking and show management.',
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Razorpay', 'JWT'],
+    category: 'Full-Stack',
     emoji: '🎬',
     github: '',
     live: 'https://mw-bay.vercel.app/',
@@ -22,6 +23,7 @@ export const defaultProjects = [
     description:
       'Full-stack EdTech platform where instructors can create & sell courses and students can purchase, track progress, and learn. Features Razorpay payments, Cloudinary media, OTP auth, and role-based dashboards.',
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Razorpay', 'Cloudinary'],
+    category: 'Full-Stack',
     emoji: '📚',
     github: '',
     live: 'https://study-notion-project-phi.vercel.app/',
@@ -32,6 +34,7 @@ export const defaultProjects = [
     description:
       'Pixel-perfect clone of the Razorpay landing page built with React and Tailwind CSS. Focuses on responsive design, component architecture, and modern UI layout techniques.',
     tags: ['React', 'Tailwind CSS'],
+    category: 'Frontend',
     emoji: '💳',
     github: '',
     live: '',
@@ -42,6 +45,7 @@ export const defaultProjects = [
     description:
       'A clean weather forecasting app that fetches real-time weather data based on city search. Built with vanilla JavaScript and CSS — no frameworks, just core web fundamentals.',
     tags: ['JavaScript', 'CSS', 'OpenWeather API'],
+    category: 'Frontend',
     emoji: '🌤️',
     github: '',
     live: '',
@@ -52,6 +56,7 @@ export const defaultProjects = [
     description:
       'A fully functional calculator with a clean UI built using vanilla JavaScript and CSS. Supports all basic arithmetic operations with keyboard support and error handling.',
     tags: ['JavaScript', 'CSS', 'HTML5'],
+    category: 'Frontend',
     emoji: '🧮',
     github: '',
     live: '',
@@ -62,9 +67,10 @@ export const defaultProjects = [
     description:
       'Free, open-source blog aggregator that collects real-time posts from 22 top AI, ML & software engineering blogs via RSS feeds. Features search, bookmarks, trending posts, dark mode, and zero login required.',
     tags: ['React', 'Vite', 'RSS', 'Axios', 'Vercel'],
+    category: 'Full-Stack',
     emoji: '📡',
     github: 'https://github.com/Faizankhan17623/ByteFeed',
-    live: 'https://www.bytefeed.store/',
+    live: 'https://byte-feed-two.vercel.app/',
   },
   {
     id: 7,
@@ -72,6 +78,7 @@ export const defaultProjects = [
     description:
       'Real-time computer vision app that tracks eye blinks per minute, calculates attention/focus score (0–100%), detects drowsiness, counts raised fingers, and recognizes hand gestures — all from a live webcam feed.',
     tags: ['Python', 'OpenCV', 'MediaPipe', 'NumPy', 'Computer Vision'],
+    category: 'AI / CV',
     emoji: '👁️',
     github: 'https://github.com/Faizankhan17623/eye-blink-finger-counter',
     live: '',
@@ -82,6 +89,7 @@ export const defaultProjects = [
     description:
       'A personal wiki built with Obsidian and Claude — covering dev notes, learnings, research, and ideas all in one place. My external memory system for everything I learn.',
     tags: ['Obsidian', 'Claude', 'Knowledge Management', 'Markdown'],
+    category: 'Tools',
     emoji: '🧠',
     github: '',
     live: 'https://faizankhan17623.github.io/Quarts/',
@@ -92,6 +100,7 @@ export const defaultProjects = [
     description:
       'A ChatGPT-style chat app with a clean ChatGPT-like UI, word-by-word typewriter replies, and persistent chat history. Backed by a Node/Express server using the Groq LLM, with live web search powered by Tavily and short-term conversation memory.',
     tags: ['Node.js', 'Express', 'JavaScript', 'Tailwind CSS', 'Groq', 'Tavily'],
+    category: 'AI / CV',
     emoji: '💬',
     github: 'https://github.com/Faizankhan17623/Chat-gpt-clone',
     live: 'https://chat-gpt-clone-y2qt.onrender.com/',
@@ -102,6 +111,7 @@ export const defaultProjects = [
     description:
       'Open-world GTA-style action game running entirely in the browser with Three.js and zero build step. Features driving, helicopters, weapons, a 5-star wanted system with police chase AI, day/night cycle, and procedural sound.',
     tags: ['Three.js', 'JavaScript', 'WebGL', 'Game Dev', 'Web Audio'],
+    category: 'Games',
     emoji: '🚗',
     github: 'https://github.com/Faizankhan17623/Gta-Clone',
     live: 'https://faizankhan17623.github.io/Gta-Clone/',
@@ -112,6 +122,7 @@ export const defaultProjects = [
     description:
       'Neon arcade space shooter in a single HTML file — pilot a rocket against pixel-art alien invaders. Combos, boss fights, power-ups, particle explosions, and synthesized Web Audio sound. Pure HTML/CSS/JS with zero dependencies.',
     tags: ['JavaScript', 'HTML5 Canvas', 'CSS', 'Game Dev', 'Web Audio'],
+    category: 'Games',
     emoji: '🚀',
     github: 'https://github.com/Faizankhan17623/Neon-Blaster',
     live: 'https://faizankhan17623.github.io/Neon-Blaster/',

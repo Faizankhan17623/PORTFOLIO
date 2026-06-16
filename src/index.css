@@ -551,6 +551,88 @@ ul { list-style: none; }
 .proj-link.live { border-color: rgba(0, 245, 255, 0.25); color: var(--neon-cyan); }
 .proj-link.live:hover { border-color: var(--neon-cyan); box-shadow: 0 0 10px rgba(0, 245, 255, 0.2); }
 
+/* card top row + category chip on card */
+.proj-card-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.proj-cat-chip {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em;
+  text-transform: uppercase; padding: 3px 9px; color: var(--neon-pink);
+  border: 1px solid rgba(255, 45, 120, 0.3); background: rgba(255, 45, 120, 0.05);
+}
+.pf-select {
+  background: var(--card); border: 1px solid var(--border-sharp); color: var(--text2);
+  padding: 10px 12px; font-family: 'Share Tech Mono', monospace; font-size: 0.85rem;
+}
+
+/* ─── LAYOUT SWITCHER (preview control) ─────────────── */
+.layout-switcher {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin: 18px 0 6px;
+}
+.ls-label { font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; color: var(--text3); letter-spacing: 0.06em; }
+.ls-btn {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.72rem; letter-spacing: 0.05em;
+  text-transform: uppercase; padding: 6px 14px; cursor: pointer;
+  background: transparent; border: 1px solid var(--border-sharp); color: var(--text3);
+  transition: all 0.2s;
+}
+.ls-btn:hover { color: var(--neon-cyan); border-color: rgba(0, 245, 255, 0.4); }
+.ls-btn.active {
+  color: var(--neon-cyan); border-color: var(--neon-cyan);
+  box-shadow: 0 0 10px rgba(0, 245, 255, 0.2); background: rgba(0, 245, 255, 0.05);
+}
+
+/* ─── LAYOUT 1: FILTER TABS ─────────────────────────── */
+.cat-tabs { display: flex; flex-wrap: wrap; gap: 10px; margin: 22px 0 26px; }
+.cat-tab {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'Rajdhani', sans-serif; font-weight: 600; font-size: 0.85rem;
+  text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 16px; cursor: pointer;
+  background: transparent; border: 1px solid var(--border-sharp); color: var(--text2);
+  transition: all 0.22s; position: relative;
+}
+.cat-tab:hover { color: var(--neon-green); border-color: rgba(57, 255, 20, 0.45); }
+.cat-tab.active {
+  color: var(--bg); background: var(--neon-green); border-color: var(--neon-green);
+  box-shadow: var(--glow-green);
+}
+.cat-tab-count {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.66rem;
+  padding: 1px 7px; border: 1px solid currentColor; opacity: 0.7;
+}
+.cat-tab.active .cat-tab-count { border-color: rgba(0,0,0,0.4); }
+
+/* ─── LAYOUT 2: COLLAPSIBLE DROPDOWNS ───────────────── */
+.cat-accordion { display: flex; flex-direction: column; gap: 14px; margin-top: 24px; }
+.acc-section { border: 1px solid var(--border-sharp); background: rgba(255,255,255,0.012); }
+.acc-section.open { border-color: rgba(0, 245, 255, 0.3); }
+.acc-header {
+  width: 100%; display: flex; align-items: center; gap: 14px; cursor: pointer;
+  background: transparent; border: none; padding: 16px 20px; text-align: left;
+  font-family: 'Rajdhani', sans-serif; text-transform: uppercase; transition: background 0.2s;
+}
+.acc-header:hover { background: rgba(0, 245, 255, 0.04); }
+.acc-arrow { color: var(--neon-cyan); font-size: 0.7rem; width: 14px; }
+.acc-title { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.05em; color: var(--text); flex: 1; }
+.acc-count {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--neon-cyan);
+  border: 1px solid rgba(0, 245, 255, 0.3); padding: 2px 9px;
+}
+.acc-grid { padding: 4px 20px 24px; }
+
+/* ─── LAYOUT 3: GROUPED SECTIONS ────────────────────── */
+.cat-sections { display: flex; flex-direction: column; gap: 44px; margin-top: 28px; }
+.cat-group-head { display: flex; align-items: center; gap: 16px; margin-bottom: 22px; }
+.cat-group-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border-sharp), transparent); }
+.cat-group-title {
+  font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 1.15rem;
+  text-transform: uppercase; letter-spacing: 0.12em; color: var(--neon-green);
+  text-shadow: 0 0 12px rgba(57, 255, 20, 0.3); white-space: nowrap;
+}
+.cat-group-count {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.7rem; color: var(--text3);
+  border: 1px solid var(--border-sharp); padding: 2px 9px;
+}
+
 /* ─── CONTACT (new classes) ──────────────────────── */
 .contact-form { display: flex; flex-direction: column; gap: 16px; }
 .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }

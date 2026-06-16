@@ -5,7 +5,7 @@ import { useScramble } from '../hooks/useScramble'
 
 const CATEGORY_ORDER = ['Full-Stack', 'Frontend', 'Games', 'AI / CV', 'Tools', 'Other']
 
-// ─── Single project card (shared by all three layouts) ──────────────
+// ─── Single project card ────────────────────────────────────────────
 function ProjectCard({ p, i, isAdmin, onRemove }) {
   return (
     <motion.div
@@ -59,9 +59,7 @@ function ProjectCard({ p, i, isAdmin, onRemove }) {
 export default function Projects({ projects, isAdmin, onUpdate }) {
   const [form, setForm] = useState({ title: '', description: '', tags: '', emoji: '🚀', category: 'Full-Stack', github: '', live: '' })
   const [adding, setAdding] = useState(false)
-  const [layout, setLayout] = useState('tabs')      // 'tabs' | 'dropdown' | 'sections'
-  const [activeCat, setActiveCat] = useState('All') // for tabs
-  const [openCats, setOpenCats] = useState({})       // for dropdown
+  const [openCats, setOpenCats] = useState({})
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const t1 = useScramble('MY', { trigger: inView, speed: 35, delay: 80 })
@@ -80,10 +78,6 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
     for (const p of projects) (map[p.category || 'Other'] ||= []).push(p)
     return map
   }, [projects, categories])
-
-  const tabFiltered = activeCat === 'All'
-    ? projects
-    : projects.filter(p => (p.category || 'Other') === activeCat)
 
   const toggleCat = (c) => setOpenCats(s => ({ ...s, [c]: !s[c] }))
 
@@ -118,20 +112,6 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
         </h2>
         <p className="sec-sub">Real-world applications I've built from scratch.</p>
       </motion.div>
-
-      {/* ─── Layout switcher (temporary preview control) ─── */}
-      <div className="layout-switcher">
-        <span className="ls-label">// view:</span>
-        {[['tabs', 'Filter Tabs'], ['dropdown', 'Dropdowns'], ['sections', 'Sections']].map(([k, label]) => (
-          <button
-            key={k}
-            className={`ls-btn ${layout === k ? 'active' : ''}`}
-            onClick={() => setLayout(k)}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
 
       {isAdmin && (
         <motion.div className="admin-bar" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -172,89 +152,39 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
         )}
       </AnimatePresence>
 
-      {/* ═══ LAYOUT 1: FILTER TABS ═══ */}
-      {layout === 'tabs' && (
-        <>
-          <div className="cat-tabs">
-            {['All', ...categories].map(c => (
-              <button
-                key={c}
-                className={`cat-tab ${activeCat === c ? 'active' : ''}`}
-                onClick={() => setActiveCat(c)}
-              >
-                {c}
-                <span className="cat-tab-count">
-                  {c === 'All' ? projects.length : grouped[c]?.length || 0}
-                </span>
+      {/* ═══ COLLAPSIBLE DROPDOWNS BY CATEGORY ═══ */}
+      <div className="cat-accordion">
+        {categories.map((c, ci) => {
+          const open = openCats[c] ?? ci === 0 // first one open by default
+          return (
+            <div key={c} className={`acc-section ${open ? 'open' : ''}`}>
+              <button className="acc-header" onClick={() => toggleCat(c)}>
+                <span className="acc-arrow">{open ? '▼' : '▶'}</span>
+                <span className="acc-title">{c}</span>
+                <span className="acc-count">{grouped[c].length}</span>
               </button>
-            ))}
-          </div>
-          <motion.div layout className="projects-grid">
-            <AnimatePresence mode="popLayout">
-              {tabFiltered.map((p, i) => (
-                <ProjectCard key={p.id} p={p} i={i} isAdmin={isAdmin} onRemove={removeProject} />
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        </>
-      )}
-
-      {/* ═══ LAYOUT 2: COLLAPSIBLE DROPDOWNS ═══ */}
-      {layout === 'dropdown' && (
-        <div className="cat-accordion">
-          {categories.map((c, ci) => {
-            const open = openCats[c] ?? ci === 0 // first one open by default
-            return (
-              <div key={c} className={`acc-section ${open ? 'open' : ''}`}>
-                <button className="acc-header" onClick={() => toggleCat(c)}>
-                  <span className="acc-arrow">{open ? '▼' : '▶'}</span>
-                  <span className="acc-title">{c}</span>
-                  <span className="acc-count">{grouped[c].length}</span>
-                </button>
-                <AnimatePresence initial={false}>
-                  {open && (
-                    <motion.div
-                      key="body"
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ overflow: 'hidden' }}
-                    >
-                      <div className="projects-grid acc-grid">
-                        {grouped[c].map((p, i) => (
-                          <ProjectCard key={p.id} p={p} i={i} isAdmin={isAdmin} onRemove={removeProject} />
-                        ))}
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* ═══ LAYOUT 3: GROUPED SECTIONS ═══ */}
-      {layout === 'sections' && (
-        <div className="cat-sections">
-          {categories.map(c => (
-            <div key={c} className="cat-group">
-              <div className="cat-group-head">
-                <span className="cat-group-line" />
-                <span className="cat-group-title">{c}</span>
-                <span className="cat-group-count">{grouped[c].length}</span>
-                <span className="cat-group-line" />
-              </div>
-              <div className="projects-grid">
-                {grouped[c].map((p, i) => (
-                  <ProjectCard key={p.id} p={p} i={i} isAdmin={isAdmin} onRemove={removeProject} />
-                ))}
-              </div>
+              <AnimatePresence initial={false}>
+                {open && (
+                  <motion.div
+                    key="body"
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div className="projects-grid acc-grid">
+                      {grouped[c].map((p, i) => (
+                        <ProjectCard key={p.id} p={p} i={i} isAdmin={isAdmin} onRemove={removeProject} />
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
-          ))}
-        </div>
-      )}
+          )
+        })}
+      </div>
     </div>
   )
 }

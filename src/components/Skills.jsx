@@ -4,9 +4,13 @@ import { useScramble } from '../hooks/useScramble'
 
 const ICONS = {
   frontend: '🖥️',
+  styling: '🎨',
+  libraries: '📦',
   backend: '⚙️',
+  database: '🗄️',
   tools: '🛠️',
   ai: '🤖',
+  deployment: '🚀',
 }
 
 const container = {

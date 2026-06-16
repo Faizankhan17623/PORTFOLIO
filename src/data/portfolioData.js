@@ -1,8 +1,12 @@
 export const defaultSkills = {
-  frontend: ['React', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Tailwind CSS', 'Bootstrap'],
-  backend: ['Node.js', 'Express.js', 'MongoDB', 'REST APIs', 'JWT Auth', 'Docker'],
-  tools: ['Git', 'GitHub', 'VS Code', 'Postman', 'Cloudinary', 'Razorpay', 'CI/CD'],
-  ai: ['Prompt Engineering', 'OpenAI API', 'MCP'],
+  frontend: ['HTML5', 'JavaScript (ES6+)', 'React'],
+  styling: ['CSS3', 'Tailwind CSS'],
+  libraries: ['Bootstrap', 'GSAP'],
+  backend: ['Node.js', 'Express.js'],
+  database: ['MongoDB', 'MySQL'],
+  tools: ['Git', 'GitHub', 'Postman', 'Docker'],
+  ai: ['Prompt Engineering', 'Generative AI', 'MCP'],
+  deployment: ['CI/CD', 'Vercel', 'AWS S3', 'Render'],
 }
 
 export const defaultProjects = [

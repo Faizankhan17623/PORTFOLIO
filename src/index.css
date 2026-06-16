@@ -486,6 +486,26 @@ ul { list-style: none; }
 
 /* ─── SKILLS GRID (card layout) ─────────────────── */
 .skills-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+/* ─── SPOTLIGHT (cursor-follow glow) ───────────────── */
+.spotlight { position: relative; }
+.spotlight::after {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    320px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(var(--spot-color, 0, 245, 255), 0.14),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 1;
+}
+.spotlight:hover::after { opacity: 1; }
+/* keep card content above the glow */
+.spotlight > * { position: relative; z-index: 2; }
+
 .skill-card {
   background: var(--card);
   border: 1px solid var(--border-sharp);
@@ -927,7 +947,7 @@ ul { list-style: none; }
 .gh-repos { margin-top: 48px; }
 .gh-repos-label { font-family: 'Share Tech Mono', monospace; color: var(--text2); font-size: 0.82rem; margin-bottom: 18px; letter-spacing: 1px; text-transform: uppercase; }
 .gh-repos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.gh-repo-card { display: block; padding: 18px; background: var(--card2); border: 1px solid var(--border-sharp); border-radius: 0; transition: all 0.25s ease; cursor: none; }
+.gh-repo-card { display: block; padding: 18px; background: var(--card2); border: 1px solid var(--border-sharp); border-radius: 0; transition: all 0.25s ease; cursor: none; position: relative; overflow: hidden; }
 .gh-repo-card:hover { border-color: var(--neon-cyan); transform: translateY(-3px); box-shadow: var(--glow-cyan); }
 .gh-repo-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .gh-repo-name { font-family: 'Share Tech Mono', monospace; font-weight: 400; color: var(--neon-green); font-size: 0.88rem; }

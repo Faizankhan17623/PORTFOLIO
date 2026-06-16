@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
+import { useSpotlight } from '../hooks/useSpotlight'
 
 const GH_USER = 'Faizankhan17623'
 
@@ -23,6 +24,7 @@ export default function GitHubStats() {
   const [data, setData] = useState(null)
   const [repos, setRepos] = useState([])
   const [error, setError] = useState(false)
+  const spot = useSpotlight()
 
   useEffect(() => {
     let cancelled = false
@@ -75,22 +77,22 @@ export default function GitHubStats() {
       </motion.div>
 
       <div className="gh-grid">
-        <motion.div className="gh-stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }}>
+        <motion.div className="gh-stat-card spotlight" {...spot} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.05 }}>
           <div className="gh-stat-icon">📦</div>
           <div className="gh-stat-num"><Counter to={stats.repos} /></div>
           <div className="gh-stat-label">Public Repos</div>
         </motion.div>
-        <motion.div className="gh-stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.12 }}>
+        <motion.div className="gh-stat-card spotlight" {...spot} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.12 }}>
           <div className="gh-stat-icon">👥</div>
           <div className="gh-stat-num"><Counter to={stats.followers} /></div>
           <div className="gh-stat-label">Followers</div>
         </motion.div>
-        <motion.div className="gh-stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.19 }}>
+        <motion.div className="gh-stat-card spotlight" {...spot} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.19 }}>
           <div className="gh-stat-icon">🔭</div>
           <div className="gh-stat-num"><Counter to={stats.following} /></div>
           <div className="gh-stat-label">Following</div>
         </motion.div>
-        <motion.div className="gh-stat-card" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.26 }}>
+        <motion.div className="gh-stat-card spotlight" {...spot} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.26 }}>
           <div className="gh-stat-icon">🔥</div>
           <div className="gh-stat-num">365</div>
           <div className="gh-stat-label">Days Coding</div>
@@ -108,7 +110,7 @@ export default function GitHubStats() {
           <div className="gh-repos-label">⭐ Top Repositories</div>
           <div className="gh-repos-grid">
             {repos.map(r => (
-              <a key={r.id} href={r.html_url} target="_blank" rel="noreferrer" className="gh-repo-card">
+              <a key={r.id} href={r.html_url} target="_blank" rel="noreferrer" className="gh-repo-card spotlight" {...spot}>
                 <div className="gh-repo-top">
                   <span className="gh-repo-name">{r.name}</span>
                   <span className="gh-repo-star">★ {r.stargazers_count}</span>

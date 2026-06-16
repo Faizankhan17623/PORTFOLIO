@@ -2,21 +2,24 @@ import { useState, useRef, useMemo } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import TiltCard from './TiltCard'
 import { useScramble } from '../hooks/useScramble'
+import { useSpotlight } from '../hooks/useSpotlight'
 
 const CATEGORY_ORDER = ['Full-Stack', 'Frontend', 'Games', 'AI / CV', 'Tools', 'Other']
 
 // ─── Single project card ────────────────────────────────────────────
 function ProjectCard({ p, i, isAdmin, onRemove }) {
+  const spot = useSpotlight()
   return (
     <motion.div
       key={p.id}
-      className="project-card"
+      className="project-card spotlight"
       layout
       initial={{ opacity: 0, y: 40 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.9 }}
       transition={{ type: 'spring', stiffness: 100, delay: (i % 6) * 0.07 }}
       whileHover={{ y: -8, scale: 1.02, transition: { type: 'spring', stiffness: 300 } }}
+      {...spot}
     >
       <TiltCard className="project-card corner-box corner-box-inner">
         {isAdmin && (

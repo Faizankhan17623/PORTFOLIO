@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
 import { useScramble } from '../hooks/useScramble'
+import { useSpotlight } from '../hooks/useSpotlight'
 
 const ICONS = {
   frontend: '🖥️',
@@ -25,6 +26,7 @@ const tag = {
 
 export default function Skills({ skills, isAdmin, onUpdate }) {
   const [newSkill, setNewSkill] = useState({ cat: 'frontend', val: '' })
+  const spot = useSpotlight()
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const t1 = useScramble('TECH', { trigger: inView, speed: 35, delay: 80 })
@@ -60,11 +62,12 @@ export default function Skills({ skills, isAdmin, onUpdate }) {
         {Object.entries(skills).map(([cat, list], ci) => (
           <motion.div
             key={cat}
-            className="skill-card corner-box"
+            className="skill-card corner-box spotlight"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: ci * 0.12 }}
             viewport={{ once: true }}
+            {...spot}
           >
             <div className="skill-card-header">
               <span className="skill-icon">{ICONS[cat]}</span>

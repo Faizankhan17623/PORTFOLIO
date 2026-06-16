@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useRef } from 'react'
+import { motion, useInView } from 'framer-motion'
 import { useScramble } from '../hooks/useScramble'
 import { useSpotlight } from '../hooks/useSpotlight'
 
@@ -24,26 +24,12 @@ const tag = {
   show: { opacity: 1, scale: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 18 } },
 }
 
-export default function Skills({ skills, isAdmin, onUpdate }) {
-  const [newSkill, setNewSkill] = useState({ cat: 'frontend', val: '' })
+export default function Skills({ skills }) {
   const spot = useSpotlight()
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
   const t1 = useScramble('TECH', { trigger: inView, speed: 35, delay: 80 })
   const t2 = useScramble('STACK', { trigger: inView, speed: 35, delay: 280 })
-
-  const addSkill = () => {
-    const v = newSkill.val.trim()
-    if (!v) return
-    const updated = { ...skills, [newSkill.cat]: [...skills[newSkill.cat], v] }
-    onUpdate(updated)
-    setNewSkill(s => ({ ...s, val: '' }))
-  }
-
-  const removeSkill = (cat, idx) => {
-    const updated = { ...skills, [cat]: skills[cat].filter((_, i) => i !== idx) }
-    onUpdate(updated)
-  }
 
   return (
     <div className="section" ref={ref}>
@@ -74,38 +60,15 @@ export default function Skills({ skills, isAdmin, onUpdate }) {
               <h3>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h3>
             </div>
             <motion.div className="skill-tags" variants={container} initial="hidden" whileInView="show" viewport={{ once: true }}>
-              <AnimatePresence>
-                {list.map((s, i) => (
-                  <motion.span key={s + i} variants={tag} className="skill-tag" layout>
-                    {s}
-                    {isAdmin && (
-                      <button className="tag-del" onClick={() => removeSkill(cat, i)}>×</button>
-                    )}
-                  </motion.span>
-                ))}
-              </AnimatePresence>
+              {list.map((s, i) => (
+                <motion.span key={s + i} variants={tag} className="skill-tag" layout>
+                  {s}
+                </motion.span>
+              ))}
             </motion.div>
           </motion.div>
         ))}
       </div>
-
-      {isAdmin && (
-        <motion.div
-          className="admin-add-row"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-        >
-          <select value={newSkill.cat} onChange={e => setNewSkill(s => ({ ...s, cat: e.target.value }))}>
-            {Object.keys(skills).map(c => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <input
-            placeholder="New skill..."
-            value={newSkill.val}
-            onChange={e => setNewSkill(s => ({ ...s, val: e.target.value }))}
-            onKeyDown={e => e.key === 'Enter' && addSkill()}
-          />
-          <button className="btn-glow primary" onClick={addSkill}>Add</button>
-        </motion.div>
-      )}
     </div>
   )
 }

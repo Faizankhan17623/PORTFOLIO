@@ -7,7 +7,7 @@ import { useSpotlight } from '../hooks/useSpotlight'
 const CATEGORY_ORDER = ['Full-Stack', 'Frontend', 'Games', 'AI / CV', 'Tools', 'Other']
 
 // ─── Single project card ────────────────────────────────────────────
-function ProjectCard({ p, i, isAdmin, onRemove }) {
+function ProjectCard({ p, i }) {
   const spot = useSpotlight()
   return (
     <motion.div
@@ -22,9 +22,6 @@ function ProjectCard({ p, i, isAdmin, onRemove }) {
       {...spot}
     >
       <TiltCard className="project-card corner-box corner-box-inner">
-        {isAdmin && (
-          <button className="proj-del" onClick={() => onRemove(p.id)}>×</button>
-        )}
         <div className="proj-card-top">
           <div className="proj-emoji">{p.emoji}</div>
           {p.category && <span className="proj-cat-chip">{p.category}</span>}
@@ -59,9 +56,7 @@ function ProjectCard({ p, i, isAdmin, onRemove }) {
   )
 }
 
-export default function Projects({ projects, isAdmin, onUpdate }) {
-  const [form, setForm] = useState({ title: '', description: '', tags: '', emoji: '🚀', category: 'Full-Stack', github: '', live: '' })
-  const [adding, setAdding] = useState(false)
+export default function Projects({ projects }) {
   const [openCats, setOpenCats] = useState({})
   const ref = useRef(null)
   const inView = useInView(ref, { once: true, margin: '-80px' })
@@ -84,25 +79,6 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
 
   const toggleCat = (c) => setOpenCats(s => ({ ...s, [c]: !s[c] }))
 
-  const addProject = () => {
-    if (!form.title.trim()) return
-    const p = {
-      id: Date.now(),
-      title: form.title.trim(),
-      description: form.description.trim(),
-      tags: form.tags.split(',').map(t => t.trim()).filter(Boolean),
-      emoji: form.emoji || '🚀',
-      category: form.category || 'Other',
-      github: form.github.trim(),
-      live: form.live.trim(),
-    }
-    onUpdate([p, ...projects])
-    setForm({ title: '', description: '', tags: '', emoji: '🚀', category: 'Full-Stack', github: '', live: '' })
-    setAdding(false)
-  }
-
-  const removeProject = (id) => onUpdate(projects.filter(p => p.id !== id))
-
   return (
     <div className="section" ref={ref}>
       <motion.div
@@ -115,45 +91,6 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
         </h2>
         <p className="sec-sub">Real-world applications I've built from scratch.</p>
       </motion.div>
-
-      {isAdmin && (
-        <motion.div className="admin-bar" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <button className="btn-glow outline" onClick={() => setAdding(v => !v)}>
-            {adding ? '✕ Cancel' : '+ Add Project'}
-          </button>
-        </motion.div>
-      )}
-
-      <AnimatePresence>
-        {adding && isAdmin && (
-          <motion.div
-            className="project-form"
-            initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }}
-          >
-            <div className="pf-row">
-              <input placeholder="Emoji (e.g. 🎬)" value={form.emoji}
-                onChange={e => setForm(f => ({ ...f, emoji: e.target.value }))} className="pf-emoji" />
-              <input placeholder="Project title *" value={form.title}
-                onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
-            </div>
-            <textarea placeholder="Short description..." value={form.description}
-              onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={3} />
-            <input placeholder="Tags (comma separated, e.g. React,Node.js)" value={form.tags}
-              onChange={e => setForm(f => ({ ...f, tags: e.target.value }))} />
-            <div className="pf-row">
-              <select value={form.category}
-                onChange={e => setForm(f => ({ ...f, category: e.target.value }))} className="pf-select">
-                {CATEGORY_ORDER.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-              <input placeholder="GitHub URL" value={form.github}
-                onChange={e => setForm(f => ({ ...f, github: e.target.value }))} />
-            </div>
-            <input placeholder="Live URL" value={form.live}
-              onChange={e => setForm(f => ({ ...f, live: e.target.value }))} />
-            <button className="btn-glow primary" onClick={addProject}>Save Project</button>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* ═══ COLLAPSIBLE DROPDOWNS BY CATEGORY ═══ */}
       <div className="cat-accordion">
@@ -178,7 +115,7 @@ export default function Projects({ projects, isAdmin, onUpdate }) {
                   >
                     <div className="projects-grid acc-grid">
                       {grouped[c].map((p, i) => (
-                        <ProjectCard key={p.id} p={p} i={i} isAdmin={isAdmin} onRemove={removeProject} />
+                        <ProjectCard key={p.id} p={p} i={i} />
                       ))}
                     </div>
                   </motion.div>

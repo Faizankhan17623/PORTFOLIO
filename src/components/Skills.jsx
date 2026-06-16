@@ -7,6 +7,7 @@ const ICONS = {
   styling: '🎨',
   libraries: '📦',
   backend: '⚙️',
+  apis: '🔌',
   database: '🗄️',
   tools: '🛠️',
   ai: '🤖',

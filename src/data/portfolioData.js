@@ -2,10 +2,11 @@ export const defaultSkills = {
   frontend: ['HTML5', 'JavaScript (ES6+)', 'React'],
   styling: ['CSS3', 'Tailwind CSS'],
   libraries: ['Bootstrap', 'GSAP'],
-  backend: ['Node.js', 'Express.js'],
+  backend: ['Node.js', 'Express.js', 'FastAPI (Learning)'],
+  apis: ['REST API', 'GraphQL'],
   database: ['MongoDB', 'MySQL'],
   tools: ['Git', 'GitHub', 'Postman', 'Docker'],
-  ai: ['Prompt Engineering', 'Generative AI', 'MCP'],
+  ai: ['Prompt Engineering', 'Generative AI', 'RAG', 'MCP'],
   deployment: ['CI/CD', 'Vercel', 'AWS S3', 'Render'],
 }
 

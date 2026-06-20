@@ -41,7 +41,7 @@ const COMMANDS = {
       { t: 'dim', v: 'I build fast, beautiful, production-ready web apps.' },
       { t: 'dim', v: 'React on the front, Node.js & MongoDB on the back.' },
       { t: 'gap' },
-      { t: 'row', k: 'Email', v: 'fk3701@gmail.com' },
+      { t: 'row', k: 'Email', v: 'faizankhan901152@gmail.com' },
       { t: 'row', k: 'Location', v: 'India' },
       { t: 'row', k: 'Status', v: '● Open to opportunities', c: 'green' },
     ],
@@ -83,7 +83,7 @@ const COMMANDS = {
     output: [
       { t: 'hl', v: '$ Contact' },
       { t: 'gap' },
-      { t: 'row', k: 'Email', v: 'fk3701@gmail.com' },
+      { t: 'row', k: 'Email', v: 'faizankhan901152@gmail.com' },
       { t: 'row', k: 'GitHub', v: 'github.com/Faizankhan17623' },
       { t: 'row', k: 'LinkedIn', v: 'linkedin.com/in/faizankhan-fullstack' },
       { t: 'gap' },
@@ -102,7 +102,7 @@ const COMMANDS = {
       { t: 'cm', v: '✓ Available immediately — remote, contract, full-time' },
       { t: 'gap' },
       { t: 'row', k: 'Status', v: '● Open to work — let\'s talk', c: 'green' },
-      { t: 'row', k: 'Email', v: 'fk3701@gmail.com' },
+      { t: 'row', k: 'Email', v: 'faizankhan901152@gmail.com' },
     ],
   }),
 
@@ -111,7 +111,7 @@ const COMMANDS = {
       { t: 'hl', v: '$ Resume' },
       { t: 'gap' },
       { t: 'cm', v: 'Fetching latest resume… ✓' },
-      { t: 'dim', v: 'Email fk3701@gmail.com to request the PDF, or check the Contact section.' },
+      { t: 'dim', v: 'Email faizankhan901152@gmail.com to request the PDF, or check the Contact section.' },
     ],
   }),
 

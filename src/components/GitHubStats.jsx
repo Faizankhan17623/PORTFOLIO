@@ -23,6 +23,7 @@ function Counter({ to, duration = 1.4 }) {
 export default function GitHubStats() {
   const [data, setData] = useState(null)
   const [repos, setRepos] = useState([])
+  const [totalStars, setTotalStars] = useState(0)
   const [error, setError] = useState(false)
   const spot = useSpotlight()
 
@@ -37,8 +38,9 @@ export default function GitHubStats() {
         if (user.message) { setError(true); return }
         setData(user)
         if (Array.isArray(repoList)) {
-          const top = [...repoList]
-            .filter(r => !r.fork)
+          const owned = repoList.filter(r => !r.fork)
+          setTotalStars(owned.reduce((sum, r) => sum + r.stargazers_count, 0))
+          const top = [...owned]
             .sort((a, b) => b.stargazers_count - a.stargazers_count)
             .slice(0, 3)
           setRepos(top)
@@ -93,9 +95,9 @@ export default function GitHubStats() {
           <div className="gh-stat-label">Following</div>
         </motion.div>
         <motion.div className="gh-stat-card spotlight" {...spot} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.26 }}>
-          <div className="gh-stat-icon">🔥</div>
-          <div className="gh-stat-num">365</div>
-          <div className="gh-stat-label">Days Coding</div>
+          <div className="gh-stat-icon">⭐</div>
+          <div className="gh-stat-num"><Counter to={totalStars} /></div>
+          <div className="gh-stat-label">Total Stars</div>
         </motion.div>
       </div>
 

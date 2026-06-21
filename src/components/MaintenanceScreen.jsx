@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import bootSound from '../assets/bootSound3.js'
 
-const DURATION = 3500
+const DURATION = 15000
 
 export default function MaintenanceScreen({ onDone }) {
   const [progress, setProgress] = useState(0)
@@ -85,9 +85,13 @@ export default function MaintenanceScreen({ onDone }) {
               transition={{ delay: 1.1 }}
             >
               <TerminalLine delay={1.2} text="→ Loading components..." />
-              <TerminalLine delay={1.8} text="→ Connecting to database..." />
-              <TerminalLine delay={2.4} text="→ Spinning up React..." />
-              <TerminalLine delay={2.9} text={<span style={{ color: '#4ade80' }}>✓ Ready. Welcome!</span>} />
+              <TerminalLine delay={3.0} text="→ Connecting to database..." />
+              <TerminalLine delay={5.0} text="→ Spinning up React..." />
+              <TerminalLine delay={7.0} text="→ Compiling assets..." />
+              <TerminalLine delay={9.0} text="→ Warming up animations..." />
+              <TerminalLine delay={11.0} text="→ Establishing secure connection..." />
+              <TerminalLine delay={13.0} text="→ Finalizing portfolio..." />
+              <TerminalLine delay={14.2} text={<span style={{ color: '#4ade80' }}>✓ Ready. Welcome!</span>} />
             </motion.div>
           </div>
         </motion.div>

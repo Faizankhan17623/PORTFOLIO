@@ -1,0 +1,12 @@
+const mongoose = require('mongoose')
+
+// Single-document counter for total site visits.
+const counterSchema = new mongoose.Schema(
+  {
+    key:   { type: String, required: true, unique: true },
+    count: { type: Number, default: 0 },
+  },
+  { timestamps: true }
+)
+
+module.exports = mongoose.model('Counter', counterSchema)

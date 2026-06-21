@@ -1,4 +1,6 @@
 import { motion } from 'framer-motion'
+import VisitorCounter from './VisitorCounter'
+import NowPlaying from './NowPlaying'
 
 export default function Footer() {
   return (
@@ -10,7 +12,21 @@ export default function Footer() {
           transition={{ duration: 0.6 }} viewport={{ once: true }}
         >
           faizan.dev
+          {/* Disguised easter-egg trigger — looks like a blinking terminal cursor.
+              Clicking it fires the Konami effect. No one would guess what it does. */}
+          <span
+            className="footer-cursor"
+            role="button"
+            tabIndex={0}
+            aria-label="·"
+            onClick={() => window.dispatchEvent(new Event('konami:trigger'))}
+            onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new Event('konami:trigger')) }}
+          >
+            _
+          </span>
         </motion.div>
+
+        <NowPlaying />
 
         <motion.p
           className="footer-copy"
@@ -19,6 +35,8 @@ export default function Footer() {
         >
           Built with React &amp; Framer Motion · {new Date().getFullYear()} Faizan Khan
         </motion.p>
+
+        <VisitorCounter />
       </div>
     </footer>
   )

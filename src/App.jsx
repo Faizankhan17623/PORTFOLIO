@@ -13,6 +13,7 @@ import TerminalOverlay from './components/TerminalOverlay'
 import ScrollProgressBar from './components/ScrollProgressBar'
 import GitHubStats from './components/GitHubStats'
 import AIChat from './components/AIChat'
+import KonamiEasterEgg from './components/KonamiEasterEgg'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 import Ticker from './components/Ticker'
 
@@ -85,6 +86,7 @@ function App() {
       <Footer />
 
       <AIChat />
+      <KonamiEasterEgg />
       <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
     </>
   )

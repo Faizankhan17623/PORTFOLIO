@@ -679,7 +679,7 @@ ul { list-style: none; }
 
 /* ─── FOOTER (new classes) ───────────────────────── */
 .footer { padding: 24px 64px; border-top: 1px solid var(--border-sharp); }
-.footer-inner { display: flex; align-items: center; justify-content: space-between; max-width: 1200px; margin: 0 auto; }
+.footer-inner { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; max-width: 1200px; margin: 0 auto; }
 .footer-logo { font-size: 1.1rem; font-weight: 600; font-family: 'Share Tech Mono', monospace; color: var(--neon-green); text-shadow: 0 0 12px rgba(57, 255, 20, 0.4); }
 .footer-copy { font-size: 0.78rem; color: var(--text3); font-family: 'Share Tech Mono', monospace; }
 .footer-lock { background: none; border: none; cursor: pointer; color: var(--text3); opacity: 0.15; padding: 4px 6px; line-height: 1; transition: opacity 0.3s; }
@@ -1295,3 +1295,111 @@ ul { list-style: none; }
   font-family: 'Share Tech Mono', monospace;
   letter-spacing: 0.04em;
 }
+
+/* ─── VISITOR COUNTER (#8) ───────────────────────── */
+.visitor-counter {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem; color: var(--text3);
+  padding: 6px 12px; border: 1px solid var(--border-sharp); border-radius: 4px;
+  background: rgba(57, 255, 20, 0.03);
+}
+.visitor-counter .vc-item { display: inline-flex; align-items: center; gap: 6px; }
+.visitor-counter .vc-num { color: var(--neon-green); font-weight: 600; }
+.visitor-counter .vc-sep { opacity: 0.4; }
+.visitor-counter .vc-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+.visitor-counter .vc-dot.online {
+  background: var(--neon-green);
+  box-shadow: 0 0 8px rgba(57, 255, 20, 0.8);
+  animation: vc-pulse 1.8s ease-in-out infinite;
+}
+@keyframes vc-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+/* ─── SPOTIFY NOW PLAYING (#9) ───────────────────── */
+.now-playing {
+  display: inline-flex; align-items: center; gap: 10px;
+  text-decoration: none; padding: 6px 12px 6px 6px;
+  border: 1px solid var(--border-sharp); border-radius: 6px;
+  background: rgba(0, 245, 255, 0.03); transition: border-color 0.3s, transform 0.3s;
+}
+.now-playing:hover { border-color: rgba(0, 245, 255, 0.4); transform: translateY(-2px); }
+.now-playing .np-art {
+  width: 38px; height: 38px; border-radius: 4px; overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(0, 245, 255, 0.08); color: var(--neon-cyan); font-size: 1.1rem;
+}
+.now-playing .np-art img { width: 100%; height: 100%; object-fit: cover; }
+.now-playing .np-art.spin img { animation: np-spin 8s linear infinite; }
+@keyframes np-spin { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+.now-playing .np-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.now-playing .np-label {
+  font-family: 'Share Tech Mono', monospace; font-size: 0.6rem; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.06em; display: inline-flex; align-items: center; gap: 5px;
+}
+.now-playing .np-title { font-size: 0.8rem; color: var(--text); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+.now-playing .np-artist { font-size: 0.68rem; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
+.now-playing .np-bars { display: inline-flex; align-items: flex-end; gap: 1.5px; height: 9px; }
+.now-playing .np-bars span {
+  width: 2px; background: var(--neon-green); border-radius: 1px;
+  animation: np-eq 0.9s ease-in-out infinite;
+}
+.now-playing .np-bars span:nth-child(1) { height: 40%; animation-delay: 0s; }
+.now-playing .np-bars span:nth-child(2) { height: 90%; animation-delay: 0.3s; }
+.now-playing .np-bars span:nth-child(3) { height: 60%; animation-delay: 0.6s; }
+@keyframes np-eq { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+
+/* ─── KONAMI EASTER EGG (#11) ────────────────────── */
+/* Full-screen secret overlay */
+.konami-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  width: 100vw; height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px; text-align: center;
+  background: radial-gradient(ellipse at center, rgba(2, 14, 4, 0.92) 0%, rgba(1, 4, 2, 0.98) 100%);
+  backdrop-filter: blur(10px);
+}
+.konami-content {
+  max-width: 640px; padding: 0 16px;
+}
+.konami-close {
+  position: fixed; top: 22px; right: 28px; z-index: 10000;
+  width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+  background: rgba(2, 9, 4, 0.6); border: 1px solid var(--neon-green); border-radius: 50%;
+  color: var(--neon-green); font-size: 1.8rem; cursor: pointer; line-height: 1;
+  box-shadow: 0 0 16px rgba(57, 255, 20, 0.3); transition: all 0.25s;
+}
+.konami-close:hover {
+  background: rgba(57, 255, 20, 0.15); transform: rotate(90deg) scale(1.08);
+  box-shadow: 0 0 24px rgba(57, 255, 20, 0.6);
+}
+.konami-emoji { font-size: clamp(3.5rem, 9vw, 6rem); margin-bottom: 16px; }
+.konami-title {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(1.6rem, 5vw, 3rem); letter-spacing: 0.12em;
+  color: var(--neon-green); text-shadow: 0 0 20px rgba(57, 255, 20, 0.7); margin-bottom: 24px;
+}
+.konami-text { font-size: clamp(1rem, 2.2vw, 1.3rem); color: var(--text2); line-height: 1.7; margin-bottom: 14px; }
+.konami-text.konami-cta { color: var(--text); margin-top: 28px; margin-bottom: 12px; }
+.konami-mail {
+  display: inline-block; font-family: 'Share Tech Mono', monospace;
+  font-size: clamp(1rem, 2.4vw, 1.4rem);
+  color: var(--neon-cyan); text-decoration: none; padding: 12px 24px;
+  border: 1px solid rgba(0, 245, 255, 0.4); border-radius: 6px; transition: all 0.3s;
+}
+.konami-mail:hover { background: rgba(0, 245, 255, 0.1); box-shadow: 0 0 16px rgba(0, 245, 255, 0.3); }
+
+/* Disguised easter-egg trigger — looks like a blinking terminal cursor next
+   to the footer logo. Fully visible and on-theme; no one suspects it does
+   anything until they click it and the Konami effect fires. */
+.footer-cursor {
+  display: inline-block; margin-left: 2px;
+  color: var(--neon-green); font-weight: 700; cursor: pointer;
+  animation: footer-blink 1.1s step-end infinite;
+  transition: text-shadow 0.25s, transform 0.2s;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.5);
+}
+.footer-cursor:hover {
+  transform: scale(1.15);
+  text-shadow: 0 0 12px rgba(57, 255, 20, 0.9);
+}
+@keyframes footer-blink { 0%, 50% { opacity: 1; } 51%, 100% { opacity: 0; } }

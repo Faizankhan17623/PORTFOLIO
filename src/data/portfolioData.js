@@ -12,6 +12,17 @@ export const defaultSkills = {
 
 export const defaultProjects = [
   {
+    id: 12,
+    title: 'Personal GPT',
+    description:
+      'Full-stack RAG chat agent with a ChatGPT-style interface. Chat freely with AI or upload PDFs, Word & text files to get answers grounded in your own documents. Features word-by-word streaming (SSE), auto-titled chats, persistent history, and a document chunking + embedding pipeline.',
+    tags: ['React', 'Node.js', 'Express', 'Groq', 'Pinecone', 'RAG', 'Redux'],
+    category: 'AI / CV',
+    emoji: '🤖',
+    github: 'https://github.com/Faizankhan17623/personal-gpt',
+    live: 'https://personal-gpt-beta.vercel.app/',
+  },
+  {
     id: 1,
     title: 'Cine Circuit',
     description:
@@ -98,17 +109,6 @@ export const defaultProjects = [
     emoji: '🧠',
     github: '',
     live: 'https://faizankhan17623.github.io/Quarts/',
-  },
-  {
-    id: 9,
-    title: 'ChatGPT Clone',
-    description:
-      'A ChatGPT-style chat app with a clean ChatGPT-like UI, word-by-word typewriter replies, and persistent chat history. Backed by a Node/Express server using the Groq LLM, with live web search powered by Tavily and short-term conversation memory.',
-    tags: ['Node.js', 'Express', 'JavaScript', 'Tailwind CSS', 'Groq', 'Tavily'],
-    category: 'AI / CV',
-    emoji: '💬',
-    github: 'https://github.com/Faizankhan17623/Chat-gpt-clone',
-    live: 'https://chat-gpt-clone-y2qt.onrender.com/',
   },
   {
     id: 10,

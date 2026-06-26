@@ -39,6 +39,18 @@ export default function Navbar({ onTerminalOpen }) {
           transition={{ type: 'spring', stiffness: 400 }}
         >
           faizan.dev
+          {/* Same disguised easter-egg trigger as the footer — looks like a
+              blinking terminal cursor. Clicking it fires the Konami effect. */}
+          <span
+            className="footer-cursor"
+            role="button"
+            tabIndex={0}
+            aria-label="·"
+            onClick={(e) => { e.stopPropagation(); window.dispatchEvent(new Event('konami:trigger')) }}
+            onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new Event('konami:trigger')) }}
+          >
+            _
+          </span>
         </motion.div>
       </MagneticElement>
       <ul className="nav-links">

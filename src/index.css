@@ -652,6 +652,15 @@ ul { list-style: none; }
 }
 .acc-grid { padding: 4px 20px 24px; }
 
+/* grid-rows expand/collapse (replaces Framer height animation) */
+.acc-body {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.32s ease;
+}
+.acc-body.open { grid-template-rows: 1fr; }
+.acc-body-inner { overflow: hidden; min-height: 0; }
+
 /* ─── CONTACT (new classes) ──────────────────────── */
 .contact-form { display: flex; flex-direction: column; gap: 16px; }
 .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
@@ -726,7 +735,7 @@ ul { list-style: none; }
   background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
   opacity: 0; transition: opacity 0.25s;
 }
-.brain-card:hover { border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); }
+.brain-card:hover { border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); transform: translateY(-4px); }
 .brain-card:hover::before { opacity: 1; }
 .brain-card-icon { font-size: 2.6rem; line-height: 1; flex-shrink: 0; }
 .brain-card-body { display: flex; flex-direction: column; gap: 10px; }
@@ -875,6 +884,41 @@ ul { list-style: none; }
 .t-proj-links { display: inline-flex; gap: 8px; margin-left: 10px; }
 .t-link { color: var(--neon-cyan); font-size: 0.74rem; transition: color 0.2s; }
 .t-link:hover { color: var(--neon-green); }
+
+/* ─── HELP CALL-TO-ACTION (recruiter-friendly) ──────── */
+.t-helpcta {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 8px;
+  margin-top: 4px; font-size: 0.78rem;
+}
+.t-help-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 14px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.8rem; letter-spacing: 0.04em;
+  color: var(--neon-green);
+  background: rgba(57, 255, 20, 0.07);
+  border: 1px solid rgba(57, 255, 20, 0.5);
+  border-radius: 0;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(57, 255, 20, 0.5);
+  animation: help-pulse 2s ease-in-out infinite;
+  transition: background 0.18s, border-color 0.18s, transform 0.12s;
+}
+.t-help-btn .t-help-prompt { color: var(--neon-cyan); opacity: 0.85; }
+.t-help-btn:hover {
+  background: rgba(57, 255, 20, 0.16);
+  border-color: var(--neon-green);
+  transform: translateY(-1px);
+  animation: none;
+  box-shadow: 0 0 18px rgba(57, 255, 20, 0.5);
+}
+@keyframes help-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(57, 255, 20, 0.0); }
+  50%      { box-shadow: 0 0 14px 1px rgba(57, 255, 20, 0.35); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .t-help-btn { animation: none; }
+}
 
 /* ─── NAVBAR TERMINAL BUTTON ─────────────────────── */
 .nav-terminal-btn {

@@ -1,29 +1,26 @@
-import { useState, useRef, useMemo } from 'react'
-import { motion, AnimatePresence, useInView } from 'framer-motion'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import TiltCard from './TiltCard'
 import { useScramble } from '../hooks/useScramble'
 import { useSpotlight } from '../hooks/useSpotlight'
+import { useGsapReveal } from '../hooks/useGsapReveal'
+import { useGsapParallax } from '../hooks/useGsapParallax'
 
 const CATEGORY_ORDER = ['Full-Stack', 'Frontend', 'Games', 'AI / CV', 'Tools', 'Other']
 
 // ─── Single project card ────────────────────────────────────────────
 function ProjectCard({ p, i }) {
   const spot = useSpotlight()
+  // Emoji drifts upward as the card scrolls through view — adds depth.
+  const emojiRef = useGsapParallax({ distance: -28 })
   return (
-    <motion.div
+    <div
       key={p.id}
-      className="project-card spotlight"
-      layout
-      initial={{ opacity: 0, y: 40 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.9 }}
-      transition={{ type: 'spring', stiffness: 100, delay: (i % 6) * 0.07 }}
-      whileHover={{ y: -8, scale: 1.02, transition: { type: 'spring', stiffness: 300 } }}
+      className="project-card spotlight gsap-reveal-card"
       {...spot}
     >
       <TiltCard className="project-card corner-box corner-box-inner">
         <div className="proj-card-top">
-          <div className="proj-emoji">{p.emoji}</div>
+          <div className="proj-emoji" ref={emojiRef}>{p.emoji}</div>
           {p.category && <span className="proj-cat-chip">{p.category}</span>}
         </div>
         <h3 className="proj-title">{p.title}</h3>
@@ -52,16 +49,34 @@ function ProjectCard({ p, i }) {
           )}
         </div>
       </TiltCard>
-    </motion.div>
+    </div>
   )
 }
 
 export default function Projects({ projects }) {
   const [openCats, setOpenCats] = useState({})
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const headRef = useGsapReveal('.reveal')
+  const accRef = useGsapReveal('.gsap-reveal-card')
+  const [inView, setInView] = useState(false)
   const t1 = useScramble('MY', { trigger: inView, speed: 35, delay: 80 })
   const t2 = useScramble('PROJECTS', { trigger: inView, speed: 35, delay: 260 })
+
+  useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '-80px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   // Build ordered list of categories that actually have projects
   const categories = useMemo(() => {
@@ -81,19 +96,18 @@ export default function Projects({ projects }) {
 
   return (
     <div className="section" ref={ref}>
-      <motion.div
-        initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }} viewport={{ once: true }}
-      >
-        <div className="sec-badge">Projects</div>
-        <h2 className="sec-title scramble-text">
-          <span>{t1}</span> <span className="hl">{t2}</span>
-        </h2>
-        <p className="sec-sub">Real-world applications I've built from scratch.</p>
-      </motion.div>
+      <div ref={headRef}>
+        <div className="reveal">
+          <div className="sec-badge">Projects</div>
+          <h2 className="sec-title scramble-text">
+            <span>{t1}</span> <span className="hl">{t2}</span>
+          </h2>
+          <p className="sec-sub">Real-world applications I've built from scratch.</p>
+        </div>
+      </div>
 
       {/* ═══ COLLAPSIBLE DROPDOWNS BY CATEGORY ═══ */}
-      <div className="cat-accordion">
+      <div className="cat-accordion" ref={accRef}>
         {categories.map((c, ci) => {
           const open = openCats[c] ?? ci === 0 // first one open by default
           return (
@@ -103,24 +117,16 @@ export default function Projects({ projects }) {
                 <span className="acc-title">{c}</span>
                 <span className="acc-count">{grouped[c].length}</span>
               </button>
-              <AnimatePresence initial={false}>
-                {open && (
-                  <motion.div
-                    key="body"
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    style={{ overflow: 'hidden' }}
-                  >
-                    <div className="projects-grid acc-grid">
-                      {grouped[c].map((p, i) => (
-                        <ProjectCard key={p.id} p={p} i={i} />
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* CSS grid-rows expand/collapse (no Framer needed) */}
+              <div className={`acc-body ${open ? 'open' : ''}`}>
+                <div className="acc-body-inner">
+                  <div className="projects-grid acc-grid">
+                    {grouped[c].map((p, i) => (
+                      <ProjectCard key={p.id} p={p} i={i} />
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
           )
         })}

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useGsapReveal } from '../hooks/useGsapReveal'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
@@ -15,6 +15,7 @@ function getVisitorId() {
 
 export default function VisitorCounter() {
   const [stats, setStats] = useState({ total: null, online: null })
+  const revealRef = useGsapReveal('.reveal', { deps: [stats.total] })
 
   useEffect(() => {
     const id = getVisitorId()
@@ -63,13 +64,8 @@ export default function VisitorCounter() {
   if (stats.total == null) return null
 
   return (
-    <motion.div
-      className="visitor-counter"
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
-    >
+    <span ref={revealRef} style={{ display: 'contents' }}>
+    <div className="visitor-counter reveal">
       <span className="vc-item">
         <span className="vc-dot online" />
         <span className="vc-num">{stats.online ?? '—'}</span> online now
@@ -78,6 +74,7 @@ export default function VisitorCounter() {
       <span className="vc-item">
         <span className="vc-num">{stats.total?.toLocaleString()}</span> total visits
       </span>
-    </motion.div>
+    </div>
+    </span>
   )
 }

@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { useGsapReveal } from '../hooks/useGsapReveal'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
 export default function NowPlaying() {
   const [data, setData] = useState(null)
+  const revealRef = useGsapReveal('.reveal', { deps: [data] })
 
   useEffect(() => {
     let timer
@@ -27,15 +28,12 @@ export default function NowPlaying() {
   const playing = data.isPlaying
 
   return (
-    <motion.a
-      className="now-playing"
+    <span ref={revealRef} style={{ display: 'contents' }}>
+    <a
+      className="now-playing reveal"
       href={playing ? data.songUrl : 'https://open.spotify.com'}
       target="_blank"
       rel="noreferrer"
-      initial={{ opacity: 0, y: 10 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      viewport={{ once: true }}
     >
       <div className={`np-art ${playing ? 'spin' : ''}`}>
         {playing && data.albumArt ? (
@@ -63,6 +61,7 @@ export default function NowPlaying() {
           <div className="np-title">on Spotify</div>
         )}
       </div>
-    </motion.a>
+    </a>
+    </span>
   )
 }

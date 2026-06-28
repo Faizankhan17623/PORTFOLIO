@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion } from 'framer-motion'
+import gsap from 'gsap'
 import MagneticElement from './MagneticElement'
 import TiltCard from './TiltCard'
 
@@ -136,9 +136,41 @@ function ParticleCanvas() {
 
 export default function Hero() {
   const role = useTypewriter(ROLES)
+  const heroRef = useRef(null)
+  const terminalRef = useRef(null)
+
+  // GSAP entrance timeline — the left column flies in on page load, then the
+  // terminal eases in and starts a gentle infinite float.
+  useEffect(() => {
+    const root = heroRef.current
+    if (!root) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+
+    const ctx = gsap.context(() => {
+      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
+      tl.from('.hero-tag', { autoAlpha: 0, y: 24, duration: 0.6, delay: 0.15 })
+        .from('.hero-name > span', { autoAlpha: 0, y: 40, duration: 0.7, stagger: 0.12 }, '-=0.2')
+        .from('.hero-role', { autoAlpha: 0, y: 20, duration: 0.5 }, '-=0.3')
+        .from('.hero-desc', { autoAlpha: 0, y: 20, duration: 0.5 }, '-=0.35')
+        .from('.hero-btns', { autoAlpha: 0, y: 24, duration: 0.5 }, '-=0.3')
+        .from(terminalRef.current, { autoAlpha: 0, x: 60, duration: 0.8 }, '-=0.9')
+
+      // Gentle infinite float for the terminal, started after it lands.
+      gsap.to(terminalRef.current, {
+        y: 10,
+        duration: 5,
+        ease: 'sine.inOut',
+        yoyo: true,
+        repeat: -1,
+        delay: 1.4,
+      })
+    }, root)
+
+    return () => ctx.revert()
+  }, [])
 
   return (
-    <div className="hero crt-flicker">
+    <div className="hero crt-flicker" ref={heroRef}>
       <ParticleCanvas />
       <div className="hero-noise" />
       <div className="hero-scan-line" />
@@ -146,63 +178,40 @@ export default function Hero() {
 
         {/* ── Left ── */}
         <div>
-          <motion.div
-            className="hero-tag"
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          >
+          <div className="hero-tag">
             <span className="dot" /> Available for opportunities
-          </motion.div>
+          </div>
 
-          <motion.h1 className="hero-name">
-            <motion.span
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+          <h1 className="hero-name">
+            <span
               style={{ display: 'block', fontSize: '0.55em', letterSpacing: '0.1em', color: 'var(--text2)', fontFamily: "'Share Tech Mono', monospace" }}
             >
               &gt; HELLO_WORLD
-            </motion.span>
-            <motion.span
+            </span>
+            <span
               className="glitch"
               data-text="FAIZAN KHAN"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
               style={{ display: 'block' }}
             >
               FAIZAN KHAN
-            </motion.span>
-            <motion.span
-              className="neon-line"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
+            </span>
+            <span className="neon-line">
               // DEVELOPER
-            </motion.span>
-          </motion.h1>
+            </span>
+          </h1>
 
-          <motion.div
-            className="hero-role"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-          >
+          <div className="hero-role">
             <span className="prompt">$&nbsp;</span>
             <span>{role}</span>
             <span className="cursor" />
-          </motion.div>
+          </div>
 
-          <motion.p
-            className="hero-desc"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.72 }}
-          >
+          <p className="hero-desc">
             I build fast, beautiful, production-ready web applications end-to-end.
             React on the front, Node.js & MongoDB on the back — from idea to deployment.
-          </motion.p>
+          </p>
 
-          <motion.div
-            className="hero-btns"
-            initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.88 }}
-          >
+          <div className="hero-btns">
             <MagneticElement>
               <button
                 className="btn-glow primary"
@@ -219,23 +228,11 @@ export default function Hero() {
                 Contact Me
               </button>
             </MagneticElement>
-          </motion.div>
+          </div>
         </div>
 
         {/* ── Right: Terminal ── */}
-        <motion.div
-          initial={{ opacity: 0, x: 40, y: 0 }} 
-          animate={{ 
-            opacity: 1, 
-            x: 0, 
-            y: [-8, 8, -8] 
-          }}
-          transition={{ 
-            opacity: { delay: 0.5, duration: 0.8, ease: 'easeOut' },
-            x: { delay: 0.5, duration: 0.8, ease: 'easeOut' },
-            y: { duration: 5, repeat: Infinity, ease: 'easeInOut' } 
-          }}
-        >
+        <div ref={terminalRef}>
           <TiltCard className="hero-terminal">
             <div className="terminal-bar">
               <div className="t-dot r" /><div className="t-dot y" /><div className="t-dot g" />
@@ -255,7 +252,7 @@ export default function Hero() {
               <span><span className="t-w">&#125;</span></span>
             </div>
           </TiltCard>
-        </motion.div>
+        </div>
 
       </div>
     </div>

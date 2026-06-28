@@ -1,16 +1,14 @@
-import { motion } from 'framer-motion'
+import { useGsapReveal } from '../hooks/useGsapReveal'
 import VisitorCounter from './VisitorCounter'
 import NowPlaying from './NowPlaying'
 
 export default function Footer() {
+  const revealRef = useGsapReveal('.footer-reveal')
+
   return (
     <footer className="footer">
-      <div className="footer-inner">
-        <motion.div
-          className="footer-logo"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6 }} viewport={{ once: true }}
-        >
+      <div className="footer-inner" ref={revealRef}>
+        <div className="footer-logo footer-reveal">
           faizan.dev
           {/* Disguised easter-egg trigger — looks like a blinking terminal cursor.
               Clicking it fires the Konami effect. No one would guess what it does. */}
@@ -24,17 +22,13 @@ export default function Footer() {
           >
             _
           </span>
-        </motion.div>
+        </div>
 
         <NowPlaying />
 
-        <motion.p
-          className="footer-copy"
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}
-        >
+        <p className="footer-copy footer-reveal">
           Built with React &amp; Framer Motion · {new Date().getFullYear()} Faizan Khan
-        </motion.p>
+        </p>
 
         <VisitorCounter />
       </div>

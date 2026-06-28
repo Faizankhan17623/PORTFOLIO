@@ -1,8 +1,8 @@
-import { useState, useRef } from 'react'
-import { motion, useInView } from 'framer-motion'
+import { useState, useRef, useEffect } from 'react'
 import MagneticElement from './MagneticElement'
 import SuccessPopup from './SuccessPopup'
 import { useScramble } from '../hooks/useScramble'
+import { useGsapReveal } from '../hooks/useGsapReveal'
 
 const SOCIALS = [
   {
@@ -61,9 +61,27 @@ export default function Contact() {
   const [showPopup, setShowPopup] = useState(false)
   const [error, setError] = useState('')
   const ref = useRef(null)
-  const inView = useInView(ref, { once: true, margin: '-80px' })
+  const sectionRef = useRef(null)
+  const revealRef = useGsapReveal('.reveal', { y: 26, stagger: 0.1 })
+  const [inView, setInView] = useState(false)
   const t1 = useScramble('GET IN', { trigger: inView, speed: 35, delay: 80 })
   const t2 = useScramble('TOUCH', { trigger: inView, speed: 35, delay: 320 })
+
+  useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true)
+          io.disconnect()
+        }
+      },
+      { rootMargin: '-80px' }
+    )
+    io.observe(el)
+    return () => io.disconnect()
+  }, [])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -92,29 +110,23 @@ export default function Contact() {
   }
 
   return (
-    <div className="section">
+    <div className="section" ref={sectionRef}>
       <SuccessPopup show={showPopup} onClose={() => setShowPopup(false)} />
 
-      <motion.div
-        initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }} viewport={{ once: true }}
-      >
+      <div ref={revealRef}>
+      <div className="reveal">
         <div className="sec-badge">Contact</div>
         <h2 className="sec-title scramble-text">
           <span>{t1}</span> <span className="hl">{t2}</span>
         </h2>
         <p className="sec-sub">Have a project in mind or just want to say hi? I'd love to hear from you.</p>
-      </motion.div>
+      </div>
 
       <div className="contact-wrap" ref={ref}>
         {/* Left: form */}
-        <motion.form
-          className="contact-form"
+        <form
+          className="contact-form reveal"
           onSubmit={handleSubmit}
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          viewport={{ once: true }}
         >
           <div className="cf-row">
             <div className="cf-group">
@@ -142,73 +154,58 @@ export default function Contact() {
           </div>
 
           {error && (
-            <motion.p
-              className="cf-error"
-              initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }}
-            >
+            <p className="cf-error">
               {error}
-            </motion.p>
+            </p>
           )}
 
           <MagneticElement className="full-w">
-            <motion.button
+            <button
               type="submit"
               className="btn-glow primary full-w interactive"
               disabled={sending}
-              whileTap={{ scale: 0.97 }}
             >
               {sending ? (
                 <span className="sending-dots">Sending<span>.</span><span>.</span><span>.</span></span>
               ) : 'Send Message →'}
-            </motion.button>
+            </button>
           </MagneticElement>
-        </motion.form>
+        </form>
 
         {/* Right: info + socials */}
-        <motion.div
-          className="contact-info"
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            show: { transition: { staggerChildren: 0.12, delayChildren: 0.2 } }
-          }}
-        >
-          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
+        <div className="contact-info">
+          <div className="ci-block reveal">
             <h4>Email</h4>
             <a href="mailto:faizankhan901152@gmail.com" className="ci-link">faizankhan901152@gmail.com</a>
-          </motion.div>
-          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
+          </div>
+          <div className="ci-block reveal">
             <h4>Location</h4>
             <p>India 🇮🇳</p>
-          </motion.div>
-          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
+          </div>
+          <div className="ci-block reveal">
             <h4>Status</h4>
             <p className="ci-available"><span className="dot pulse" />Available for opportunities</p>
-          </motion.div>
-          <motion.div variants={{ hidden: { opacity: 0, x: 30 }, show: { opacity: 1, x: 0, transition: { type: 'spring' } } }} className="ci-block">
+          </div>
+          <div className="ci-block reveal">
             <h4>Find me on</h4>
             <div className="social-row">
               {SOCIALS.map(s => (
                 <MagneticElement key={s.label}>
-                  <motion.a
+                  <a
                     href={s.href}
                     target="_blank"
                     rel="noreferrer"
                     className="social-btn interactive"
                     title={s.label}
-                    whileHover={{ scale: 1.15, y: -4, rotate: 5 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 10 }}
                   >
                     {s.icon}
-                  </motion.a>
+                  </a>
                 </MagneticElement>
               ))}
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
+      </div>
       </div>
     </div>
   )

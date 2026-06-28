@@ -185,8 +185,18 @@ const COMMANDS = {
   }),
 }
 
-function OutputLine({ line }) {
+function OutputLine({ line, onRun }) {
   switch (line.t) {
+    case 'helpcta':
+      return (
+        <div className="t-helpcta">
+          <span className="t-output-dim">{line.v}</span>
+          <button className="t-help-btn" onClick={() => onRun?.('help')}>
+            <span className="t-help-prompt">$</span> help
+          </button>
+          <span className="t-output-dim">to see what I can do.</span>
+        </div>
+      )
     case 'ascii':
       return <pre className="t-ascii">{line.v}</pre>
     case 'hl':
@@ -235,7 +245,7 @@ function OutputLine({ line }) {
   }
 }
 
-function TerminalLine({ entry }) {
+function TerminalLine({ entry, onRun }) {
   if (entry.type === 'input') {
     return (
       <div className="t-history-input">
@@ -253,7 +263,7 @@ function TerminalLine({ entry }) {
   if (entry.type === 'output') {
     return (
       <div className="t-output-block">
-        {entry.lines.map((line, i) => <OutputLine key={i} line={line} />)}
+        {entry.lines.map((line, i) => <OutputLine key={i} line={line} onRun={onRun} />)}
       </div>
     )
   }
@@ -296,7 +306,7 @@ export default function TerminalOverlay({ open, onClose }) {
   const [history, setHistory] = useState([
     { type: 'output', lines: [
       { t: 'hl', v: 'Welcome to faizan@portfolio' },
-      { t: 'dim', v: 'Type `help` to see available commands.' },
+      { t: 'helpcta', v: 'New here? Click' },
     ]},
   ])
   const [input, setInput] = useState('')
@@ -404,7 +414,7 @@ export default function TerminalOverlay({ open, onClose }) {
 
             {matrixOn && <MatrixRain />}
             <div className="t-body" onClick={() => inputRef.current?.focus()}>
-              {history.map((entry, i) => <TerminalLine key={i} entry={entry} />)}
+              {history.map((entry, i) => <TerminalLine key={i} entry={entry} onRun={runCommand} />)}
 
               <div className="t-input-line">
                 <span className="t-prompt">faizan@portfolio</span>

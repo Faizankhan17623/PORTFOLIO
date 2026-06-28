@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react'
 import Lenis from 'lenis'
+import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger)
 import CustomCursor from './components/CustomCursor'
 import Navbar from './components/Navbar'
 import Hero from './components/Hero'
@@ -35,6 +39,10 @@ function App() {
       infinite: false,
     })
 
+    // Keep GSAP ScrollTrigger in sync with Lenis's virtual scroll position,
+    // otherwise scroll-driven animations never fire under smooth scrolling.
+    lenis.on('scroll', ScrollTrigger.update)
+
     function raf(time) {
       lenis.raf(time)
       requestAnimationFrame(raf)
@@ -42,8 +50,24 @@ function App() {
 
     requestAnimationFrame(raf)
 
-    return () => lenis.destroy()
+    // Recalculate trigger positions once everything has mounted.
+    const refreshTimer = setTimeout(() => ScrollTrigger.refresh(), 300)
+
+    return () => {
+      clearTimeout(refreshTimer)
+      lenis.off('scroll', ScrollTrigger.update)
+      lenis.destroy()
+    }
   }, [])
+
+  // Once the boot screen lifts, the real content mounts — recompute all
+  // ScrollTrigger positions against the now-visible layout, otherwise every
+  // scroll reveal would have been measured behind the boot overlay and never fire.
+  useEffect(() => {
+    if (loading) return
+    const t = setTimeout(() => ScrollTrigger.refresh(), 100)
+    return () => clearTimeout(t)
+  }, [loading])
 
   useEffect(() => {
     const onKey = (e) => {
@@ -62,32 +86,39 @@ function App() {
   return (
     <>
       {loading && <MaintenanceScreen onDone={() => setLoading(false)} />}
-      <ScrollProgressBar />
-      <CustomCursor />
-      <Navbar onTerminalOpen={() => setTerminalOpen(true)} />
-      {/* <Ticker /> */}
-      <main>
-        <section id="home"><Hero /></section>
-        <div className="divider" />
-        <section id="about"><About /></section>
-        <div className="divider" />
-        <section id="skills">
-          <Skills skills={skills} />
-        </section>
-        <div className="divider" />
-        <section id="projects">
-          <Projects projects={projects} />
-        </section>
-        <div className="divider" />
-        <section id="github"><GitHubStats /></section>
-        <div className="divider" />
-        <section id="contact"><Contact /></section>
-      </main>
-      <Footer />
+      {/* Mount the real content only after the boot screen finishes, so GSAP
+          entrance + ScrollTrigger reveals initialize against the visible page
+          (not behind the overlay, where they'd play unseen and never re-fire). */}
+      {!loading && (
+        <>
+          <ScrollProgressBar />
+          <CustomCursor />
+          <Navbar onTerminalOpen={() => setTerminalOpen(true)} />
+          {/* <Ticker /> */}
+          <main>
+            <section id="home"><Hero /></section>
+            <div className="divider" />
+            <section id="about"><About /></section>
+            <div className="divider" />
+            <section id="skills">
+              <Skills skills={skills} />
+            </section>
+            <div className="divider" />
+            <section id="projects">
+              <Projects projects={projects} />
+            </section>
+            <div className="divider" />
+            <section id="github"><GitHubStats /></section>
+            <div className="divider" />
+            <section id="contact"><Contact /></section>
+          </main>
+          <Footer />
 
-      <AIChat />
-      <KonamiEasterEgg />
-      <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
+          <AIChat />
+          <KonamiEasterEgg />
+          <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
+        </>
+      )}
     </>
   )
 }

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ACHIEVEMENTS, isUnlocked, unlock, unlockedCount } from '../lib/achievements'
 import { THEMES, getTheme, applyTheme } from '../lib/theme'
+import { sfx } from '../lib/sound'
 
 const EMAIL = 'faizankhan901152@gmail.com'
 const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -47,6 +48,7 @@ export default function CommandPalette({ onTerminalOpen }) {
   useEffect(() => {
     if (open) {
       unlock('command_center')
+      sfx.open()
       setTimeout(() => inputRef.current?.focus(), 60)
     }
   }, [open])
@@ -59,7 +61,10 @@ export default function CommandPalette({ onTerminalOpen }) {
 
   const switchTheme = useCallback((id) => {
     if (applyTheme(id)) {
-      if (id !== theme) unlock('chameleon')
+      if (id !== theme) {
+        unlock('chameleon')
+        sfx.theme()
+      }
       setTheme(id)
     }
   }, [theme])
@@ -115,11 +120,14 @@ export default function CommandPalette({ onTerminalOpen }) {
     } else if (view === 'commands') {
       if (e.key === 'ArrowDown') {
         e.preventDefault()
+        sfx.key()
         setIndex(i => Math.min(i + 1, filtered.length - 1))
       } else if (e.key === 'ArrowUp') {
         e.preventDefault()
+        sfx.key()
         setIndex(i => Math.max(i - 1, 0))
       } else if (e.key === 'Enter') {
+        sfx.enter()
         runItem(filtered[index])
       }
     }

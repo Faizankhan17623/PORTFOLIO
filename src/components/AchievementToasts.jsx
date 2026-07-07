@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ACHIEVEMENTS, onUnlock, unlock, unlockedCount } from '../lib/achievements'
+import { sfx } from '../lib/sound'
 
 // Renders the neon "ACHIEVEMENT UNLOCKED" toast stack, and owns the site-wide
 // trackers (first visit, night owl, scroll-to-bottom) that don't belong to
@@ -21,6 +22,7 @@ export default function AchievementToasts() {
   }, [])
 
   useEffect(() => onUnlock((def) => {
+    sfx.achievement()
     const key = `${def.id}-${Date.now()}`
     setToasts(t => [...t, { ...def, key, count: unlockedCount() }])
     setTimeout(() => setToasts(t => t.filter(x => x.key !== key)), 5200)

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ACHIEVEMENTS, isUnlocked, unlock } from '../lib/achievements'
 import { THEMES, getTheme, applyTheme } from '../lib/theme'
+import { sfx, toggleMuted } from '../lib/sound'
 
 const ASCII_LOGO = `
  ███████╗██╗  ██╗
@@ -29,6 +30,7 @@ const COMMANDS = {
       { t: 'row', k: 'theme', v: 'Switch color theme' },
       { t: 'row', k: 'lights off', v: 'Kill the power grid' },
       { t: 'row', k: 'play', v: 'Launch the hidden arcade' },
+      { t: 'row', k: 'sound', v: 'Toggle UI sounds' },
       { t: 'row', k: 'sudo', v: 'Try to gain root access' },
       { t: 'row', k: 'clear', v: 'Clear terminal' },
       { t: 'row', k: 'exit', v: 'Close terminal' },
@@ -176,6 +178,15 @@ const COMMANDS = {
       { t: 'dim', v: 'Usage: theme blade | theme ghost | theme noir' },
     ],
   }),
+
+  sound: () => {
+    const nowMuted = toggleMuted()
+    return {
+      output: nowMuted
+        ? [{ t: 'cm', v: '🔇 UI sounds OFF' }]
+        : [{ t: 'cm', v: '🔊 UI sounds ON' }, { t: 'dim', v: 'Subtle synth clicks engaged.' }],
+    }
+  },
 
   play: () => ({
     game: true,
@@ -381,6 +392,7 @@ export default function TerminalOverlay({ open, onClose }) {
   useEffect(() => {
     if (open) {
       unlock('terminal_hacker')
+      sfx.open()
       setTimeout(() => inputRef.current?.focus(), 80)
     }
   }, [open])
@@ -421,7 +433,10 @@ export default function TerminalOverlay({ open, onClose }) {
       const id = cmd.slice(6).trim()
       const prev = getTheme()
       if (applyTheme(id)) {
-        if (id !== prev) unlock('chameleon')
+        if (id !== prev) {
+          unlock('chameleon')
+          sfx.theme()
+        }
         const name = THEMES.find(th => th.id === id).name
         setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: [
           { t: 'cm', v: `Theme switched: ${name} ✓` },
@@ -436,6 +451,7 @@ export default function TerminalOverlay({ open, onClose }) {
     }
 
     const fn = COMMANDS[cmd]
+    if (!fn) sfx.error()
     if (fn) {
       const result = fn()
       if (result.matrix) {
@@ -464,7 +480,9 @@ export default function TerminalOverlay({ open, onClose }) {
   }, [onClose])
 
   const handleKey = (e) => {
+    if (e.key.length === 1) sfx.key()
     if (e.key === 'Enter') {
+      sfx.enter()
       runCommand(input)
       setInput('')
     } else if (e.key === 'ArrowUp') {

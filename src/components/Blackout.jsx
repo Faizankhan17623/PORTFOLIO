@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { unlock } from '../lib/achievements'
+import { sfx } from '../lib/sound'
 
 // "lights off" easter egg — kills all page lighting and hands the visitor a
 // flashlight cursor. Triggered via a `blackout:on` window event (terminal
@@ -12,6 +13,7 @@ export default function Blackout() {
   useEffect(() => {
     const turnOn = () => {
       unlock('lights_out')
+      sfx.powerDown()
       setOn(true)
     }
     window.addEventListener('blackout:on', turnOn)

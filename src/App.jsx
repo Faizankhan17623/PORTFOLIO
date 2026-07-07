@@ -22,6 +22,7 @@ import CommandPalette from './components/CommandPalette'
 import AchievementToasts from './components/AchievementToasts'
 import Blackout from './components/Blackout'
 import SnakeGame from './components/SnakeGame'
+import SoundFX from './components/SoundFX'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 import Ticker from './components/Ticker'
 
@@ -124,6 +125,7 @@ function App() {
           <AchievementToasts />
           <Blackout />
           <SnakeGame />
+          <SoundFX />
           <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
         </>
       )}

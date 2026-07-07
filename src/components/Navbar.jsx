@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import MagneticElement from './MagneticElement'
+import { isMuted, toggleMuted, onMuteChange } from '../lib/sound'
 
 const LINKS = ['home', 'about', 'skills', 'projects', 'contact']
 
 export default function Navbar({ onTerminalOpen }) {
   const [active, setActive] = useState('home')
   const [scrolled, setScrolled] = useState(false)
+  const [muted, setMuted] = useState(isMuted)
+
+  useEffect(() => onMuteChange(setMuted), [])
 
   useEffect(() => {
     const onScroll = () => {
@@ -73,6 +77,14 @@ export default function Navbar({ onTerminalOpen }) {
         ))}
       </ul>
       <div className="nav-actions">
+        <button
+          className="nav-sound-btn interactive"
+          onClick={() => toggleMuted()}
+          title={muted ? 'Unmute sounds' : 'Mute sounds'}
+          aria-label={muted ? 'Unmute sounds' : 'Mute sounds'}
+        >
+          {muted ? '🔇' : '🔊'}
+        </button>
         <button
           className="nav-cmdk-btn interactive"
           onClick={() => window.dispatchEvent(new Event('palette:open'))}

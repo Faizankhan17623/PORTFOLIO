@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { unlock } from '../lib/achievements'
+import { sfx } from '../lib/sound'
 
 const COLS = 24
 const ROWS = 16
@@ -81,6 +82,7 @@ export default function SnakeGame() {
     }
     placeFood(g)
     gameRef.current = g
+    sfx.coin()
     setScore(0)
     setIsNewHigh(false)
     setPhase('playing')
@@ -122,6 +124,7 @@ export default function SnakeGame() {
         head.x < 0 || head.y < 0 || head.x >= COLS || head.y >= ROWS ||
         g.snake.some(s => s.x === head.x && s.y === head.y)
       if (dead) {
+        sfx.gameOver()
         if (g.score > high) {
           setHigh(g.score)
           setIsNewHigh(true)
@@ -132,6 +135,7 @@ export default function SnakeGame() {
       }
       g.snake.unshift(head)
       if (head.x === g.food.x && head.y === g.food.y) {
+        sfx.eat()
         g.score++
         setScore(g.score)
         if (g.score >= 15) unlock('snake_charmer')

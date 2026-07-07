@@ -1621,3 +1621,58 @@ ul { list-style: none; }
   font-size: 0.68rem; letter-spacing: 0.18em; text-transform: uppercase;
   white-space: nowrap;
 }
+
+/* ─── SNAKE.EXE (hidden arcade) ───────────────────── */
+.snake-overlay {
+  position: fixed; inset: 0; z-index: 10500;
+  background: rgba(2, 5, 8, 0.85);
+  backdrop-filter: blur(8px);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px;
+  touch-action: none;
+}
+.snake-window {
+  background: var(--card2);
+  border: 1px solid var(--border-sharp);
+  border-radius: 8px;
+  box-shadow: 0 0 50px rgb(from var(--neon-green) r g b / 0.12), 0 24px 60px rgba(0, 0, 0, 0.7);
+  overflow: hidden;
+  font-family: 'Share Tech Mono', monospace;
+  max-width: 96vw;
+}
+.snake-titlebar {
+  display: flex; align-items: center; gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.snake-title { color: var(--neon-green); font-size: 0.8rem; letter-spacing: 0.08em; }
+.snake-hud { margin-left: auto; color: var(--text2); font-size: 0.74rem; letter-spacing: 0.12em; }
+.snake-esc {
+  font-size: 0.6rem; color: var(--text3); cursor: pointer;
+  border: 1px solid var(--border-sharp); border-radius: 3px; padding: 2px 6px;
+  white-space: nowrap;
+}
+.snake-esc:hover { color: var(--text); border-color: var(--neon-green); }
+.snake-stage { position: relative; }
+.snake-stage canvas { display: block; max-width: 100%; height: auto; }
+.snake-msg {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  background: rgba(2, 5, 8, 0.72);
+  text-align: center; padding: 20px;
+}
+.snake-msg-title {
+  color: var(--neon-green);
+  font-size: clamp(1.4rem, 4vw, 2rem);
+  letter-spacing: 0.3em;
+  text-shadow: 0 0 18px rgb(from var(--neon-green) r g b / 0.6);
+  animation: snake-blink 1.2s steps(2, end) infinite;
+}
+@keyframes snake-blink { 50% { opacity: 0.55; } }
+.snake-msg-sub { color: var(--text2); font-size: 0.74rem; letter-spacing: 0.08em; }
+.snake-foot {
+  padding: 9px 14px;
+  border-top: 1px solid var(--border);
+  color: var(--text3); font-size: 0.64rem; letter-spacing: 0.06em;
+  text-align: center;
+}

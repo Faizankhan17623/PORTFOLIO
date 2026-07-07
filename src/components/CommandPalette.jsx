@@ -87,6 +87,7 @@ export default function CommandPalette({ onTerminalOpen }) {
     { id: 'link-li', group: 'Links', icon: '↗', label: 'LinkedIn', hint: 'connect hire', run: () => window.open('https://linkedin.com/in/faizankhan-fullstack', '_blank') },
     { id: 'secret', group: 'Classified', icon: '▚', label: '??? — do not run this', hint: 'secret forbidden', run: () => window.dispatchEvent(new Event('konami:trigger')) },
     { id: 'lights', group: 'Classified', icon: '🔦', label: 'lights off', hint: 'blackout dark flashlight power', run: () => window.dispatchEvent(new Event('blackout:on')) },
+    { id: 'snake', group: 'Classified', icon: '👾', label: 'Insert coin — SNAKE.EXE', hint: 'game play arcade snake', run: () => window.dispatchEvent(new Event('game:snake')) },
   ], [onTerminalOpen, copied, copyEmail, theme, switchTheme])
 
   const filtered = useMemo(() => {

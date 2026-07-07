@@ -15,6 +15,8 @@ export const ACHIEVEMENTS = [
   { id: 'konami_master', icon: '🕹️', title: 'Cheat Code Activated', desc: 'Entered the Konami code' },
   { id: 'chameleon', icon: '🎨', title: 'Chameleon', desc: 'Switched the color theme' },
   { id: 'lights_out', icon: '🔦', title: 'Lights Out', desc: 'Killed the power grid' },
+  { id: 'arcade_rat', icon: '👾', title: 'Arcade Rat', desc: 'Found the hidden arcade' },
+  { id: 'snake_charmer', icon: '🐍', title: 'Snake Charmer', desc: 'Scored 15+ in SNAKE.EXE' },
 ]
 
 function load() {

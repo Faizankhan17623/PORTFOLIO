@@ -21,6 +21,7 @@ import KonamiEasterEgg from './components/KonamiEasterEgg'
 import CommandPalette from './components/CommandPalette'
 import AchievementToasts from './components/AchievementToasts'
 import Blackout from './components/Blackout'
+import SnakeGame from './components/SnakeGame'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 import Ticker from './components/Ticker'
 
@@ -122,6 +123,7 @@ function App() {
           <CommandPalette onTerminalOpen={() => setTerminalOpen(true)} />
           <AchievementToasts />
           <Blackout />
+          <SnakeGame />
           <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
         </>
       )}

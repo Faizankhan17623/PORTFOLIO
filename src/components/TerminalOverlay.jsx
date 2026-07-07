@@ -28,6 +28,7 @@ const COMMANDS = {
       { t: 'row', k: 'trophies', v: 'Your unlocked achievements' },
       { t: 'row', k: 'theme', v: 'Switch color theme' },
       { t: 'row', k: 'lights off', v: 'Kill the power grid' },
+      { t: 'row', k: 'play', v: 'Launch the hidden arcade' },
       { t: 'row', k: 'sudo', v: 'Try to gain root access' },
       { t: 'row', k: 'clear', v: 'Clear terminal' },
       { t: 'row', k: 'exit', v: 'Close terminal' },
@@ -173,6 +174,14 @@ const COMMANDS = {
       })),
       { t: 'gap' },
       { t: 'dim', v: 'Usage: theme blade | theme ghost | theme noir' },
+    ],
+  }),
+
+  play: () => ({
+    game: true,
+    output: [
+      { t: 'cm', v: 'Launching SNAKE.EXE…' },
+      { t: 'dim', v: 'Inserting coin. Arrows or WASD to steer. Don\'t bite yourself.' },
     ],
   }),
 
@@ -441,6 +450,12 @@ export default function TerminalOverlay({ open, onClose }) {
           onClose()
           window.dispatchEvent(new Event('blackout:on'))
         }, 700)
+      }
+      if (result.game) {
+        setTimeout(() => {
+          onClose()
+          window.dispatchEvent(new Event('game:snake'))
+        }, 500)
       }
       setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: result.output }])
     } else {

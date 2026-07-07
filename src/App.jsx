@@ -20,6 +20,7 @@ import AIChat from './components/AIChat'
 import KonamiEasterEgg from './components/KonamiEasterEgg'
 import CommandPalette from './components/CommandPalette'
 import AchievementToasts from './components/AchievementToasts'
+import Blackout from './components/Blackout'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 import Ticker from './components/Ticker'
 
@@ -120,6 +121,7 @@ function App() {
           <KonamiEasterEgg />
           <CommandPalette onTerminalOpen={() => setTerminalOpen(true)} />
           <AchievementToasts />
+          <Blackout />
           <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
         </>
       )}

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ACHIEVEMENTS, isUnlocked, unlock } from '../lib/achievements'
+import { THEMES, getTheme, applyTheme } from '../lib/theme'
 
 const ASCII_LOGO = `
  ███████╗██╗  ██╗
@@ -25,6 +26,8 @@ const COMMANDS = {
       { t: 'row', k: 'coffee', v: 'Buy me a coffee' },
       { t: 'row', k: 'matrix', v: 'Enter the Matrix' },
       { t: 'row', k: 'trophies', v: 'Your unlocked achievements' },
+      { t: 'row', k: 'theme', v: 'Switch color theme' },
+      { t: 'row', k: 'lights off', v: 'Kill the power grid' },
       { t: 'row', k: 'sudo', v: 'Try to gain root access' },
       { t: 'row', k: 'clear', v: 'Clear terminal' },
       { t: 'row', k: 'exit', v: 'Close terminal' },
@@ -155,6 +158,43 @@ const COMMANDS = {
     output: [
       { t: 'cm', v: 'Wake up, Neo…' },
       { t: 'dim', v: 'Press any key to exit the Matrix.' },
+    ],
+  }),
+
+  theme: () => ({
+    output: [
+      { t: 'hl', v: '$ Themes' },
+      { t: 'gap' },
+      ...THEMES.map(th => ({
+        t: 'row',
+        k: th.id,
+        v: getTheme() === th.id ? `${th.name} — ● active` : th.name,
+        c: getTheme() === th.id ? 'green' : undefined,
+      })),
+      { t: 'gap' },
+      { t: 'dim', v: 'Usage: theme blade | theme ghost | theme noir' },
+    ],
+  }),
+
+  lights: () => ({
+    output: [
+      { t: 'cm', v: 'Usage: lights off' },
+      { t: 'dim', v: 'Flip the master breaker at your own risk.' },
+    ],
+  }),
+
+  'lights off': () => ({
+    blackout: true,
+    output: [
+      { t: 'error', v: '⚡ POWER FAILURE — grid connection lost' },
+      { t: 'dim', v: 'Emergency flashlight deployed…' },
+    ],
+  }),
+
+  'lights on': () => ({
+    output: [
+      { t: 'cm', v: 'The lights are already on.' },
+      { t: 'dim', v: 'When they go out — click anywhere or press ESC to restore power.' },
     ],
   }),
 
@@ -367,6 +407,25 @@ export default function TerminalOverlay({ open, onClose }) {
       return
     }
 
+    // theme <id>
+    if (cmd.startsWith('theme ')) {
+      const id = cmd.slice(6).trim()
+      const prev = getTheme()
+      if (applyTheme(id)) {
+        if (id !== prev) unlock('chameleon')
+        const name = THEMES.find(th => th.id === id).name
+        setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: [
+          { t: 'cm', v: `Theme switched: ${name} ✓` },
+        ] }])
+      } else {
+        setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: [
+          { t: 'error', v: `Unknown theme: ${id}` },
+          { t: 'dim', v: 'Available: noir, blade, ghost' },
+        ] }])
+      }
+      return
+    }
+
     const fn = COMMANDS[cmd]
     if (fn) {
       const result = fn()
@@ -374,6 +433,14 @@ export default function TerminalOverlay({ open, onClose }) {
         unlock('matrix_mode')
         setMatrixOn(true)
         setTimeout(() => setMatrixOn(false), 4000)
+      }
+      if (result.blackout) {
+        // Let the "POWER FAILURE" line land, then cut the power — closing
+        // the terminal so the blackout owns the whole screen.
+        setTimeout(() => {
+          onClose()
+          window.dispatchEvent(new Event('blackout:on'))
+        }, 700)
       }
       setHistory(h => [...h, { type: 'input', text: raw }, { type: 'output', lines: result.output }])
     } else {

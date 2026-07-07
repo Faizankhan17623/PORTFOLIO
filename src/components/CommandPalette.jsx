@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ACHIEVEMENTS, isUnlocked, unlock, unlockedCount } from '../lib/achievements'
+import { THEMES, getTheme, applyTheme } from '../lib/theme'
 
 const EMAIL = 'faizankhan901152@gmail.com'
 const scrollTo = (id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
@@ -13,6 +14,7 @@ export default function CommandPalette({ onTerminalOpen }) {
   const [index, setIndex] = useState(0)
   const [view, setView] = useState('commands') // 'commands' | 'trophies'
   const [copied, setCopied] = useState(false)
+  const [theme, setTheme] = useState(getTheme)
   const inputRef = useRef(null)
   const listRef = useRef(null)
 
@@ -55,6 +57,13 @@ export default function CommandPalette({ onTerminalOpen }) {
     setTimeout(() => setCopied(false), 2000)
   }, [])
 
+  const switchTheme = useCallback((id) => {
+    if (applyTheme(id)) {
+      if (id !== theme) unlock('chameleon')
+      setTheme(id)
+    }
+  }, [theme])
+
   const commands = useMemo(() => [
     { id: 'nav-home', group: 'Navigate', icon: '⌂', label: 'Home', hint: 'hero top', run: () => scrollTo('home') },
     { id: 'nav-about', group: 'Navigate', icon: '◈', label: 'About', hint: 'bio who', run: () => scrollTo('about') },
@@ -65,10 +74,20 @@ export default function CommandPalette({ onTerminalOpen }) {
     { id: 'act-terminal', group: 'Actions', icon: '>_', label: 'Open Terminal', hint: 'shell cli console', run: onTerminalOpen },
     { id: 'act-email', group: 'Actions', icon: copied ? '✓' : '⧉', label: copied ? 'Email copied!' : 'Copy Email', hint: 'clipboard mail', run: copyEmail, keepOpen: true },
     { id: 'act-trophies', group: 'Actions', icon: '🏆', label: 'View Achievements', hint: 'trophies unlocked progress', run: () => setView('trophies'), keepOpen: true },
+    ...THEMES.map(t => ({
+      id: `theme-${t.id}`,
+      group: 'Theme',
+      icon: t.icon,
+      label: theme === t.id ? `${t.name} — active` : t.name,
+      hint: `theme color palette ${t.desc}`,
+      run: () => switchTheme(t.id),
+      keepOpen: true,
+    })),
     { id: 'link-gh', group: 'Links', icon: '↗', label: 'GitHub Profile', hint: 'code repos', run: () => window.open('https://github.com/Faizankhan17623', '_blank') },
     { id: 'link-li', group: 'Links', icon: '↗', label: 'LinkedIn', hint: 'connect hire', run: () => window.open('https://linkedin.com/in/faizankhan-fullstack', '_blank') },
     { id: 'secret', group: 'Classified', icon: '▚', label: '??? — do not run this', hint: 'secret forbidden', run: () => window.dispatchEvent(new Event('konami:trigger')) },
-  ], [onTerminalOpen, copied, copyEmail])
+    { id: 'lights', group: 'Classified', icon: '🔦', label: 'lights off', hint: 'blackout dark flashlight power', run: () => window.dispatchEvent(new Event('blackout:on')) },
+  ], [onTerminalOpen, copied, copyEmail, theme, switchTheme])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()

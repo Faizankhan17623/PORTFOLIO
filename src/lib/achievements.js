@@ -13,6 +13,8 @@ export const ACHIEVEMENTS = [
   { id: 'deep_diver', icon: '🌊', title: 'Deep Diver', desc: 'Scrolled all the way down' },
   { id: 'night_owl', icon: '🦉', title: 'Night Owl', desc: 'Visited between midnight and 5 AM' },
   { id: 'konami_master', icon: '🕹️', title: 'Cheat Code Activated', desc: 'Entered the Konami code' },
+  { id: 'chameleon', icon: '🎨', title: 'Chameleon', desc: 'Switched the color theme' },
+  { id: 'lights_out', icon: '🔦', title: 'Lights Out', desc: 'Killed the power grid' },
 ]
 
 function load() {

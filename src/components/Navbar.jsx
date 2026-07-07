@@ -72,9 +72,18 @@ export default function Navbar({ onTerminalOpen }) {
           </motion.li>
         ))}
       </ul>
-      <button className="nav-terminal-btn interactive" onClick={onTerminalOpen}>
-        <span className="nav-terminal-icon">&gt;_</span> Terminal
-      </button>
+      <div className="nav-actions">
+        <button
+          className="nav-cmdk-btn interactive"
+          onClick={() => window.dispatchEvent(new Event('palette:open'))}
+          title="Command Palette (Ctrl+K)"
+        >
+          ⌘K
+        </button>
+        <button className="nav-terminal-btn interactive" onClick={onTerminalOpen}>
+          <span className="nav-terminal-icon">&gt;_</span> Terminal
+        </button>
+      </div>
     </motion.nav>
   )
 }

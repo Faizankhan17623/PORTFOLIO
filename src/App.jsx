@@ -18,6 +18,8 @@ import ScrollProgressBar from './components/ScrollProgressBar'
 import GitHubStats from './components/GitHubStats'
 import AIChat from './components/AIChat'
 import KonamiEasterEgg from './components/KonamiEasterEgg'
+import CommandPalette from './components/CommandPalette'
+import AchievementToasts from './components/AchievementToasts'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 import Ticker from './components/Ticker'
 
@@ -116,6 +118,8 @@ function App() {
 
           <AIChat />
           <KonamiEasterEgg />
+          <CommandPalette onTerminalOpen={() => setTerminalOpen(true)} />
+          <AchievementToasts />
           <TerminalOverlay open={terminalOpen} onClose={() => setTerminalOpen(false)} />
         </>
       )}

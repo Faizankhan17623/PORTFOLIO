@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { unlock } from '../lib/achievements'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const QUICK_ASKS = [
@@ -64,6 +65,7 @@ export default function AIChat() {
   const send = (text) => {
     const msg = (text ?? input).trim()
     if (!msg) return
+    unlock('ai_whisperer')
     setMessages(m => [...m, { from: 'user', text: msg }])
     setInput('')
     setTyping(true)

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { unlock } from '../lib/achievements'
 
 const SEQUENCE = [
   'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
@@ -63,6 +64,7 @@ export default function KonamiEasterEgg() {
 
   // Fire the full effect: matrix rain + secret popup.
   const trigger = () => {
+    unlock('konami_master')
     setActive(true)
     setTimeout(() => setShowPopup(true), 1200)
   }

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { ACHIEVEMENTS, isUnlocked, unlock } from '../lib/achievements'
 
 const ASCII_LOGO = `
  ███████╗██╗  ██╗
@@ -23,6 +24,7 @@ const COMMANDS = {
       { t: 'row', k: 'joke', v: 'A dev joke' },
       { t: 'row', k: 'coffee', v: 'Buy me a coffee' },
       { t: 'row', k: 'matrix', v: 'Enter the Matrix' },
+      { t: 'row', k: 'trophies', v: 'Your unlocked achievements' },
       { t: 'row', k: 'sudo', v: 'Try to gain root access' },
       { t: 'row', k: 'clear', v: 'Clear terminal' },
       { t: 'row', k: 'exit', v: 'Close terminal' },
@@ -153,6 +155,18 @@ const COMMANDS = {
     output: [
       { t: 'cm', v: 'Wake up, Neo…' },
       { t: 'dim', v: 'Press any key to exit the Matrix.' },
+    ],
+  }),
+
+  trophies: () => ({
+    output: [
+      { t: 'hl', v: `$ Achievements — ${ACHIEVEMENTS.filter(a => isUnlocked(a.id)).length}/${ACHIEVEMENTS.length} unlocked` },
+      { t: 'gap' },
+      ...ACHIEVEMENTS.map(a => isUnlocked(a.id)
+        ? { t: 'row', k: `${a.icon} ${a.title}`, v: a.desc, c: 'green' }
+        : { t: 'row', k: `🔒 ${a.title}`, v: '??? — keep exploring' }),
+      { t: 'gap' },
+      { t: 'dim', v: 'Trophies unlock as you explore the site. Try Ctrl+K.' },
     ],
   }),
 
@@ -317,6 +331,7 @@ export default function TerminalOverlay({ open, onClose }) {
 
   useEffect(() => {
     if (open) {
+      unlock('terminal_hacker')
       setTimeout(() => inputRef.current?.focus(), 80)
     }
   }, [open])
@@ -356,6 +371,7 @@ export default function TerminalOverlay({ open, onClose }) {
     if (fn) {
       const result = fn()
       if (result.matrix) {
+        unlock('matrix_mode')
         setMatrixOn(true)
         setTimeout(() => setMatrixOn(false), 4000)
       }

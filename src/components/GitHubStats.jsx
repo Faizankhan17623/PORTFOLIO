@@ -101,12 +101,14 @@ export default function GitHubStats() {
 
       <div className="gh-chart reveal">
         <div className="gh-repos-label">Contribution Activity</div>
-        <img
-          src={`https://ghchart.rshah.org/${GH_USER}`}
-          alt="Faizan's GitHub Contribution Graph"
-          className="gh-chart-img"
-          loading="lazy"
-        />
+        <div className="gh-chart-inner">
+          <img
+            src={`https://ghchart.rshah.org/${GH_USER}`}
+            alt="Faizan's GitHub Contribution Graph"
+            className="gh-chart-img"
+            loading="lazy"
+          />
+        </div>
       </div>
 
       {repos.length > 0 && (

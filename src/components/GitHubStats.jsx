@@ -99,6 +99,16 @@ export default function GitHubStats() {
         </div>
       </div>
 
+      <div className="gh-chart reveal">
+        <div className="gh-repos-label">Contribution Activity</div>
+        <img
+          src={`https://ghchart.rshah.org/00d9ff/${GH_USER}`}
+          alt="Faizan's GitHub Contribution Graph"
+          className="gh-chart-img"
+          loading="lazy"
+        />
+      </div>
+
       {repos.length > 0 && (
         <div className="gh-repos reveal">
           <div className="gh-repos-label">⭐ Top Repositories</div>
@@ -128,6 +138,13 @@ export default function GitHubStats() {
       >
         See all on GitHub →
       </a>
+
+      <img
+        src={`https://komarev.com/ghpvc/?username=${GH_USER}&color=blueviolet&style=flat`}
+        alt="Profile view count"
+        className="gh-visitor-badge reveal"
+        loading="lazy"
+      />
     </div>
   )
 }

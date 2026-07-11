@@ -21,11 +21,23 @@ function Counter({ to, duration = 1.4 }) {
   return <>{val.toLocaleString()}</>
 }
 
+// GitHub's empty/scale colors from ghchart.rshah.org, remapped to the neon theme
+// so empty cells stay visibly distinct from the dark card instead of crushing to black.
+const CHART_COLOR_MAP = {
+  '#eeeeee': '#12222a',
+  '#767676': '#1c3540',
+  '#c6e48b': '#0d6b73',
+  '#7bc96f': '#00a3ad',
+  '#239a3b': '#00d4e0',
+  '#196127': '#00f5ff',
+}
+
 export default function GitHubStats() {
   const [data, setData] = useState(null)
   const [repos, setRepos] = useState([])
   const [totalStars, setTotalStars] = useState(0)
   const [error, setError] = useState(false)
+  const [chartSvg, setChartSvg] = useState(null)
   const spot = useSpotlight()
   const revealRef = useGsapReveal('.reveal', { y: 26, stagger: 0.08, deps: [repos.length, !!data] })
   const titleRef = useGsapTitle()
@@ -50,6 +62,19 @@ export default function GitHubStats() {
         }
       })
       .catch(() => !cancelled && setError(true))
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+    fetch(`https://ghchart.rshah.org/${GH_USER}`)
+      .then(r => r.text())
+      .then(svg => {
+        if (cancelled) return
+        const recolored = svg.replace(/#[0-9a-fA-F]{6}/g, (hex) => CHART_COLOR_MAP[hex.toLowerCase()] || hex)
+        setChartSvg(recolored)
+      })
+      .catch(() => {})
     return () => { cancelled = true }
   }, [])
 
@@ -102,12 +127,21 @@ export default function GitHubStats() {
       <div className="gh-chart reveal">
         <div className="gh-repos-label">Contribution Activity</div>
         <div className="gh-chart-inner">
-          <img
-            src={`https://ghchart.rshah.org/${GH_USER}`}
-            alt="Faizan's GitHub Contribution Graph"
-            className="gh-chart-img"
-            loading="lazy"
-          />
+          {chartSvg ? (
+            <div
+              className="gh-chart-img"
+              role="img"
+              aria-label="Faizan's GitHub Contribution Graph"
+              dangerouslySetInnerHTML={{ __html: chartSvg }}
+            />
+          ) : (
+            <img
+              src={`https://ghchart.rshah.org/${GH_USER}`}
+              alt="Faizan's GitHub Contribution Graph"
+              className="gh-chart-img"
+              loading="lazy"
+            />
+          )}
         </div>
       </div>
 

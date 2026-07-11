@@ -1068,9 +1068,8 @@ ul { list-style: none; }
 .gh-chart-inner:hover { border-color: var(--neon-cyan); box-shadow: var(--glow-cyan); }
 .gh-chart-img {
   max-width: 100%; height: auto; min-width: 640px;
-  filter: invert(1) hue-rotate(180deg) saturate(4) brightness(1.1);
-  mix-blend-mode: screen;
 }
+.gh-chart-img svg { display: block; width: 100%; height: auto; }
 @media (max-width: 900px) { .gh-grid { grid-template-columns: repeat(2, 1fr); } .gh-repos-grid { grid-template-columns: 1fr; } .gh-title { font-size: 2rem; } .gh-chart-inner { padding: 14px; } .gh-chart { width: 100%; margin-left: 0; } }
 
 /* ─── TESTIMONIALS ───────────────────────────────── */

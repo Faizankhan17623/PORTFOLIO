@@ -21,23 +21,11 @@ function Counter({ to, duration = 1.4 }) {
   return <>{val.toLocaleString()}</>
 }
 
-// GitHub's empty/scale colors from ghchart.rshah.org, remapped to the neon theme
-// so empty cells stay visibly distinct from the dark card instead of crushing to black.
-const CHART_COLOR_MAP = {
-  '#eeeeee': '#12222a',
-  '#767676': '#1c3540',
-  '#c6e48b': '#0d6b73',
-  '#7bc96f': '#00a3ad',
-  '#239a3b': '#00d4e0',
-  '#196127': '#00f5ff',
-}
-
 export default function GitHubStats() {
   const [data, setData] = useState(null)
   const [repos, setRepos] = useState([])
   const [totalStars, setTotalStars] = useState(0)
   const [error, setError] = useState(false)
-  const [chartSvg, setChartSvg] = useState(null)
   const spot = useSpotlight()
   const revealRef = useGsapReveal('.reveal', { y: 26, stagger: 0.08, deps: [repos.length, !!data] })
   const titleRef = useGsapTitle()
@@ -62,20 +50,6 @@ export default function GitHubStats() {
         }
       })
       .catch(() => !cancelled && setError(true))
-    return () => { cancelled = true }
-  }, [])
-
-  useEffect(() => {
-    let cancelled = false
-    fetch(`https://ghchart.rshah.org/${GH_USER}`)
-      .then(r => r.text())
-      .then(svg => {
-        if (cancelled) return
-        const withoutProlog = svg.replace(/^[\s\S]*?(?=<svg)/, '')
-        const recolored = withoutProlog.replace(/#[0-9a-fA-F]{6}/g, (hex) => CHART_COLOR_MAP[hex.toLowerCase()] || hex)
-        setChartSvg(recolored)
-      })
-      .catch(() => {})
     return () => { cancelled = true }
   }, [])
 
@@ -127,22 +101,28 @@ export default function GitHubStats() {
 
       <div className="gh-chart reveal">
         <div className="gh-repos-label">Contribution Activity</div>
-        <div className="gh-chart-inner">
-          {chartSvg ? (
-            <div
-              className="gh-chart-img"
-              role="img"
-              aria-label="Faizan's GitHub Contribution Graph"
-              dangerouslySetInnerHTML={{ __html: chartSvg }}
-            />
-          ) : (
+        <div className="gh-chart-frame">
+          <div className="gh-chart-bar">
+            <span className="t-dot r" /><span className="t-dot y" /><span className="t-dot g" />
+            <span className="gh-chart-path">~/{GH_USER}/contributions.log</span>
+          </div>
+          <div className="gh-chart-inner">
             <img
               src={`https://ghchart.rshah.org/${GH_USER}`}
               alt="Faizan's GitHub Contribution Graph"
               className="gh-chart-img"
               loading="lazy"
             />
-          )}
+          </div>
+          <div className="gh-chart-legend">
+            <span>Less</span>
+            <span className="gh-legend-cell" style={{ background: '#ebedf0' }} />
+            <span className="gh-legend-cell" style={{ background: '#c6e48b' }} />
+            <span className="gh-legend-cell" style={{ background: '#7bc96f' }} />
+            <span className="gh-legend-cell" style={{ background: '#239a3b' }} />
+            <span className="gh-legend-cell" style={{ background: '#196127' }} />
+            <span>More</span>
+          </div>
         </div>
       </div>
 

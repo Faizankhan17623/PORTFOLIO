@@ -71,7 +71,8 @@ export default function GitHubStats() {
       .then(r => r.text())
       .then(svg => {
         if (cancelled) return
-        const recolored = svg.replace(/#[0-9a-fA-F]{6}/g, (hex) => CHART_COLOR_MAP[hex.toLowerCase()] || hex)
+        const withoutProlog = svg.replace(/^[\s\S]*?(?=<svg)/, '')
+        const recolored = withoutProlog.replace(/#[0-9a-fA-F]{6}/g, (hex) => CHART_COLOR_MAP[hex.toLowerCase()] || hex)
         setChartSvg(recolored)
       })
       .catch(() => {})

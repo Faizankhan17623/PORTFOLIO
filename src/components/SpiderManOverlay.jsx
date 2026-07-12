@@ -51,9 +51,11 @@ function SpiderManTraveler() {
   const { scrollYProgress } = useScroll()
   const scrollVelocity = useVelocity(scrollYProgress)
 
-  // Keyframes: header (top-left) -> far right -> far left -> footer (bottom).
-  const x = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], ['4vw', '88vw', '4vw', '46vw'])
-  const y = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], ['8vh', '35vh', '65vh', '92vh'])
+  // Keyframes: header (top-left) -> far right -> far left -> bottom-right,
+  // landing on the same row as the AI chat FAB (fixed at bottom:28px;
+  // right:28px, 54px wide) but just to its left, never on top of it.
+  const x = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], ['4vw', '88vw', '4vw', '82vw'])
+  const y = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], ['8vh', '35vh', '65vh', '89vh'])
   const rotateRaw = useTransform(scrollYProgress, [0, 0.33, 0.66, 1], [0, 360, 720, 720])
   // useSpring ONLY on the numeric rotate value — wrapping x/y (unit strings) in
   // useSpring would pin him to position 0, since springs can't animate strings.

@@ -1726,3 +1726,29 @@ ul { list-style: none; }
   border-color: var(--neon-green);
   box-shadow: 0 0 12px rgb(from var(--neon-green) r g b / 0.2);
 }
+
+/* ─── Spider-Man scroll traveler: THWIP bubble ──────────────────── */
+.thwip-bubble {
+  position: fixed;
+  font-family: 'Share Tech Mono', monospace;
+  font-weight: 700;
+  background: var(--neon-yellow);
+  color: #0a0a0c;
+  border: 2px solid #000;
+  border-radius: 8px;
+  padding: 3px 12px;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  box-shadow: 3px 3px 0 0 #000;
+  pointer-events: none;
+  z-index: 9997;
+  white-space: nowrap;
+}
+.thwip-bubble::after {
+  content: '';
+  position: absolute; left: 14px; bottom: -8px;
+  width: 0; height: 0;
+  border: 6px solid transparent;
+  border-top-color: #000;
+  border-bottom: 0;
+}

@@ -25,7 +25,7 @@ import SnakeGame from './components/SnakeGame'
 import SoundFX from './components/SoundFX'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 import Ticker from './components/Ticker'
-import SpiderManOverlay from './components/SpiderManOverlay'
+// import SpiderManOverlay from './components/SpiderManOverlay'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -99,7 +99,7 @@ function App() {
         <>
           <ScrollProgressBar />
           <CustomCursor />
-          <SpiderManOverlay />
+          {/* <SpiderManOverlay /> */}
           <Navbar onTerminalOpen={() => setTerminalOpen(true)} />
           {/* <Ticker /> */}
           <main>

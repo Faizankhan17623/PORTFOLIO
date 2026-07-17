@@ -2,6 +2,7 @@ import { useRef, useEffect, useState } from 'react'
 import { useScramble } from '../hooks/useScramble'
 import { useSpotlight } from '../hooks/useSpotlight'
 import { useGsapReveal } from '../hooks/useGsapReveal'
+import { useGsapParallax } from '../hooks/useGsapParallax'
 
 const ICONS = {
   frontend: '🖥️',
@@ -13,6 +14,26 @@ const ICONS = {
   tools: '🛠️',
   ai: '🤖',
   deployment: '🚀',
+}
+
+// Single skill card — its icon drifts upward as the card scrolls through view.
+function SkillCard({ cat, list, spot }) {
+  const iconRef = useGsapParallax({ distance: -18 })
+  return (
+    <div className="skill-card corner-box spotlight reveal" {...spot}>
+      <div className="skill-card-header">
+        <span className="skill-icon" ref={iconRef}>{ICONS[cat]}</span>
+        <h3>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h3>
+      </div>
+      <div className="skill-tags">
+        {list.map((s, i) => (
+          <span key={s + i} className="skill-tag">
+            {s}
+          </span>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default function Skills({ skills }) {
@@ -52,19 +73,7 @@ export default function Skills({ skills }) {
 
         <div className="skills-grid">
           {Object.entries(skills).map(([cat, list]) => (
-            <div key={cat} className="skill-card corner-box spotlight reveal" {...spot}>
-              <div className="skill-card-header">
-                <span className="skill-icon">{ICONS[cat]}</span>
-                <h3>{cat.charAt(0).toUpperCase() + cat.slice(1)}</h3>
-              </div>
-              <div className="skill-tags">
-                {list.map((s, i) => (
-                  <span key={s + i} className="skill-tag">
-                    {s}
-                  </span>
-                ))}
-              </div>
-            </div>
+            <SkillCard key={cat} cat={cat} list={list} spot={spot} />
           ))}
         </div>
       </div>

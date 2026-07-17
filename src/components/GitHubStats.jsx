@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useSpotlight } from '../hooks/useSpotlight'
 import { useGsapReveal } from '../hooks/useGsapReveal'
 import { useGsapTitle } from '../hooks/useGsapTitle'
+import { useGsapParallax } from '../hooks/useGsapParallax'
 
 const GH_USER = 'Faizankhan17623'
 
@@ -19,6 +20,18 @@ function Counter({ to, duration = 1.4 }) {
     requestAnimationFrame(step)
   }, [to, duration])
   return <>{val.toLocaleString()}</>
+}
+
+// Single stat card — its icon drifts upward as the card scrolls through view.
+function StatCard({ icon, value, label, spot }) {
+  const iconRef = useGsapParallax({ distance: -18 })
+  return (
+    <div className="gh-stat-card spotlight reveal" {...spot}>
+      <div className="gh-stat-icon" ref={iconRef}>{icon}</div>
+      <div className="gh-stat-num">{value}</div>
+      <div className="gh-stat-label">{label}</div>
+    </div>
+  )
 }
 
 export default function GitHubStats() {
@@ -77,26 +90,10 @@ export default function GitHubStats() {
       </div>
 
       <div className="gh-grid">
-        <div className="gh-stat-card spotlight reveal" {...spot}>
-          <div className="gh-stat-icon">📦</div>
-          <div className="gh-stat-num"><Counter to={stats.repos} /></div>
-          <div className="gh-stat-label">Public Repos</div>
-        </div>
-        <div className="gh-stat-card spotlight reveal" {...spot}>
-          <div className="gh-stat-icon">👥</div>
-          <div className="gh-stat-num"><Counter to={stats.followers} /></div>
-          <div className="gh-stat-label">Followers</div>
-        </div>
-        <div className="gh-stat-card spotlight reveal" {...spot}>
-          <div className="gh-stat-icon">🔭</div>
-          <div className="gh-stat-num"><Counter to={stats.following} /></div>
-          <div className="gh-stat-label">Following</div>
-        </div>
-        <div className="gh-stat-card spotlight reveal" {...spot}>
-          <div className="gh-stat-icon">⭐</div>
-          <div className="gh-stat-num"><Counter to={totalStars} /></div>
-          <div className="gh-stat-label">Total Stars</div>
-        </div>
+        <StatCard icon="📦" value={<Counter to={stats.repos} />} label="Public Repos" spot={spot} />
+        <StatCard icon="👥" value={<Counter to={stats.followers} />} label="Followers" spot={spot} />
+        <StatCard icon="🔭" value={<Counter to={stats.following} />} label="Following" spot={spot} />
+        <StatCard icon="⭐" value={<Counter to={totalStars} />} label="Total Stars" spot={spot} />
       </div>
 
       <div className="gh-chart reveal">

@@ -3,6 +3,7 @@ import MagneticElement from './MagneticElement'
 import SuccessPopup from './SuccessPopup'
 import { useScramble } from '../hooks/useScramble'
 import { useGsapReveal } from '../hooks/useGsapReveal'
+import { useGsapParallax } from '../hooks/useGsapParallax'
 
 const SOCIALS = [
   {
@@ -63,6 +64,8 @@ export default function Contact() {
   const ref = useRef(null)
   const sectionRef = useRef(null)
   const revealRef = useGsapReveal('.reveal', { y: 26, stagger: 0.1 })
+  // Social row drifts upward as it scrolls through view — adds depth.
+  const socialRowRef = useGsapParallax({ distance: -16 })
   const [inView, setInView] = useState(false)
   const t1 = useScramble('GET IN', { trigger: inView, speed: 35, delay: 80 })
   const t2 = useScramble('TOUCH', { trigger: inView, speed: 35, delay: 320 })
@@ -188,7 +191,7 @@ export default function Contact() {
           </div>
           <div className="ci-block reveal">
             <h4>Find me on</h4>
-            <div className="social-row">
+            <div className="social-row" ref={socialRowRef}>
               {SOCIALS.map(s => (
                 <MagneticElement key={s.label}>
                   <a

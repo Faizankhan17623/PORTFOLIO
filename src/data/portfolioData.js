@@ -12,6 +12,17 @@ export const defaultSkills = {
 
 export const defaultProjects = [
   {
+    id: 13,
+    title: 'Scout',
+    description:
+      'Groq-powered web search agent that combines real-time Tavily search with MongoDB-backed conversation memory, delivering fast, cited answers in a clean chat interface.',
+    tags: ['React', 'Node.js', 'Express', 'Groq', 'Tavily', 'MongoDB'],
+    category: 'AI / CV',
+    emoji: '🔎',
+    github: 'https://github.com/Faizankhan17623/scout',
+    live: 'https://scout-kappa-eight.vercel.app',
+  },
+  {
     id: 12,
     title: 'Personal GPT',
     description:

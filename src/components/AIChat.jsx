@@ -80,7 +80,10 @@ export default function AIChat() {
       <motion.button
         className={`ai-fab ${open ? 'open' : ''}`}
         onClick={() => setOpen(o => !o)}
-        whileHover={{ scale: 1.06 }}
+        // Continuous idle float so the button reads as "alive" even before it's touched.
+        animate={open ? { y: 0, rotate: 0 } : { y: [0, -10, 0], rotate: [0, -4, 4, 0] }}
+        transition={open ? { duration: 0.3 } : { duration: 3.2, repeat: Infinity, ease: 'easeInOut' }}
+        whileHover={{ scale: 1.06, y: -4 }}
         whileTap={{ scale: 0.94 }}
         aria-label="Open AI chat"
       >

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useSpotlight } from '../hooks/useSpotlight'
 import { useGsapReveal } from '../hooks/useGsapReveal'
 import { useGsapTitle } from '../hooks/useGsapTitle'
@@ -66,6 +67,16 @@ export default function GitHubStats() {
     return () => { cancelled = true }
   }, [])
 
+  // The API response reflows this section (stat numbers, repo cards, chart
+  // image) after ScrollTrigger already measured it pre-data — re-measure once
+  // the new layout has painted, otherwise reveal triggers stay stuck at their
+  // stale (often off-screen) positions and the section never animates in.
+  useEffect(() => {
+    if (!data) return
+    const t = setTimeout(() => ScrollTrigger.refresh(), 150)
+    return () => clearTimeout(t)
+  }, [data, repos.length])
+
   if (error) return null
 
   const stats = data ? {
@@ -109,6 +120,7 @@ export default function GitHubStats() {
               alt="Faizan's GitHub Contribution Graph"
               className="gh-chart-img"
               loading="lazy"
+              onLoad={() => ScrollTrigger.refresh()}
             />
           </div>
           <div className="gh-chart-legend">

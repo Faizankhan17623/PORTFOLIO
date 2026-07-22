@@ -184,6 +184,27 @@ ul { list-style: none; }
   animation: glitch-2 3.5s infinite;
   clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
 }
+.name-reveal {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 1.1em;
+  cursor: none;
+}
+.name-reveal-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.name-reveal-sr {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 .hero-name .neon-line {
   display: block;
   color: var(--neon-green);

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import MagneticElement from './MagneticElement'
 import TiltCard from './TiltCard'
+import NameReveal from './NameReveal'
 
 const ROLES = [
   'Full Stack Developer',
@@ -149,7 +150,7 @@ export default function Hero() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
       tl.from('.hero-tag', { autoAlpha: 0, y: 24, duration: 0.6, delay: 0.15 })
-        .from('.hero-name > span', { autoAlpha: 0, y: 40, duration: 0.7, stagger: 0.12 }, '-=0.2')
+        .from('.hero-name > span, .hero-name > .name-reveal', { autoAlpha: 0, y: 40, duration: 0.7, stagger: 0.12 }, '-=0.2')
         .from('.hero-role', { autoAlpha: 0, y: 20, duration: 0.5 }, '-=0.3')
         .from('.hero-desc', { autoAlpha: 0, y: 20, duration: 0.5 }, '-=0.35')
         .from('.hero-btns', { autoAlpha: 0, y: 24, duration: 0.5 }, '-=0.3')
@@ -188,13 +189,7 @@ export default function Hero() {
             >
               &gt; HELLO_WORLD
             </span>
-            <span
-              className="glitch"
-              data-text="FAIZAN KHAN"
-              style={{ display: 'block' }}
-            >
-              FAIZAN KHAN
-            </span>
+            <NameReveal />
             <span className="neon-line">
               // DEVELOPER
             </span>

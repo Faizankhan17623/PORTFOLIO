@@ -1,27 +1,41 @@
 # Faizan Khan — Portfolio
 
-A personal portfolio website built with **React + Vite**, with a small **Express + MongoDB** backend for the contact form.
+A personal portfolio site built as a single-page React app with a boot-screen intro, a full retro-terminal/command-palette layer, and a gamified easter-egg system on top of the usual About/Skills/Projects/Contact sections. Backed by a small Express + MongoDB API for the contact form, visitor counter, and an optional Spotify "now playing" widget.
 
-🔗 **Live:** https://portfolio-pied-eight-2csy0b9zua.vercel.app
+**Live:** https://portfolio-pied-eight-2csy0b9zua.vercel.app
 
-## ✨ Features
+## Features
 
-- **Interactive terminal overlay** — a fake terminal ("Faizan Khan portfolio") with its own commands, including a Matrix rain easter egg
-- **AI chat widget** — ask questions about me directly on the site
-- **GitHub stats** — live stats pulled from my GitHub profile
-- **Contact form** — messages are validated and saved to MongoDB (one message per email)
-- **Smooth animations** — Framer Motion transitions, Lenis smooth scrolling, magnetic buttons, tilt cards, and a custom cursor
-- **Multi-page layout** — Home, About, Skills, Projects, and Contact pages via React Router
+**Core sections** (single scrolling page, anchor-linked): Hero, About, Skills, Projects, GitHub Stats, Contact, Footer.
 
-## 🛠 Tech Stack
+- **Boot / maintenance screen** — a fake terminal boot sequence plays before the site content mounts
+- **Terminal overlay** (`/` key or navbar) — a real fake shell with commands like `whoami`, `skills`, `projects`, `contact`, `hire-me`, `resume`, `joke`, `coffee`, `matrix`, `trophies`, `theme`, `lights off`, `play`, `sound`, `sudo`, history navigation with arrow keys
+- **Command palette** (`Ctrl/Cmd+K`) — quick navigation, copy-email, theme switcher, and a "Classified" section that triggers the hidden easter eggs
+- **Achievement/trophy system** — 12 unlockable achievements (e.g. opening the terminal, entering the Konami code, finding the arcade) persisted in `localStorage`, surfaced as toast popups and a trophy view in the command palette
+- **Konami code easter egg** — the classic ↑↑↓↓←→←→BA sequence triggers a Matrix-style falling-code rain overlay
+- **Hidden Snake game** (`SNAKE.EXE`) — a canvas-based Snake game with high-score persistence, launched from the terminal (`play`) or command palette
+- **Blackout / "lights off" mode** — kills page lighting and hands the visitor a flashlight-style cursor mask
+- **Theme switcher** — three color themes (Neon Noir, Blade Runner, Ghost) applied via a `data-theme` attribute, persisted in `localStorage`
+- **AI chat widget** — a floating assistant with canned/fuzzy-matched Q&A about Faizan's stack, projects, and availability (client-side only, no external LLM call)
+- **GitHub stats** — live stats and repos pulled from the GitHub public API, with animated counters
+- **Visitor counter** — total-visit and "online now" counts backed by the Express API
+- **Spotify "Now Playing"** — optional footer widget showing the currently playing track via the Spotify API (degrades to "offline" if not configured)
+- **Second Brain link** — footer card linking out to an external Obsidian-based knowledge base
+- **Contact form** — validated and saved to MongoDB, one message per email address
+- **Sound effects** — UI sounds (open/close/keypress/theme-switch/power-down) with a mute toggle
+- **Custom cursor, magnetic buttons, tilt/spotlight cards, scroll progress bar** — plus GSAP + ScrollTrigger scroll reveals and a Lenis-smoothed scroll
 
-| Part     | Tech                                                    |
-|----------|---------------------------------------------------------|
-| Frontend | React 19, Vite 7, React Router 7, Framer Motion, Lenis  |
-| Backend  | Node.js, Express, Mongoose (MongoDB)                    |
-| Hosting  | Vercel (frontend) + separate backend deployment         |
+## Tech Stack
 
-## 🚀 Getting Started
+| Part | Tech |
+|------|------|
+| Frontend | React 19, Vite 7, Framer Motion, GSAP + ScrollTrigger, Lenis (smooth scroll) |
+| Backend | Node.js, Express, Mongoose (MongoDB) |
+| Hosting | Vercel (frontend) + separate Node backend deployment |
+
+> Note: `react-router-dom` is listed as a dependency and a `src/pages/` directory exists, but neither is currently wired up — the live site is a single page with anchor-scrolled sections (`src/App.jsx` renders `src/components/*` directly).
+
+## Getting Started
 
 ```bash
 # 1. Install dependencies (frontend + backend)
@@ -40,53 +54,67 @@ The frontend runs on `http://localhost:5173` and the API on `http://localhost:50
 
 ### Available Scripts
 
-| Script                 | What it does                          |
-|------------------------|---------------------------------------|
-| `npm run dev`          | Runs frontend **and** backend together |
-| `npm run dev:frontend` | Vite dev server only                   |
-| `npm run dev:backend`  | Express API only (nodemon)             |
-| `npm run build`        | Production build of the frontend       |
-| `npm run preview`      | Preview the production build           |
-| `npm run lint`         | Run ESLint                             |
+**Root (`package.json`):**
 
-## 📁 Project Structure
+| Script | What it does |
+|--------|---------------|
+| `npm run dev` | Runs frontend **and** backend together (via `concurrently`) |
+| `npm run dev:frontend` | Vite dev server only |
+| `npm run dev:backend` | Express API only (via `npm run dev --prefix=server`) |
+| `npm run build` | Production build of the frontend |
+| `npm run preview` | Preview the production build |
+| `npm run lint` | Run ESLint |
+
+**`server/package.json`:**
+
+| Script | What it does |
+|--------|---------------|
+| `npm start` | Run the API with plain Node |
+| `npm run dev` | Run the API with nodemon (auto-restart) |
+
+### Environment Variables
+
+**Root `.env`:**
+- `VITE_API_URL` — URL of the backend API (`http://localhost:5000` locally)
+
+**`server/.env`:**
+- `MONGO_URI` — MongoDB connection string
+- `PORT` — API port (default `5000`)
+- `FRONTEND_URL` — allowed CORS origin for the deployed frontend
+- `SPOTIFY_CLIENT_ID`, `SPOTIFY_CLIENT_SECRET`, `SPOTIFY_REFRESH_TOKEN` — optional; leave blank to disable the "Now Playing" widget (it just reports offline)
+
+## API Endpoints (`server/index.js`)
+
+| Method | Route | Purpose |
+|--------|-------|---------|
+| GET | `/` | Health check |
+| POST | `/api/visit` | Increment total visit count, register visitor as online |
+| POST | `/api/heartbeat` | Keep a visitor marked "online" without counting a new visit |
+| GET | `/api/stats` | Read current total/online visitor stats |
+| GET | `/api/now-playing` | Spotify currently-playing track (or `isPlaying: false` if unconfigured) |
+| POST | `/api/contact` | Save a contact-form message (validated, one per email) |
+
+## Project Structure
 
 ```
 portfolio/
 ├── src/
-│   ├── components/   # Navbar, Hero, TerminalOverlay, AIChat, GitHubStats, ...
-│   ├── pages/        # Home, About, Skills, Projects, Contact
-│   ├── data/         # portfolioData.js (content lives here)
+│   ├── components/    # Navbar, Hero, About, Skills, Projects, Contact, Footer,
+│   │                   # TerminalOverlay, CommandPalette, AIChat, GitHubStats,
+│   │                   # KonamiEasterEgg, SnakeGame, Blackout, AchievementToasts,
+│   │                   # NowPlaying, VisitorCounter, SecondBrain, CustomCursor, ...
+│   ├── pages/          # Unused legacy page components (not routed)
+│   ├── data/           # portfolioData.js — skills & projects content
+│   ├── hooks/          # useGsapReveal, useGsapParallax, useGsapTitle, useScramble, useSpotlight
+│   ├── lib/            # achievements.js, theme.js, sound.js
 │   └── App.jsx
-├── server/           # Express + MongoDB API (contact form)
-│   ├── models/
+├── server/             # Express + MongoDB API
+│   ├── models/         # Message.js, Counter.js
 │   └── index.js
+├── vercel.json         # Security headers for the deployed frontend
 └── index.html
 ```
 
-## 📬 Contact
+## Contact
 
 Built by **Faizan Khan**. Use the contact form on the site or open an issue here.
-
-<!--
-═══════════════════════════════════════════════════════════════
-  OLD README (kept for reference — original Vite template text)
-═══════════════════════════════════════════════════════════════
-
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [typescript-eslint](https://typescript-eslint.io) in your project.
--->

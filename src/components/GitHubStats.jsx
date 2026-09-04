@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+import { cloneElement, useEffect, useState } from 'react'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { GitHubCalendar } from 'react-github-calendar'
 import { useSpotlight } from '../hooks/useSpotlight'
 import { useGsapReveal } from '../hooks/useGsapReveal'
 import { useGsapTitle } from '../hooks/useGsapTitle'
@@ -40,6 +41,7 @@ export default function GitHubStats() {
   const [repos, setRepos] = useState([])
   const [totalStars, setTotalStars] = useState(0)
   const [error, setError] = useState(false)
+  const [selectedActivity, setSelectedActivity] = useState(null)
   const spot = useSpotlight()
   const revealRef = useGsapReveal('.reveal', { y: 26, stagger: 0.08, deps: [repos.length, !!data] })
   const titleRef = useGsapTitle()
@@ -47,8 +49,8 @@ export default function GitHubStats() {
   useEffect(() => {
     let cancelled = false
     Promise.all([
-      fetch(`https://api.github.com/users/${GH_USER}`).then(r => r.json()),
-      fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=updated`).then(r => r.json()),
+      fetch(`https://api.github.com/users/${GH_USER}`, { cache: 'no-store' }).then(r => r.json()),
+      fetch(`https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=updated`, { cache: 'no-store' }).then(r => r.json()),
     ])
       .then(([user, repoList]) => {
         if (cancelled) return
@@ -57,10 +59,10 @@ export default function GitHubStats() {
         if (Array.isArray(repoList)) {
           const owned = repoList.filter(r => !r.fork)
           setTotalStars(owned.reduce((sum, r) => sum + r.stargazers_count, 0))
-          const top = [...owned]
-            .sort((a, b) => b.stargazers_count - a.stargazers_count)
+          const latest = [...owned]
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
             .slice(0, 3)
-          setRepos(top)
+          setRepos(latest)
         }
       })
       .catch(() => !cancelled && setError(true))
@@ -115,21 +117,73 @@ export default function GitHubStats() {
             <span className="gh-chart-path">~/{GH_USER}/contributions.log</span>
           </div>
           <div className="gh-chart-inner">
-            <img
-              src={`https://ghchart.rshah.org/${GH_USER}`}
-              alt="Faizan's GitHub Contribution Graph"
-              className="gh-chart-img"
-              loading="lazy"
-              onLoad={() => ScrollTrigger.refresh()}
+            <GitHubCalendar
+              username={GH_USER}
+              colorScheme="dark"
+              blockSize={24}
+              blockMargin={4}
+              fontSize={13}
+              showColorLegend={false}
+              showTotalCount
+              errorMessage="Contribution activity is temporarily unavailable. View it directly on GitHub."
+              renderBlock={(block, activity) => cloneElement(block, {
+                role: 'button',
+                tabIndex: 0,
+                'aria-label': `${activity.count} contributions on ${activity.date}`,
+                onMouseEnter: () => setSelectedActivity(activity),
+                onMouseLeave: () => setSelectedActivity(null),
+                onFocus: () => setSelectedActivity(activity),
+                onBlur: () => setSelectedActivity(null),
+                onClick: () => setSelectedActivity(activity),
+                onKeyDown: (event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault()
+                    setSelectedActivity(activity)
+                  }
+                },
+                className: 'gh-activity-block',
+                stroke: selectedActivity?.date === activity.date ? '#f5ff00' : undefined,
+                strokeWidth: selectedActivity?.date === activity.date ? 2 : undefined,
+              })}
+              theme={{
+                dark: ['#101820', '#123d1d', '#197b2c', '#24bd39', '#39ff14'],
+              }}
             />
           </div>
+          {selectedActivity && (
+            <div className="gh-day-popup" role="status">
+              <button
+                type="button"
+                className="gh-day-popup-close"
+                onClick={() => setSelectedActivity(null)}
+                aria-label="Close contribution details"
+              >
+                ×
+              </button>
+              <span className="gh-day-popup-kicker">ACTIVITY LOG</span>
+              <strong>{new Date(`${selectedActivity.date}T00:00:00`).toLocaleDateString('en-US', {
+                day: 'numeric', month: 'long', year: 'numeric',
+              })}</strong>
+              <span className="gh-day-popup-count">
+                {selectedActivity.count} {selectedActivity.count === 1 ? 'contribution' : 'contributions'}
+              </span>
+              <span className="gh-day-popup-level">Intensity level: {selectedActivity.level}/4</span>
+              <a
+                href={`https://github.com/${GH_USER}?tab=overview&from=${selectedActivity.date}&to=${selectedActivity.date}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                View day on GitHub →
+              </a>
+            </div>
+          )}
           <div className="gh-chart-legend">
             <span>Less</span>
-            <span className="gh-legend-cell" style={{ background: '#ebedf0' }} />
-            <span className="gh-legend-cell" style={{ background: '#c6e48b' }} />
-            <span className="gh-legend-cell" style={{ background: '#7bc96f' }} />
-            <span className="gh-legend-cell" style={{ background: '#239a3b' }} />
-            <span className="gh-legend-cell" style={{ background: '#196127' }} />
+            <span className="gh-legend-cell" style={{ background: '#101820' }} />
+            <span className="gh-legend-cell" style={{ background: '#123d1d' }} />
+            <span className="gh-legend-cell" style={{ background: '#197b2c' }} />
+            <span className="gh-legend-cell" style={{ background: '#24bd39' }} />
+            <span className="gh-legend-cell" style={{ background: '#39ff14' }} />
             <span>More</span>
           </div>
         </div>
@@ -137,7 +191,7 @@ export default function GitHubStats() {
 
       {repos.length > 0 && (
         <div className="gh-repos reveal">
-          <div className="gh-repos-label">⭐ Top Repositories</div>
+          <div className="gh-repos-label">⚡ Latest Repositories</div>
           <div className="gh-repos-grid">
             {repos.map(r => (
               <a key={r.id} href={r.html_url} target="_blank" rel="noreferrer" className="gh-repo-card spotlight" {...spot}>

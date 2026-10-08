@@ -188,7 +188,7 @@ app.post('/api/contact', async (req, res) => {
       message: message.trim(),
       source: source === 'ai-chat' ? 'ai-chat' : 'contact-form',
     })
-    notifyNewMessage(saved)
+    notifyNewMessage(saved).then((emailStatus) => Message.updateOne({ _id: saved._id }, { emailStatus })).catch(() => {})
     res.status(201).json({ success: true, message: 'Message saved successfully.' })
   } catch (err) {
     console.error('Save error:', err)

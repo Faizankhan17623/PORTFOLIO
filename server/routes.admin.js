@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const Message = require('./models/Message')
+const { sendTestEmail, emailProvider } = require('./lib/mailer')
 const { issueToken, requireAdmin, safeEqual, isLocked, recordFailure } = require('./lib/adminAuth')
 
 const router = express.Router()
@@ -14,6 +15,15 @@ router.post('/login', (req, res) => {
     return res.status(401).json({ error: 'Incorrect password.' })
   }
   res.json({ token: issueToken() })
+})
+
+router.post('/email-test', requireAdmin, async (_req, res) => {
+  try {
+    const via = await sendTestEmail()
+    res.json({ ok: true, provider: via })
+  } catch (err) {
+    res.status(500).json({ ok: false, provider: emailProvider(), error: err.message })
+  }
 })
 
 router.get('/messages', requireAdmin, async (_req, res) => {

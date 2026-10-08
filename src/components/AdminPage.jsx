@@ -55,6 +55,7 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [confirmId, setConfirmId] = useState(null)
+  const [emailTest, setEmailTest] = useState({ busy: false, text: '', ok: true })
 
   const logout = useCallback(() => {
     saveToken('')
@@ -114,6 +115,16 @@ export default function AdminPage() {
     } catch (err) { setError(err.message) }
   }
 
+  const testEmail = async () => {
+    setEmailTest({ busy: true, text: '', ok: true })
+    try {
+      const data = await api('/email-test', { method: 'POST' })
+      setEmailTest({ busy: false, ok: true, text: `Test email sent via ${data.provider}. Check your inbox (and spam).` })
+    } catch (err) {
+      setEmailTest({ busy: false, ok: false, text: err.message })
+    }
+  }
+
   const unread = messages.filter((m) => !m.read).length
   const visible = useMemo(() => messages.filter((m) => {
     if (filter === 'unread') return !m.read
@@ -136,6 +147,7 @@ export default function AdminPage() {
         <div className="admin-top">
           <h1>Messages {unread > 0 && <small>{unread} new</small>}</h1>
           <div className="admin-actions">
+            <button className="admin-btn" onClick={testEmail} disabled={emailTest.busy}>{emailTest.busy ? 'Sending…' : 'Send test email'}</button>
             <button className="admin-btn" onClick={load} disabled={loading}>{loading ? 'Loading…' : 'Refresh'}</button>
             <a className="admin-btn" href="#">View site</a>
             <button className="admin-btn" onClick={logout}>Sign out</button>
@@ -149,6 +161,7 @@ export default function AdminPage() {
         </div>
 
         {error && <div className="admin-error" style={{ marginBottom: 12 }}>{error}</div>}
+        {emailTest.text && <div className={emailTest.ok ? 'admin-ok' : 'admin-error'} style={{ marginBottom: 12 }}>{emailTest.text}</div>}
 
         <div className="admin-list">
           {visible.length === 0 && !loading && <div className="admin-empty">No messages here yet.</div>}
@@ -164,6 +177,7 @@ export default function AdminPage() {
               </div>
               <div className="admin-msg-meta">{m.email}</div>
               <p>{m.message}</p>
+              {m.emailStatus && <div className={`admin-email-status${m.emailStatus.startsWith('failed') ? ' bad' : ''}`}>Email to you: {m.emailStatus}</div>}
               <div className="admin-msg-actions">
                 <a className="admin-btn primary" href={`mailto:${m.email}?subject=${encodeURIComponent('Re: your message on my portfolio')}`}>Reply</a>
                 <button className="admin-btn" onClick={() => toggleRead(m)}>{m.read ? 'Mark unread' : 'Mark read'}</button>

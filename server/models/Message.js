@@ -8,6 +8,7 @@ const messageSchema = new mongoose.Schema(
     message: { type: String, required: true, trim: true, maxlength: 2000 },
     source:  { type: String, enum: ['contact-form', 'ai-chat'], default: 'contact-form' },
     read:    { type: Boolean, default: false },
+    emailStatus: { type: String, default: '' },
   },
   { timestamps: true }
 )

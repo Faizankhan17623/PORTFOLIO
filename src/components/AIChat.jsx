@@ -82,6 +82,18 @@ function LeadForm({ onDone }) {
   )
 }
 
+const CHAT_KEY = 'portfolio_ai_chat'
+const GREETING = { from: 'ai', text: "Hey 👋 I'm Faizan's AI assistant. Ask me anything about him — his stack, projects, availability." }
+
+// Keep the conversation for this browser tab only, so closing the chat or refreshing doesn't wipe it.
+function loadMessages() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(CHAT_KEY))
+    if (Array.isArray(saved) && saved.length) return saved
+  } catch { /* ignore corrupt or unavailable storage */ }
+  return [GREETING]
+}
+
 function TypingDots() {
   return (
     <div className="ai-typing">
@@ -92,16 +104,23 @@ function TypingDots() {
 
 export default function AIChat() {
   const [open, setOpen] = useState(false)
-  const [messages, setMessages] = useState([
-    { from: 'ai', text: "Hey 👋 I'm Faizan's AI assistant. Ask me anything about him — his stack, projects, availability." },
-  ])
+  const [messages, setMessages] = useState(loadMessages)
   const [input, setInput] = useState('')
   const [typing, setTyping] = useState(false)
   const scrollRef = useRef(null)
 
   useEffect(() => {
+    try { sessionStorage.setItem(CHAT_KEY, JSON.stringify(messages)) } catch { /* storage unavailable */ }
+  }, [messages])
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [messages, typing])
+
+  // The panel unmounts when closed, so jump to the latest message when it opens again.
+  useEffect(() => {
+    if (open) scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight })
+  }, [open])
 
   const send = (text) => {
     const msg = (text ?? input).trim()
@@ -167,7 +186,7 @@ export default function AIChat() {
               <button className="ai-chat-close" onClick={() => setOpen(false)} aria-label="Close">×</button>
             </div>
 
-            <div className="ai-chat-body" ref={scrollRef}>
+            <div className="ai-chat-body" ref={scrollRef} data-lenis-prevent>
               {messages.map((m, i) => (
                 <motion.div
                   key={i}

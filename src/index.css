@@ -1268,8 +1268,8 @@ ul { list-style: none; }
 .ai-status-dot { width: 6px; height: 6px; background: var(--neon-green); border-radius: 0; box-shadow: 0 0 6px rgb(from var(--neon-green) r g b / 0.7); }
 .ai-chat-close { background: transparent; border: none; color: var(--text2); font-size: 1.4rem; cursor: none !important; width: 30px; height: 30px; border-radius: 0; transition: all 0.2s; }
 .ai-chat-close:hover { color: var(--neon-pink); }
-.ai-chat-body { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-.ai-chat-body::-webkit-scrollbar { width: 2px; }
+.ai-chat-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.ai-chat-body::-webkit-scrollbar { width: 6px; }
 .ai-chat-body::-webkit-scrollbar-thumb { background: var(--border-sharp); }
 .ai-msg { display: flex; gap: 10px; max-width: 88%; }
 .ai-msg-ai { align-self: flex-start; }

@@ -22,7 +22,7 @@ const COMMANDS = {
       { t: 'row', k: 'projects', v: 'My projects' },
       { t: 'row', k: 'contact', v: 'Get in touch' },
       { t: 'row', k: 'hire-me', v: 'Why you should hire me' },
-      { t: 'row', k: 'resume', v: 'Open / download resume' },
+      { t: 'row', k: 'resume', v: 'View résumé snapshot' },
       { t: 'row', k: 'joke', v: 'A dev joke' },
       { t: 'row', k: 'coffee', v: 'Buy me a coffee' },
       { t: 'row', k: 'matrix', v: 'Enter the Matrix' },
@@ -44,14 +44,14 @@ const COMMANDS = {
       { t: 'ascii', v: ASCII_LOGO },
       { t: 'gap' },
       { t: 'hl', v: 'Faizan Khan' },
-      { t: 'cm', v: 'Full Stack Developer · MERN Stack · Open to Work' },
+      { t: 'cm', v: 'Full-stack Developer · MERN · Available Immediately' },
       { t: 'gap' },
-      { t: 'dim', v: 'I build fast, beautiful, production-ready web apps.' },
-      { t: 'dim', v: 'React on the front, Node.js & MongoDB on the back.' },
+      { t: 'dim', v: 'I design, build, and deploy production-grade web applications.' },
+      { t: 'dim', v: 'Currently expanding into AI-integrated products with LLM features.' },
       { t: 'gap' },
       { t: 'row', k: 'Email', v: 'faizankhan901152@gmail.com' },
-      { t: 'row', k: 'Location', v: 'India' },
-      { t: 'row', k: 'Status', v: '● Open to opportunities', c: 'green' },
+      { t: 'row', k: 'Location', v: 'Pune, Maharashtra, India' },
+      { t: 'row', k: 'Status', v: '● Available immediately', c: 'green' },
     ],
   }),
 
@@ -59,17 +59,20 @@ const COMMANDS = {
     output: [
       { t: 'hl', v: '$ Tech Stack' },
       { t: 'gap' },
-      { t: 'cat', v: 'Frontend' },
-      { t: 'tags', v: ['React', 'JavaScript (ES6+)', 'HTML5', 'CSS3', 'Tailwind CSS'] },
+      { t: 'cat', v: 'Languages' },
+      { t: 'tags', v: ['JavaScript', 'Python'] },
+      { t: 'gap' },
+      { t: 'cat', v: 'Frontend & Styling' },
+      { t: 'tags', v: ['React.js', 'HTML', 'CSS', 'Tailwind CSS', 'Bootstrap'] },
       { t: 'gap' },
       { t: 'cat', v: 'Backend' },
-      { t: 'tags', v: ['Node.js', 'Express.js', 'MongoDB', 'REST APIs', 'JWT Auth'] },
+      { t: 'tags', v: ['Node.js', 'Express.js', 'MongoDB', 'SQL'] },
       { t: 'gap' },
-      { t: 'cat', v: 'Tools & DevOps' },
-      { t: 'tags', v: ['Git', 'GitHub', 'Docker', 'Postman', 'Cloudinary', 'CI/CD'] },
+      { t: 'cat', v: 'Testing & Delivery' },
+      { t: 'tags', v: ['Postman', 'Selenium', 'Git', 'GitHub', 'Docker', 'GitHub Actions', 'Vercel', 'Render', 'AWS'] },
       { t: 'gap' },
-      { t: 'cat', v: 'AI / ML' },
-      { t: 'tags', v: ['Prompt Engineering', 'OpenAI API', 'MCP', 'Computer Vision'] },
+      { t: 'cat', v: 'Current AI Focus' },
+      { t: 'tags', v: ['LLM integrations', 'AI applications', 'AI/ML fundamentals'] },
     ],
   }),
 
@@ -77,6 +80,8 @@ const COMMANDS = {
     output: [
       { t: 'hl', v: '$ Projects' },
       { t: 'gap' },
+      { t: 'proj', emoji: '📄', title: 'Resumify', desc: 'ATS-aware résumé builder and career platform', live: 'https://ai-resume-enhancer-v2.vercel.app', gh: 'https://github.com/Faizankhan17623/AI-Resume-Enhancer-v2' },
+      { t: 'proj', emoji: '🧠', title: 'Notewise', desc: 'AI study companion for grounded learning', live: 'https://ai-notes-summarizer-phi.vercel.app', gh: 'https://github.com/Faizankhan17623/Ai-Notes-Summarizer' },
       { t: 'proj', emoji: '🎬', title: 'Cine Circuit', desc: 'Full-stack movie ticketing platform', live: 'https://mw-bay.vercel.app/' },
       { t: 'proj', emoji: '📚', title: 'StudyNotion', desc: 'EdTech platform with course marketplace', live: 'https://study-notion-project-phi.vercel.app/' },
       { t: 'proj', emoji: '📡', title: 'ByteFeed', desc: 'Real-time blog aggregator for 22+ dev blogs', live: 'https://www.bytefeed.store/', gh: 'https://github.com/Faizankhan17623/ByteFeed' },
@@ -92,8 +97,10 @@ const COMMANDS = {
       { t: 'hl', v: '$ Contact' },
       { t: 'gap' },
       { t: 'row', k: 'Email', v: 'faizankhan901152@gmail.com' },
+      { t: 'row', k: 'Phone', v: '+91 90115 75978' },
       { t: 'row', k: 'GitHub', v: 'github.com/Faizankhan17623' },
       { t: 'row', k: 'LinkedIn', v: 'linkedin.com/in/faizankhan-fullstack' },
+      { t: 'row', k: 'LeetCode', v: 'leetcode.com/u/MADMAN9656/' },
       { t: 'gap' },
       { t: 'dim', v: "Best way to reach me: shoot me an email or scroll to Contact section." },
     ],
@@ -103,13 +110,13 @@ const COMMANDS = {
     output: [
       { t: 'hl', v: '$ Why hire Faizan?' },
       { t: 'gap' },
-      { t: 'cm', v: '✓ Ships fast — full-stack apps in weeks, not months' },
-      { t: 'cm', v: '✓ End-to-end ownership — design → code → deploy' },
-      { t: 'cm', v: '✓ Real payments (Razorpay), real auth (JWT), real users' },
-      { t: 'cm', v: '✓ Clean code, clear communication, zero ego' },
-      { t: 'cm', v: '✓ Available immediately — remote, contract, full-time' },
+      { t: 'cm', v: '✓ End-to-end product delivery — architecture to deployment' },
+      { t: 'cm', v: '✓ Production-grade full-stack application experience' },
+      { t: 'cm', v: '✓ Career technology and AI-powered study products' },
+      { t: 'cm', v: '✓ Problem solving, debugging, and collaboration' },
+      { t: 'cm', v: '✓ Available immediately — Pune, India' },
       { t: 'gap' },
-      { t: 'row', k: 'Status', v: '● Open to work — let\'s talk', c: 'green' },
+      { t: 'row', k: 'Status', v: '● Available immediately — let\'s talk', c: 'green' },
       { t: 'row', k: 'Email', v: 'faizankhan901152@gmail.com' },
     ],
   }),
@@ -118,8 +125,8 @@ const COMMANDS = {
     output: [
       { t: 'hl', v: '$ Resume' },
       { t: 'gap' },
-      { t: 'cm', v: 'Fetching latest resume… ✓' },
-      { t: 'dim', v: 'Email faizankhan901152@gmail.com to request the PDF, or check the Contact section.' },
+      { t: 'cm', v: 'Résumé snapshot ready. ✓' },
+      { t: 'dim', v: 'Scroll to the Résumé section for selected projects, education, and certifications.' },
     ],
   }),
 
@@ -454,6 +461,18 @@ export default function TerminalOverlay({ open, onClose }) {
     if (!fn) sfx.error()
     if (fn) {
       const result = fn()
+      if (cmd === 'projects') {
+        const removedProjects = /razorpay clone|weather( predictor| app)?|calculator|second brain|gta clone|neon blaster|personal[- ]?gpt|eye blink|finger counter/i
+        const repoLinks = {
+          'Cine Circuit': 'https://github.com/Faizankhan17623/Cine-Circuit',
+          StudyNotion: 'https://github.com/Faizankhan17623/StudyNotionProject',
+        }
+        result.output = result.output
+          .filter((line) => !removedProjects.test(line.title ?? ''))
+          .map((line) => line.t === 'proj' && repoLinks[line.title] && !line.gh
+            ? { ...line, gh: repoLinks[line.title] }
+            : line)
+      }
       if (result.matrix) {
         unlock('matrix_mode')
         setMatrixOn(true)

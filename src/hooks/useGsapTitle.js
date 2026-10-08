@@ -19,9 +19,6 @@ export function useGsapTitle(opts = {}) {
     const el = ref.current
     if (!el) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-    if (el.dataset.titleRevealed) return
-    el.dataset.titleRevealed = '1'
-
     // Wrap each top-level child (and bare text nodes) in an inline-block span so
     // we can animate them without disturbing inline highlight (.hl) styling.
     const pieces = []
@@ -64,6 +61,7 @@ export function useGsapTitle(opts = {}) {
     return () => {
       tween.scrollTrigger && tween.scrollTrigger.kill()
       tween.kill()
+      gsap.set(pieces, { clearProps: 'opacity,visibility,transform' })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [start, stagger, ...deps])

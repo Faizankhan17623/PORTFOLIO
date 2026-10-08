@@ -94,7 +94,7 @@ export default function GitHubStats() {
           <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.56 0-.28-.01-1.02-.02-2-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.27-1.68-1.27-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.75 1.18 1.75 1.18 1.02 1.75 2.68 1.24 3.33.95.1-.74.4-1.24.73-1.53-2.55-.29-5.24-1.28-5.24-5.7 0-1.26.45-2.29 1.19-3.1-.12-.29-.51-1.47.11-3.06 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.78 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.77.11 3.06.74.81 1.19 1.84 1.19 3.1 0 4.43-2.7 5.4-5.26 5.69.41.36.78 1.05.78 2.13 0 1.54-.01 2.78-.01 3.16 0 .31.21.68.8.56 4.56-1.52 7.85-5.83 7.85-10.91C23.5 5.65 18.35.5 12 .5z" />
           </svg>
-          LIVE FROM GITHUB
+          05 / LIVE FROM GITHUB
         </span>
         <h2 className="gh-title" ref={titleRef}>
           Code I'm <span className="gradient">shipping</span> right now
@@ -119,7 +119,7 @@ export default function GitHubStats() {
           <div className="gh-chart-inner">
             <GitHubCalendar
               username={GH_USER}
-              colorScheme="dark"
+              colorScheme="light"
               blockSize={24}
               blockMargin={4}
               fontSize={13}
@@ -142,11 +142,11 @@ export default function GitHubStats() {
                   }
                 },
                 className: 'gh-activity-block',
-                stroke: selectedActivity?.date === activity.date ? '#f5ff00' : undefined,
+                stroke: selectedActivity?.date === activity.date ? '#e97558' : undefined,
                 strokeWidth: selectedActivity?.date === activity.date ? 2 : undefined,
               })}
               theme={{
-                dark: ['#101820', '#123d1d', '#197b2c', '#24bd39', '#39ff14'],
+                  light: ['#eff0e8', '#dce7c5', '#b8d394', '#8dae67', '#53784b'],
               }}
             />
           </div>
@@ -179,11 +179,11 @@ export default function GitHubStats() {
           )}
           <div className="gh-chart-legend">
             <span>Less</span>
-            <span className="gh-legend-cell" style={{ background: '#101820' }} />
-            <span className="gh-legend-cell" style={{ background: '#123d1d' }} />
-            <span className="gh-legend-cell" style={{ background: '#197b2c' }} />
-            <span className="gh-legend-cell" style={{ background: '#24bd39' }} />
-            <span className="gh-legend-cell" style={{ background: '#39ff14' }} />
+            <span className="gh-legend-cell" style={{ background: '#eff0e8' }} />
+            <span className="gh-legend-cell" style={{ background: '#dce7c5' }} />
+            <span className="gh-legend-cell" style={{ background: '#b8d394' }} />
+            <span className="gh-legend-cell" style={{ background: '#8dae67' }} />
+            <span className="gh-legend-cell" style={{ background: '#53784b' }} />
             <span>More</span>
           </div>
         </div>

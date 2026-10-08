@@ -13,17 +13,17 @@ const QUICK_ASKS = [
 
 const RESPONSES = {
   'who are you?':
-    "I'm Faizan Khan — a Full Stack Developer specializing in the MERN stack. I build production-ready web apps end-to-end, from pixel-perfect React frontends to scalable Node.js backends.",
+    "I'm Faizan Khan, a full-stack developer based in Pune. I design, build, and deploy production-grade web applications across the MERN stack, and I'm currently expanding into AI-integrated products with LLM features.",
   'what is your tech stack?':
-    "Frontend: React, JavaScript (ES6+), Tailwind, Framer Motion.\nBackend: Node.js, Express, MongoDB, REST APIs, JWT.\nTools: Git, Docker, Postman, Cloudinary, Razorpay, CI/CD.\nAI: Claude API, OpenAI API, Prompt Engineering, MCP.",
+    "Languages: JavaScript and Python.\nFrontend: React.js, HTML, CSS, Tailwind CSS, and Bootstrap.\nBackend and data: Node.js, Express.js, MongoDB, and SQL.\nTesting and delivery: Postman, Selenium, Git, GitHub, Docker, GitHub Actions, Vercel, Render, and AWS.\nCurrent focus: LLM integrations and AI/ML fundamentals.",
   'best project?':
-    "Cine Circuit — a full-stack movie ticketing platform with four role-based dashboards (Admin, Theatre, Organizer, User), Razorpay payments, JWT auth, and real-time seat booking. It's live at mw-bay.vercel.app",
+    "Resumify is a full-stack career platform with an ATS-aware résumé scan, an 11-template builder with PDF and DOCX export, recruiter workflows, and AI candidate-fit scoring. You can try it at ai-resume-enhancer-v2.vercel.app. I also built Notewise, an AI study companion for grounded notes, flashcards, quizzes, and chat.",
   'are you available for hire?':
-    "Yes! I'm actively open to full-time, contract, and freelance opportunities. Remote-friendly, India-based. Let's build something great together.",
+    "I'm available immediately and based in Pune, Maharashtra, India. Email me at faizankhan901152@gmail.com or call +91 90115 75978.",
   'how can i contact you?':
-    "📧 faizankhan901152@gmail.com\n🔗 linkedin.com/in/faizankhan-fullstack\n💻 github.com/Faizankhan17623\n\nFastest reply: drop an email — I respond within 24 hours.",
+    "Email: faizankhan901152@gmail.com\nPhone: +91 90115 75978\nLinkedIn: linkedin.com/in/faizankhan-fullstack\nGitHub: github.com/Faizankhan17623\nLeetCode: leetcode.com/u/MADMAN9656/",
   'why should i hire you?':
-    "I ship. I've built and deployed multiple full-stack apps with real payment integrations (Razorpay), real auth (JWT + OTP), and real users. I learn fast, communicate clearly, and care about clean code AND great UX. Plus — I'm hungry.",
+    "I take ownership across the full product cycle: design, implementation, deployment, debugging, and ongoing improvement. Resumify and Notewise show how I work through complex product flows, and I bring a strong problem-solving mindset, adaptability, and a habit of continuous learning.",
 }
 
 function getResponse(q) {
@@ -38,7 +38,7 @@ function getResponse(q) {
   if (key.includes('contact') || key.includes('email') || key.includes('reach')) return RESPONSES['how can i contact you?']
   if (key.includes('skill') || key.includes('stack') || key.includes('tech')) return RESPONSES['what is your tech stack?']
   if (key.includes('project') || key.includes('work') || key.includes('build')) return RESPONSES['best project?']
-  return "Great question! For anything I haven't covered here, just email me at faizankhan901152@gmail.com — I'd love to chat directly. Or try one of the quick questions below 👇"
+  return "For anything I haven't covered, email me at faizankhan901152@gmail.com. You can also explore my projects and résumé on this portfolio."
 }
 
 function TypingDots() {

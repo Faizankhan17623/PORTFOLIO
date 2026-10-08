@@ -1,16 +1,36 @@
 export const defaultSkills = {
-  frontend: ['HTML5', 'JavaScript (ES6+)', 'React'],
-  styling: ['CSS3', 'Tailwind CSS'],
-  libraries: ['Bootstrap', 'GSAP'],
+  languages: ['JavaScript', 'Python'],
+  frontend: ['React.js', 'HTML', 'CSS'],
+  styling: ['Tailwind CSS', 'Bootstrap'],
   backend: ['Node.js', 'Express.js'],
-  apis: ['REST API', 'FastAPI (Learning)'],
-  database: ['MongoDB', 'MySQL'],
-  tools: ['Git', 'GitHub', 'Postman', 'Docker'],
-  ai: ['Prompt Engineering', 'Generative AI', 'RAG', 'MCP'],
-  deployment: ['CI/CD', 'Vercel', 'AWS S3', 'Render'],
+  databases: ['MongoDB', 'SQL'],
+  testing: ['Postman', 'Selenium'],
+  deployment: ['Vercel', 'Render', 'AWS'],
+  devops: ['Git', 'GitHub', 'Docker', 'CI/CD (GitHub Actions)'],
+  ai: ['LLM integrations', 'AI-integrated apps', 'AI/ML fundamentals'],
 }
 
 export const defaultProjects = [
+  {
+    id: 14,
+    title: 'Resumify',
+    description:
+      'Full-stack career platform for job seekers, recruiters, and administrators. Combines an ATS-aware résumé scan and 11-template builder with PDF/DOCX export, recruiter workflows, candidate fit scoring, screening, and admin tools.',
+    tags: ['Career platform', 'ATS résumé scan', 'PDF + DOCX', 'AI fit scoring'],
+    category: 'Full-Stack',
+    github: 'https://github.com/Faizankhan17623/AI-Resume-Enhancer-v2',
+    live: 'https://ai-resume-enhancer-v2.vercel.app',
+  },
+  {
+    id: 15,
+    title: 'Notewise',
+    description:
+      'AI study companion that turns notes into grounded summaries, flashcards, quizzes, and chat. Supports PDF, DOCX, audio, and web inputs, source-page citations, subscription plans, spaced repetition, and collaborative study rooms.',
+    tags: ['AI study companion', 'Document ingestion', 'Adaptive learning', 'Study rooms'],
+    category: 'AI / CV',
+    github: 'https://github.com/Faizankhan17623/Ai-Notes-Summarizer',
+    live: 'https://ai-notes-summarizer-phi.vercel.app',
+  },
   {
     id: 13,
     title: 'Scout',
@@ -41,7 +61,7 @@ export const defaultProjects = [
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Razorpay', 'JWT'],
     category: 'Full-Stack',
     emoji: '🎬',
-    github: '',
+    github: 'https://github.com/Faizankhan17623/Cine-Circuit',
     live: 'https://mw-bay.vercel.app/',
   },
   {
@@ -52,7 +72,7 @@ export const defaultProjects = [
     tags: ['React', 'Node.js', 'MongoDB', 'Express', 'Razorpay', 'Cloudinary'],
     category: 'Full-Stack',
     emoji: '📚',
-    github: '',
+    github: 'https://github.com/Faizankhan17623/StudyNotionProject',
     live: 'https://study-notion-project-phi.vercel.app/',
   },
   {
@@ -143,4 +163,4 @@ export const defaultProjects = [
     github: 'https://github.com/Faizankhan17623/Neon-Blaster',
     live: 'https://faizankhan17623.github.io/Neon-Blaster/',
   },
-]
+].filter(({ title }) => ['Resumify', 'Notewise', 'Scout', 'Cine Circuit', 'StudyNotion', 'ByteFeed'].includes(title))

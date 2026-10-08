@@ -27,7 +27,7 @@ export default function Footer() {
         <NowPlaying />
 
         <p className="footer-copy footer-reveal">
-          Built with React &amp; Framer Motion · {new Date().getFullYear()} Faizan Khan
+          © {new Date().getFullYear()} Faizan Khan · Built with care
         </p>
 
         <VisitorCounter />

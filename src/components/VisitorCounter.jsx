@@ -13,6 +13,10 @@ function getVisitorId() {
   return id
 }
 
+function getTimezone() {
+  try { return Intl.DateTimeFormat().resolvedOptions().timeZone || '' } catch { return '' }
+}
+
 export default function VisitorCounter() {
   const [stats, setStats] = useState({ total: null, online: null })
   const revealRef = useGsapReveal('.reveal', { deps: [stats.total] })
@@ -29,7 +33,7 @@ export default function VisitorCounter() {
         const res = await fetch(`${API_URL}${endpoint}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id }),
+          body: JSON.stringify({ id, timezone: getTimezone() }),
         })
         const data = await res.json()
         sessionStorage.setItem('visitCounted', '1')

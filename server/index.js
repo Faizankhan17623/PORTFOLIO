@@ -2,9 +2,12 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const helmet = require('helmet')
+const rateLimit = require('express-rate-limit')
 const Message = require('./models/Message')
 const Counter = require('./models/Counter')
 const { notifyNewMessage } = require('./lib/mailer')
+const { recordVisit } = require('./lib/visitors')
 const adminRoutes = require('./routes.admin')
 
 const app = express()
@@ -12,27 +15,34 @@ const PORT = process.env.PORT || 5000
 app.set('trust proxy', 1)
 
 // ── Middleware ──────────────────────────────────────────
+app.disable('x-powered-by')
+app.use(helmet())
+
+// Exact origins only. A wildcard like portfolio-*.vercel.app would let anyone's Vercel project in.
 const ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:5174',
   'https://portfolio-pied-eight-2csy0b9zua.vercel.app',
   process.env.FRONTEND_URL,
-]
+].filter(Boolean)
 
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true)
-    if (
-      ALLOWED_ORIGINS.filter(Boolean).includes(origin) ||
-      /https:\/\/portfolio-.*\.vercel\.app$/.test(origin)
-    ) {
-      return callback(null, true)
-    }
-    callback(new Error('Not allowed by CORS'))
-  },
+  origin: (origin, callback) => callback(null, !origin || ALLOWED_ORIGINS.includes(origin)),
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
 }))
-app.use(express.json({ limit: '20kb' }))
+app.use(express.json({ limit: '10kb' }))
+
+const limiter = (windowMs, limit, error, extra = {}) => rateLimit({
+  windowMs,
+  limit,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { error },
+  ...extra,
+})
+
+// Blanket cap per IP, with tighter caps on the routes that write data.
+app.use(limiter(15 * 60 * 1000, 600, 'Too many requests. Please slow down.'))
 
 // ── DB ──────────────────────────────────────────────────
 mongoose
@@ -47,6 +57,13 @@ app.get('/', (_req, res) => res.json({ status: 'Portfolio API running' }))
 // In-memory "online now" set keyed by a heartbeat timestamp.
 const online = new Map() // id -> last-seen ms
 const ONLINE_TTL = 60 * 1000 // a visitor is "online" for 60s after last ping
+const ONLINE_MAX = 5000 // hard cap so a flood of fake ids can't exhaust memory
+
+function markOnline(id) {
+  if (typeof id !== 'string' || !id || id.length > 64) return
+  if (!online.has(id) && online.size >= ONLINE_MAX) return
+  online.set(id, Date.now())
+}
 
 function pruneOnline() {
   const now = Date.now()
@@ -56,11 +73,11 @@ function pruneOnline() {
 }
 
 // Increment total visits + register this visitor as online.
-app.post('/api/visit', async (req, res) => {
+app.post('/api/visit', limiter(15 * 60 * 1000, 30, 'Too many requests.'), async (req, res) => {
   try {
-    const { id } = req.body || {}
-    if (id) online.set(String(id), Date.now())
+    markOnline(req.body?.id)
     pruneOnline()
+    await recordVisit(req)
 
     const doc = await Counter.findOneAndUpdate(
       { key: 'visits' },
@@ -75,9 +92,8 @@ app.post('/api/visit', async (req, res) => {
 })
 
 // Lightweight heartbeat — keeps a visitor "online" without inflating the total.
-app.post('/api/heartbeat', (req, res) => {
-  const { id } = req.body || {}
-  if (id) online.set(String(id), Date.now())
+app.post('/api/heartbeat', limiter(15 * 60 * 1000, 120, 'Too many requests.'), (req, res) => {
+  markOnline(req.body?.id)
   pruneOnline()
   res.json({ online: online.size })
 })
@@ -149,35 +165,23 @@ app.get('/api/now-playing', async (_req, res) => {
   }
 })
 
-// Per-IP throttle so the public form can't be used to flood the inbox.
-const sendLog = new Map()
-const SEND_WINDOW_MS = 60 * 60 * 1000
-const SEND_MAX = 5
-function tooManyMessages(ip) {
-  const now = Date.now()
-  const recent = (sendLog.get(ip) || []).filter((t) => now - t < SEND_WINDOW_MS)
-  if (recent.length >= SEND_MAX) { sendLog.set(ip, recent); return true }
-  recent.push(now)
-  sendLog.set(ip, recent)
-  return false
-}
-
 app.use('/api/admin', adminRoutes)
 
-app.post('/api/contact', async (req, res) => {
+const contactLimit = limiter(60 * 60 * 1000, 5, 'Too many messages. Please try again later.', { skipFailedRequests: true })
+
+app.post('/api/contact', contactLimit, async (req, res) => {
   const { name, email, message, company, source } = req.body || {}
 
-  if (!name?.trim() || !email?.trim() || !message?.trim()) {
+  if ([name, email, message].some((v) => typeof v !== 'string' || !v.trim())) {
     return res.status(400).json({ error: 'All fields are required.' })
+  }
+  if (name.trim().length > 100 || email.trim().length > 200 || message.trim().length > 2000 || (typeof company === 'string' && company.trim().length > 120)) {
+    return res.status(400).json({ error: 'One of the fields is too long.' })
   }
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-  if (!emailRegex.test(email)) {
+  if (!emailRegex.test(email.trim())) {
     return res.status(400).json({ error: 'Invalid email address.' })
-  }
-
-  if (tooManyMessages(req.ip)) {
-    return res.status(429).json({ error: 'Too many messages. Please try again later.' })
   }
 
   try {
@@ -194,6 +198,16 @@ app.post('/api/contact', async (req, res) => {
     console.error('Save error:', err)
     res.status(500).json({ error: 'Server error. Please try again.' })
   }
+})
+
+app.use((_req, res) => res.status(404).json({ error: 'Not found.' }))
+
+// Last resort: never leak stack traces or internals to the client.
+app.use((err, _req, res, _next) => {
+  if (err.type === 'entity.too.large') return res.status(413).json({ error: 'Request too large.' })
+  if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Bad request.' })
+  console.error('Unhandled error:', err.message)
+  res.status(500).json({ error: 'Server error.' })
 })
 
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`))

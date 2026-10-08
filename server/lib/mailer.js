@@ -101,15 +101,4 @@ async function notifyNewMessage(msg) {
   }
 }
 
-// Used by the admin "Send test email" button; throws so the real error is shown.
-async function sendTestEmail() {
-  await deliver(buildEmail({
-    name: 'Test Sender',
-    email: recipient() || 'test@example.com',
-    message: 'This is a test email from your portfolio admin page. If you can read this, notifications work.',
-    source: 'contact-form',
-  }))
-  return provider()
-}
-
-module.exports = { notifyNewMessage, sendTestEmail, emailProvider: provider }
+module.exports = { notifyNewMessage }

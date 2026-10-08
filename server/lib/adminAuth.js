@@ -40,6 +40,12 @@ function recordFailure(ip) {
   else rec.count += 1
 }
 
+// Drop expired lockout records so a flood of different IPs can't grow this map forever.
+setInterval(() => {
+  const now = Date.now()
+  for (const [ip, rec] of failures) if (now - rec.first > WINDOW_MS) failures.delete(ip)
+}, WINDOW_MS).unref()
+
 function requireAdmin(req, res, next) {
   const token = (req.headers.authorization || '').replace(/^Bearer /, '')
   if (!verifyToken(token)) return res.status(401).json({ error: 'Unauthorized' })

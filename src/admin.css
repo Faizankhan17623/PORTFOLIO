@@ -36,6 +36,18 @@
 .admin-page .admin-btn.danger { color: #b3361f; }
 .admin-page .admin-login .admin-btn { width: 100%; }
 
-.admin-ok { color: #2f6b3a; font-size: 0.85rem; }
+.admin-nav { display: flex; gap: 4px; margin-bottom: 18px; border-bottom: 1px solid rgba(29,42,36,0.14); }
+.admin-page .admin-nav button { margin: 0 0 -1px; padding: 9px 16px; border: 0; border-bottom: 2px solid transparent; border-radius: 0; background: transparent; color: #66726b; font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer; text-transform: none; letter-spacing: normal; box-shadow: none; width: auto; }
+.admin-page .admin-nav button.on { color: #18382b; border-bottom-color: #18382b; }
+.admin-table-wrap { overflow-x: auto; border: 1px solid rgba(29,42,36,0.14); border-radius: 14px; background: #fffefa; }
+.admin-table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+.admin-table th { padding: 11px 14px; text-align: left; font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; color: #66726b; border-bottom: 1px solid rgba(29,42,36,0.14); white-space: nowrap; }
+.admin-table td { padding: 11px 14px; border-bottom: 1px solid rgba(29,42,36,0.08); white-space: nowrap; }
+.admin-table tr:last-child td { border-bottom: 0; }
+.admin-table .mono { font-family: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace; font-size: 0.8rem; }
+.admin-count { display: inline-block; min-width: 24px; padding: 1px 9px; border-radius: 999px; background: #d4f27f; color: #18382b; font-weight: 800; font-size: 0.75rem; text-align: center; }
+.admin-pager { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+.admin-pager .admin-actions { align-items: center; }
+.admin-page .admin-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 .admin-email-status { margin: -4px 0 12px; font-size: 0.74rem; color: #66726b; word-break: break-word; }
 .admin-email-status.bad { color: #b3361f; }

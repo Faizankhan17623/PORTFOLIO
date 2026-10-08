@@ -4,18 +4,16 @@ import './index.css'
 import './portfolio.css'
 import './lib/theme'
 import App from './App.jsx'
-import AdminPage from './components/AdminPage.jsx'
 
-// Hidden admin page lives at /#/admin; the password check happens on the server.
-const isAdminRoute = () => window.location.hash.startsWith('#/admin')
+const root = createRoot(document.getElementById('root'))
+const isPrivateRoute = window.location.pathname.replace(/\/+$/, '') === '/admin'
 
-const startedOnAdmin = isAdminRoute()
-window.addEventListener('hashchange', () => {
-  if (isAdminRoute() !== startedOnAdmin) window.location.reload()
-})
-
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    {isAdminRoute() ? <AdminPage /> : <App />}
-  </StrictMode>,
-)
+// The private page is its own chunk, so it is never downloaded by regular visitors.
+if (isPrivateRoute) {
+  import('./components/AdminPage.jsx').then((mod) => {
+    const AdminPage = mod.default
+    root.render(<StrictMode><AdminPage /></StrictMode>)
+  })
+} else {
+  root.render(<StrictMode><App /></StrictMode>)
+}

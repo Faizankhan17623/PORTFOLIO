@@ -37,13 +37,12 @@ function buildEmail(msg) {
     'Message:',
     msg.message,
     '',
-    `Reply to this email to answer ${msg.name} directly.`,
+    'Hit reply to reply directly to that recruiter.',
   ].filter((l) => l !== null).join('\n')
 
   const row = (label, value) => `<tr><td style="padding:4px 14px 4px 0;color:#66726b">${label}</td><td style="padding:4px 0"><b>${value}</b></td></tr>`
   const html = `<div style="font-family:Arial,sans-serif;max-width:560px;color:#1d2a24">
-<h2 style="margin:0 0 4px">New message from a new recruiter</h2>
-<p style="margin:0 0 16px;color:#66726b">via ${via} · ${escapeHtml(when)}</p>
+<h2 style="margin:0 0 16px">New message from a new recruiter</h2>
 <table style="border-collapse:collapse;font-size:14px">
 ${row('Name', escapeHtml(msg.name))}
 ${row('Email', `<a href="mailto:${escapeHtml(msg.email)}">${escapeHtml(msg.email)}</a>`)}
@@ -51,7 +50,7 @@ ${msg.company ? row('Company', escapeHtml(msg.company)) : ''}
 </table>
 <div style="margin:18px 0 6px;color:#66726b;font-size:13px">Message</div>
 <div style="padding:14px 16px;background:#f4f3ec;border-radius:10px;white-space:pre-wrap;font-size:15px;line-height:1.55">${escapeHtml(msg.message)}</div>
-<p style="margin-top:18px;font-size:13px;color:#66726b">Hit reply to answer ${escapeHtml(msg.name)} directly.</p>
+<p style="margin-top:18px;font-size:13px;color:#66726b">Hit reply to reply directly to that recruiter.</p>
 </div>`
 
   return { subject, text, html, replyTo: msg.email, replyName: msg.name.replace(/["<>]/g, '') }

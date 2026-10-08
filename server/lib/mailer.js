@@ -21,12 +21,12 @@ const escapeHtml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', 
 
 function buildEmail(msg) {
   const via = msg.source === 'ai-chat' ? 'AI chat' : 'contact form'
-  const preview = msg.message.replace(/\s+/g, ' ').slice(0, 60)
   const when = new Date(msg.createdAt || Date.now()).toUTCString()
-  const subject = `New message from ${msg.name}: ${preview}${msg.message.length > 60 ? '…' : ''}`
+  // The name is last so Gmail doesn't stack every notification into a single conversation.
+  const subject = `New message from a new recruiter — ${msg.name}`
 
   const text = [
-    'Someone contacted you through your portfolio.',
+    'A new recruiter contacted you through your portfolio.',
     '',
     `Name:    ${msg.name}`,
     `Email:   ${msg.email}`,
@@ -42,7 +42,7 @@ function buildEmail(msg) {
 
   const row = (label, value) => `<tr><td style="padding:4px 14px 4px 0;color:#66726b">${label}</td><td style="padding:4px 0"><b>${value}</b></td></tr>`
   const html = `<div style="font-family:Arial,sans-serif;max-width:560px;color:#1d2a24">
-<h2 style="margin:0 0 4px">New portfolio message</h2>
+<h2 style="margin:0 0 4px">New message from a new recruiter</h2>
 <p style="margin:0 0 16px;color:#66726b">via ${via} · ${escapeHtml(when)}</p>
 <table style="border-collapse:collapse;font-size:14px">
 ${row('Name', escapeHtml(msg.name))}

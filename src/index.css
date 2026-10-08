@@ -1857,3 +1857,13 @@ ul { list-style: none; }
   border-top-color: #000;
   border-bottom: 0;
 }
+
+/* ─── AI chat lead form ──────────────────────────── */
+.ai-lead { display: grid; gap: 8px; margin-top: 12px; }
+.ai-lead input, .ai-lead textarea { width: 100%; padding: 9px 11px; background: rgb(from var(--neon-green) r g b / 0.03); border: 1px solid var(--border-sharp); color: var(--text); font: inherit; font-size: 0.8rem; outline: none; resize: none; }
+.ai-lead input:focus, .ai-lead textarea:focus { border-color: var(--neon-green); }
+.ai-lead button { padding: 9px 12px; background: transparent; border: 1px solid var(--neon-green); color: var(--neon-green); font: inherit; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.04em; cursor: pointer; transition: background 160ms ease; }
+.ai-lead button:hover:not(:disabled) { background: rgb(from var(--neon-green) r g b / 0.1); }
+.ai-lead button:disabled { opacity: 0.6; cursor: wait; }
+.ai-lead-error { color: var(--neon-pink); font-size: 0.74rem; }
+.ai-lead-done { margin-top: 10px; color: var(--neon-green); font-size: 0.82rem; }

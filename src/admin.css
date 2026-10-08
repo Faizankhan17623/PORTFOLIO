@@ -1,0 +1,37 @@
+.admin-page { min-height: 100vh; padding: 28px 20px 60px; background: #f4f3ec; color: #1d2a24; font-family: 'DM Sans', system-ui, sans-serif; }
+.admin-wrap { width: min(100%, 880px); margin: 0 auto; }
+.admin-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+.admin-top h1 { margin: 0; font-size: 1.35rem; letter-spacing: -0.02em; }
+.admin-top h1 small { margin-left: 8px; padding: 2px 9px; border-radius: 999px; background: #d4f27f; color: #18382b; font-size: 0.7rem; font-weight: 800; vertical-align: middle; }
+.admin-actions { display: flex; gap: 8px; }
+.admin-btn { padding: 8px 14px; border: 1px solid rgba(29,42,36,0.25); border-radius: 999px; background: transparent; color: inherit; font: inherit; font-size: 0.8rem; font-weight: 600; cursor: pointer; text-decoration: none; }
+.admin-btn:hover { background: rgba(29,42,36,0.07); }
+.admin-btn.primary { background: #18382b; border-color: #18382b; color: #fffefa; }
+.admin-btn.primary:hover { background: #22503d; }
+.admin-btn.danger { color: #b3361f; border-color: rgba(179,54,31,0.4); }
+.admin-btn.danger:hover { background: rgba(179,54,31,0.08); }
+.admin-login { max-width: 340px; margin: 18vh auto 0; padding: 28px; border: 1px solid rgba(29,42,36,0.15); border-radius: 18px; background: #fffefa; display: grid; gap: 12px; }
+.admin-login h1 { margin: 0 0 4px; font-size: 1.2rem; }
+.admin-login input { padding: 11px 13px; border: 1px solid rgba(29,42,36,0.25); border-radius: 10px; font: inherit; background: #fff; }
+.admin-error { color: #b3361f; font-size: 0.82rem; }
+.admin-filters { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+.admin-filters button { padding: 6px 13px; border: 1px solid rgba(29,42,36,0.2); border-radius: 999px; background: transparent; font: inherit; font-size: 0.78rem; cursor: pointer; }
+.admin-filters button.on { background: #18382b; border-color: #18382b; color: #fffefa; }
+.admin-list { display: grid; gap: 10px; }
+.admin-empty { padding: 40px 0; text-align: center; color: #66726b; }
+.admin-msg { padding: 16px 18px; border: 1px solid rgba(29,42,36,0.14); border-radius: 14px; background: #fffefa; }
+.admin-msg.unread { border-left: 4px solid #6b9c56; }
+.admin-msg-head { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; align-items: baseline; }
+.admin-msg-name { font-weight: 700; }
+.admin-msg-meta { color: #66726b; font-size: 0.78rem; }
+.admin-tag { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: rgba(29,42,36,0.08); font-size: 0.68rem; font-weight: 700; }
+.admin-tag.chat { background: #d4f27f; color: #18382b; }
+.admin-msg p { margin: 10px 0 12px; white-space: pre-wrap; word-break: break-word; line-height: 1.55; font-size: 0.9rem; }
+.admin-msg-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Neutralise the main site's global button/link styles inside the admin page */
+.admin-page .admin-btn, .admin-page .admin-filters button { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: auto; min-height: 0; margin: 0; text-transform: none; letter-spacing: normal; white-space: nowrap; box-shadow: none; line-height: 1.2; }
+.admin-page .admin-btn { padding: 8px 16px; }
+.admin-page .admin-btn.primary { color: #fffefa; }
+.admin-page .admin-btn.danger { color: #b3361f; }
+.admin-page .admin-login .admin-btn { width: 100%; }

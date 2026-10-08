@@ -4,9 +4,12 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const Message = require('./models/Message')
 const Counter = require('./models/Counter')
+const { notifyNewMessage } = require('./lib/mailer')
+const adminRoutes = require('./routes.admin')
 
 const app = express()
 const PORT = process.env.PORT || 5000
+app.set('trust proxy', 1)
 
 // ── Middleware ──────────────────────────────────────────
 const ALLOWED_ORIGINS = [
@@ -27,9 +30,9 @@ app.use(cors({
     }
     callback(new Error('Not allowed by CORS'))
   },
-  methods: ['GET', 'POST', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
 }))
-app.use(express.json())
+app.use(express.json({ limit: '20kb' }))
 
 // ── DB ──────────────────────────────────────────────────
 mongoose
@@ -146,8 +149,23 @@ app.get('/api/now-playing', async (_req, res) => {
   }
 })
 
+// Per-IP throttle so the public form can't be used to flood the inbox.
+const sendLog = new Map()
+const SEND_WINDOW_MS = 60 * 60 * 1000
+const SEND_MAX = 5
+function tooManyMessages(ip) {
+  const now = Date.now()
+  const recent = (sendLog.get(ip) || []).filter((t) => now - t < SEND_WINDOW_MS)
+  if (recent.length >= SEND_MAX) { sendLog.set(ip, recent); return true }
+  recent.push(now)
+  sendLog.set(ip, recent)
+  return false
+}
+
+app.use('/api/admin', adminRoutes)
+
 app.post('/api/contact', async (req, res) => {
-  const { name, email, message } = req.body
+  const { name, email, message, company, source } = req.body || {}
 
   if (!name?.trim() || !email?.trim() || !message?.trim()) {
     return res.status(400).json({ error: 'All fields are required.' })
@@ -158,12 +176,19 @@ app.post('/api/contact', async (req, res) => {
     return res.status(400).json({ error: 'Invalid email address.' })
   }
 
+  if (tooManyMessages(req.ip)) {
+    return res.status(429).json({ error: 'Too many messages. Please try again later.' })
+  }
+
   try {
-    const existing = await Message.findOne({ email: email.trim().toLowerCase() })
-    if (existing) {
-      return res.status(409).json({ error: 'This email has already sent a message. I will get back to you soon!' })
-    }
-    await Message.create({ name: name.trim(), email: email.trim(), message: message.trim() })
+    const saved = await Message.create({
+      name: name.trim(),
+      email: email.trim(),
+      company: typeof company === 'string' ? company.trim() : '',
+      message: message.trim(),
+      source: source === 'ai-chat' ? 'ai-chat' : 'contact-form',
+    })
+    notifyNewMessage(saved)
     res.status(201).json({ success: true, message: 'Message saved successfully.' })
   } catch (err) {
     console.error('Save error:', err)

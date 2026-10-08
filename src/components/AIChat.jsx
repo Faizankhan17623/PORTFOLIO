@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { unlock } from '../lib/achievements'
 import { motion, AnimatePresence } from 'framer-motion'
+import { sendContactMessage } from '../lib/contactApi'
 
 const QUICK_ASKS = [
   'Who are you?',
@@ -9,7 +10,11 @@ const QUICK_ASKS = [
   'Are you available for hire?',
   'How can I contact you?',
   'Why should I hire you?',
+  'Leave my details',
 ]
+
+const LEAD_TRIGGER = /hire|contact|reach|available|job|opportunit/i
+const LEAD_PROMPT = "Want Faizan to get in touch with you? Leave your details below and he'll reply by email."
 
 const RESPONSES = {
   'who are you?':
@@ -41,6 +46,42 @@ function getResponse(q) {
   return "For anything I haven't covered, email me at faizankhan901152@gmail.com. You can also explore my projects and résumé on this portfolio."
 }
 
+function LeadForm({ onDone }) {
+  const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
+  const [status, setStatus] = useState({ sending: false, error: '', sent: false })
+
+  const update = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
+
+  const submit = async (e) => {
+    e.preventDefault()
+    setStatus({ sending: true, error: '', sent: false })
+    try {
+      await sendContactMessage({
+        ...form,
+        message: form.message.trim() || 'Interested in connecting. Please get in touch.',
+        source: 'ai-chat',
+      })
+      setStatus({ sending: false, error: '', sent: true })
+      onDone()
+    } catch (err) {
+      setStatus({ sending: false, error: err.message, sent: false })
+    }
+  }
+
+  if (status.sent) return <div className="ai-lead-done">✓ Thanks {form.name.split(' ')[0]}! Faizan has your details and will email you soon.</div>
+
+  return (
+    <form className="ai-lead" onSubmit={submit}>
+      <input name="name" placeholder="Your name" value={form.name} onChange={update} required maxLength={100} autoComplete="name" />
+      <input name="email" type="email" placeholder="Your email" value={form.email} onChange={update} required maxLength={200} autoComplete="email" />
+      <input name="company" placeholder="Company (optional)" value={form.company} onChange={update} maxLength={120} autoComplete="organization" />
+      <textarea name="message" placeholder="Anything you'd like to share? (optional)" value={form.message} onChange={update} maxLength={2000} rows={2} />
+      {status.error && <div className="ai-lead-error">{status.error}</div>}
+      <button type="submit" disabled={status.sending}>{status.sending ? 'Sending…' : 'Send my details'}</button>
+    </form>
+  )
+}
+
 function TypingDots() {
   return (
     <div className="ai-typing">
@@ -69,9 +110,16 @@ export default function AIChat() {
     setMessages(m => [...m, { from: 'user', text: msg }])
     setInput('')
     setTyping(true)
+    const wantsLead = msg === 'Leave my details'
     setTimeout(() => {
       setTyping(false)
-      setMessages(m => [...m, { from: 'ai', text: getResponse(msg) }])
+      setMessages(m => {
+        if (wantsLead) return [...m, { from: 'ai', text: LEAD_PROMPT, lead: true }]
+        const next = [...m, { from: 'ai', text: getResponse(msg) }]
+        const alreadyOffered = m.some(x => x.lead)
+        if (LEAD_TRIGGER.test(msg) && !alreadyOffered) next.push({ from: 'ai', text: LEAD_PROMPT, lead: true })
+        return next
+      })
     }, 700 + Math.random() * 500)
   }
 
@@ -133,6 +181,7 @@ export default function AIChat() {
                     {m.text.split('\n').map((line, j) => (
                       <span key={j}>{line}{j < m.text.split('\n').length - 1 && <br />}</span>
                     ))}
+                    {m.lead && <LeadForm onDone={() => unlock('ai_whisperer')} />}
                   </div>
                 </motion.div>
               ))}

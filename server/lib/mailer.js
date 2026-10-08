@@ -90,15 +90,43 @@ async function deliver(mail) {
   return provider() === 'resend' ? sendViaResend(mail) : sendViaSmtp(mail)
 }
 
+// The most recent delivery attempt, shown (read-only) on the admin status tab.
+const lastDelivery = { at: null, ok: null, kind: '', detail: '' }
+const recordDelivery = (ok, kind, detail = '') => Object.assign(lastDelivery, { at: new Date(), ok, kind, detail: detail.slice(0, 200) })
+
 // Never throws: resolves to a short status string that is stored on the message.
 async function notifyNewMessage(msg) {
   try {
     await deliver(buildEmail(msg))
+    recordDelivery(true, 'new message')
     return `sent via ${provider()}`
   } catch (err) {
     console.error('Email notify failed:', err.message)
+    recordDelivery(false, 'new message', err.message)
     return `failed: ${err.message}`.slice(0, 300)
   }
 }
 
-module.exports = { notifyNewMessage }
+// Plain notification to the owner (sign-in alerts, server errors). Never throws.
+async function sendAlert(subject, lines) {
+  const row = (line) => (line === '' ? '<br>' : `<div>${escapeHtml(line)}</div>`)
+  try {
+    await deliver({
+      subject,
+      text: lines.join('\n'),
+      html: `<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#1d2a24;max-width:560px">${lines.map(row).join('')}</div>`,
+      replyTo: recipient(),
+      replyName: 'Portfolio',
+    })
+    recordDelivery(true, 'alert')
+    return true
+  } catch (err) {
+    console.error('Alert email failed:', err.message)
+    recordDelivery(false, 'alert', err.message)
+    return false
+  }
+}
+
+const emailStatus = () => ({ provider: provider(), configured: provider() !== 'none' && !!recipient(), last: { ...lastDelivery } })
+
+module.exports = { notifyNewMessage, sendAlert, emailStatus }

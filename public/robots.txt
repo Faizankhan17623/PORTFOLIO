@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://portfolio-pied-eight-2csy0b9zua.vercel.app/sitemap.xml

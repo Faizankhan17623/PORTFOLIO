@@ -39,7 +39,7 @@ const CERTIFICATIONS = [
 
 const STRENGTHS = ['Problem solving', 'Debugging', 'Collaboration', 'Adaptability', 'Continuous learning']
 
-import { RESUME } from '../data/contactInfo'
+import { resumeLink } from '../lib/resumeTrack'
 
 export default function Resume() {
   const revealRef = useGsapReveal('.resume-reveal', { y: 24, stagger: 0.08 })
@@ -48,7 +48,7 @@ export default function Resume() {
     <div className="portfolio-section resume-section" ref={revealRef}>
       <div className="resume-heading resume-reveal">
         <div>
-          <div className="section-kicker"><span>02</span> Resume snapshot</div>
+          <div className="section-kicker">Resume snapshot</div>
           <h2 className="section-title">Selected work,<br /><em>real skills.</em></h2>
         </div>
         <p className="resume-heading-note">
@@ -67,7 +67,7 @@ export default function Resume() {
             <span>LLM integrations</span><span>AI applications</span><span>AI/ML fundamentals</span>
           </div>
           <p className="resume-availability"><span className="availability-dot" /> Available immediately · Pune, India</p>
-          <a className="resume-download" href={RESUME.href} target="_blank" rel="noreferrer">
+          <a className="resume-download" {...resumeLink('resume-section')}>
             View full résumé (PDF) <span aria-hidden="true">↗</span>
           </a>
           <a className="resume-profile-link" href="https://github.com/Faizankhan17623?tab=repositories" target="_blank" rel="noreferrer">
@@ -78,7 +78,6 @@ export default function Resume() {
         <div className="resume-timeline" aria-label="Selected résumé projects">
           {PROJECT_WORK.map((item) => (
             <article className="resume-entry resume-reveal" key={item.number}>
-              <span className="resume-entry-number">{item.number}</span>
               <div className="resume-entry-content">
                 <p className="resume-entry-area">{item.area}</p>
                 <h3>{item.title}</h3>

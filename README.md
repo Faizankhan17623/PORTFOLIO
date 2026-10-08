@@ -87,12 +87,14 @@ The frontend runs on `http://localhost:5173` and the API on `http://localhost:50
 
 | Method | Route | Purpose |
 |--------|-------|---------|
-| GET | `/` | Health check |
+| GET | `/` | Basic status |
+| GET | `/health` | Uptime check for monitors (200 when the database is reachable, 503 otherwise) |
 | POST | `/api/visit` | Increment total visit count, register visitor as online |
 | POST | `/api/heartbeat` | Keep a visitor marked "online" without counting a new visit |
 | GET | `/api/stats` | Read current total/online visitor stats |
 | GET | `/api/now-playing` | Spotify currently-playing track (or `isPlaying: false` if unconfigured) |
 | POST | `/api/contact` | Save a contact-form message (validated, one per email) |
+| POST | `/api/resume-open` | Record a click on a résumé button (never blocks the PDF from opening) |
 
 ## Project Structure
 

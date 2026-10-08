@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useGsapReveal } from '../hooks/useGsapReveal'
+import { isOwnerDevice } from '../lib/owner'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
@@ -13,6 +14,21 @@ function getVisitorId() {
   return id
 }
 
+// Where this visitor came from: a ?ref= tag (use it to label links you send out), a UTM source, or the
+// referring site. Falls back to "direct".
+function getSource() {
+  try {
+    const params = new URLSearchParams(window.location.search)
+    const tag = params.get('ref') || params.get('utm_source')
+    if (tag) return tag
+    if (document.referrer) {
+      const host = new URL(document.referrer).hostname
+      if (host && host !== window.location.hostname) return host
+    }
+  } catch { /* fall through */ }
+  return 'direct'
+}
+
 function getTimezone() {
   try { return Intl.DateTimeFormat().resolvedOptions().timeZone || '' } catch { return '' }
 }
@@ -22,6 +38,14 @@ export default function VisitorCounter() {
   const revealRef = useGsapReveal('.reveal', { deps: [stats.total] })
 
   useEffect(() => {
+    // The owner's own browser only reads the numbers; it never adds to them.
+    if (isOwnerDevice()) {
+      const readStats = () => fetch(`${API_URL}/api/stats`).then((r) => r.json()).then(setStats).catch(() => setStats({ total: null, online: null }))
+      readStats()
+      const poll = setInterval(readStats, 30000)
+      return () => clearInterval(poll)
+    }
+
     const id = getVisitorId()
     let beat
 
@@ -33,7 +57,7 @@ export default function VisitorCounter() {
         const res = await fetch(`${API_URL}${endpoint}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id, timezone: getTimezone() }),
+          body: JSON.stringify({ id, timezone: getTimezone(), source: getSource() }),
         })
         const data = await res.json()
         sessionStorage.setItem('visitCounted', '1')

@@ -7,7 +7,6 @@ function ProjectCard({ project, index }) {
   return (
     <article className={`project-card${index === 0 ? ' is-featured' : ''}`}>
       <div className="project-art" aria-hidden="true">
-        <span className="project-art-index">{String(project.id).padStart(2, '0')}</span>
         <span className="project-art-shape" />
         <span className="project-art-word">{project.category === 'AI / CV' ? 'AI' : project.title.slice(0, 2).toUpperCase()}</span>
         <span className="project-art-caption">FAIZAN KHAN — SELECTED WORK</span>
@@ -16,7 +15,6 @@ function ProjectCard({ project, index }) {
       <div className="project-content">
         <div className="project-meta">
           <span>{project.category || 'Other'}</span>
-          <span>PROJECT {String(index + 1).padStart(2, '0')}</span>
         </div>
         <h3>{project.title}</h3>
         <p className="project-description">{project.description}</p>
@@ -25,12 +23,12 @@ function ProjectCard({ project, index }) {
         </div>
         <div className="project-links">
           {project.live && (
-            <a href={project.live} target="_blank" rel="noreferrer">
+            <a className="project-link-live" href={project.live} target="_blank" rel="noreferrer">
               Live project <span aria-hidden="true">↗</span>
             </a>
           )}
           {project.github && (
-            <a href={project.github} target="_blank" rel="noreferrer">
+            <a className="project-link-source" href={project.github} target="_blank" rel="noreferrer">
               Source code <span aria-hidden="true">↗</span>
             </a>
           )}
@@ -62,7 +60,7 @@ export default function PortfolioProjects({ projects }) {
     <div className="portfolio-section projects-section" ref={revealRef}>
       <div className="section-heading projects-heading projects-reveal">
         <div>
-          <div className="section-kicker"><span>04</span> Selected projects</div>
+          <div className="section-kicker">Selected projects</div>
           <h2 className="section-title">Built to be <em>used.</em></h2>
         </div>
         <p className="section-description">A selection of full-stack platforms and AI-powered products.</p>

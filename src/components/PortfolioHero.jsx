@@ -1,9 +1,32 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
-import { CONTACT, RESUME, SOCIALS } from '../data/contactInfo'
+import { CONTACT, SOCIALS } from '../data/contactInfo'
+import { resumeLink } from '../lib/resumeTrack'
 import { SOCIAL_ICONS } from './SocialIcons'
 
 const ROLES = ['Full-stack developer', 'MERN stack developer', 'AI-integrated products']
+
+// Floating chips around the profile card. --r tilts, --d offsets and --t sets the speed of each bob.
+const NOTES = [
+  { text: 'Full-stack products', tone: 'coral', pos: { top: '9%', left: '-5%' }, r: -5, d: 0, t: 6.2 },
+  { text: 'AI experiments', tone: 'green', pos: { bottom: '26%', right: '-7%' }, r: 4, d: -2.1, t: 7 },
+  { text: 'MERN stack', tone: 'gold', pos: { top: '31%', right: '-9%' }, r: 3, d: -3.4, t: 6.6 },
+  { text: 'LLM integrations', tone: 'green', pos: { bottom: '31%', left: '-10%' }, r: -3, d: -1.2, t: 7.4 },
+  { text: 'Clean, fast UI', tone: 'coral', pos: { top: '1%', right: '9%' }, r: 5, d: -4.2, t: 5.8 },
+  { text: 'Shipped to production', tone: 'gold', pos: { bottom: '-5%', left: '10%' }, r: -4, d: -2.8, t: 6.9 },
+]
+
+// Deterministic scatter so the dots don't jump around between renders.
+const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
+  left: (i * 37 + 11) % 100,
+  top: (i * 53 + 7) % 100,
+  size: 4 + ((i * 5) % 9),
+  delay: -((i * 0.83) % 7),
+  duration: 5 + ((i * 3) % 6),
+  dx: ((i * 7) % 29) - 14,
+  dy: ((i * 11) % 31) - 15,
+  tone: ['coral', 'green', 'gold', 'lime'][i % 4],
+}))
 
 export default function PortfolioHero() {
   const [roleIndex, setRoleIndex] = useState(0)
@@ -60,10 +83,10 @@ export default function PortfolioHero() {
 
           <div className="hero-actions" data-hero-enter>
             <button className="button button-dark" onClick={() => scrollTo('projects')}>
-              Explore my work <span aria-hidden="true">↘</span>
+              Explore My Work
             </button>
-            <a className="button button-text" href={RESUME.href} target="_blank" rel="noreferrer">
-              View résumé <span aria-hidden="true">↗</span>
+            <a className="button button-light" {...resumeLink('hero')}>
+              View Résumé
             </a>
           </div>
 
@@ -90,7 +113,7 @@ export default function PortfolioHero() {
             <div className="hero-profile-card">
               <div className="hero-card-topline">
                 <span>INDEPENDENT BUILDER</span>
-                <span className="hero-card-index">FK / 01</span>
+                <span className="hero-card-index">FK</span>
               </div>
               <div className="hero-monogram-wrap">
                 <div className="hero-monogram-ring" />
@@ -108,8 +131,24 @@ export default function PortfolioHero() {
               </div>
             </div>
           </div>
-          <div className="hero-floating-note hero-note-one"><span>01</span> Full-stack products</div>
-          <div className="hero-floating-note hero-note-two"><span>02</span> AI experiments</div>
+          <div className="hero-particles">
+            {PARTICLES.map((dot, i) => (
+              <span
+                key={i}
+                className={`hero-particle tone-${dot.tone}`}
+                style={{ left: `${dot.left}%`, top: `${dot.top}%`, width: dot.size, height: dot.size, '--dx': `${dot.dx}px`, '--dy': `${dot.dy}px`, '--d': `${dot.delay}s`, '--t': `${dot.duration}s` }}
+              />
+            ))}
+          </div>
+          {NOTES.map((note, i) => (
+            <div
+              key={note.text}
+              className={`hero-floating-note tone-${note.tone}${i >= 4 ? ' is-extra' : ''}`}
+              style={{ ...note.pos, '--r': `${note.r}deg`, '--d': `${note.d}s`, '--t': `${note.t}s` }}
+            >
+              <i aria-hidden="true" />{note.text}
+            </div>
+          ))}
         </div>
       </div>
 

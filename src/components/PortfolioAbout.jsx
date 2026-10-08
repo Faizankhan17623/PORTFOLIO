@@ -5,7 +5,7 @@ export default function PortfolioAbout() {
 
   return (
     <div className="portfolio-section about-section" ref={revealRef}>
-      <div className="section-kicker about-reveal"><span>01</span> A little about me</div>
+      <div className="section-kicker about-reveal">A little about me</div>
       <div className="about-layout">
         <h2 className="about-statement about-reveal">
           I build from<br />

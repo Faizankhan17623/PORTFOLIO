@@ -8,6 +8,7 @@ const visitorSchema = new mongoose.Schema({
   device:    { type: String, default: 'Unknown', maxlength: 80 },
   userAgent: { type: String, default: '', maxlength: 300 },
   timezone:  { type: String, default: 'Unknown', maxlength: 64 },
+  source:    { type: String, default: 'direct', maxlength: 40 },
   count:     { type: Number },
   firstSeen: { type: Date },
   lastSeen:  { type: Date, required: true },

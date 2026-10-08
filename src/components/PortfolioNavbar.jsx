@@ -9,7 +9,8 @@ const LINKS = [
   { id: 'contact', label: 'Contact' },
 ]
 
-import { CONTACT, RESUME, SOCIALS } from '../data/contactInfo'
+import { CONTACT, SOCIALS } from '../data/contactInfo'
+import { resumeLink } from '../lib/resumeTrack'
 import { SOCIAL_ICONS } from './SocialIcons'
 
 export default function PortfolioNavbar({ onTerminalOpen }) {
@@ -66,14 +67,14 @@ export default function PortfolioNavbar({ onTerminalOpen }) {
         </button>
 
         <nav className="site-nav-links" aria-label="Main navigation">
-          {LINKS.map(({ id, label }, index) => (
+          {LINKS.map(({ id, label }) => (
             <button
               key={id}
               className={active === id ? 'is-active' : ''}
               onClick={() => scrollTo(id)}
               aria-current={active === id ? 'location' : undefined}
             >
-              <span className="nav-link-number">0{index + 1}</span>{label}
+              {label}
             </button>
           ))}
         </nav>
@@ -84,7 +85,7 @@ export default function PortfolioNavbar({ onTerminalOpen }) {
               <a href={social.href} key={social.label} target="_blank" rel="noreferrer" aria-label={social.label} title={social.label}>{SOCIAL_ICONS[social.label]}</a>
             ))}
           </div>
-          <a className="nav-resume" href={RESUME.href} target="_blank" rel="noreferrer" title="Open my résumé (PDF)">Résumé</a>
+          <a className="nav-resume" {...resumeLink('navbar')} title="Open my résumé (PDF)">Résumé</a>
           <a className="nav-email" href={`mailto:${CONTACT.email}`} title={CONTACT.email}>Email me</a>
           <button className="nav-shortcut" onClick={() => window.dispatchEvent(new Event('palette:open'))} title="Open command palette">
             <span>⌘</span><span>K</span>
@@ -103,15 +104,15 @@ export default function PortfolioNavbar({ onTerminalOpen }) {
       </div>
 
       <nav id="mobile-navigation" className={`mobile-nav${menuOpen ? ' is-open' : ''}`} aria-label="Mobile navigation" aria-hidden={!menuOpen}>
-        {LINKS.map(({ id, label }, index) => (
+        {LINKS.map(({ id, label }) => (
           <button key={id} onClick={() => scrollTo(id)} tabIndex={menuOpen ? 0 : -1}>
-            <span>0{index + 1}</span>{label}<span aria-hidden="true">↘</span>
+            {label}
           </button>
         ))}
         <div className="mobile-nav-contact">
           <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
           <a href={CONTACT.phoneHref}>{CONTACT.phone}</a>
-          <a className="mobile-resume" href={RESUME.href} target="_blank" rel="noreferrer">Open résumé (PDF)</a>
+          <a className="mobile-resume" {...resumeLink('mobile-menu')}>Open résumé (PDF)</a>
           <div className="nav-socials">
             {SOCIALS.map((social) => (
               <a href={social.href} key={social.label} target="_blank" rel="noreferrer" aria-label={social.label}>{SOCIAL_ICONS[social.label]}</a>

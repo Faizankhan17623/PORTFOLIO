@@ -47,8 +47,10 @@ function getResponse(q) {
 }
 
 function LeadForm({ onDone }) {
-  const [form, setForm] = useState({ name: '', email: '', company: '', message: '' })
+  const [form, setForm] = useState({ name: '', email: '', company: '', message: '', website: '' })
   const [status, setStatus] = useState({ sending: false, error: '', sent: false })
+  const startedAt = useRef(0)
+  useEffect(() => { startedAt.current = performance.now() }, [])
 
   const update = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }))
 
@@ -60,7 +62,7 @@ function LeadForm({ onDone }) {
         ...form,
         message: form.message.trim() || 'Interested in connecting. Please get in touch.',
         source: 'ai-chat',
-      })
+      }, startedAt.current)
       setStatus({ sending: false, error: '', sent: true })
       onDone()
     } catch (err) {
@@ -72,6 +74,7 @@ function LeadForm({ onDone }) {
 
   return (
     <form className="ai-lead" onSubmit={submit}>
+      <input className="hp-field" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" value={form.website} onChange={update} />
       <input name="name" placeholder="Your name" value={form.name} onChange={update} required maxLength={100} autoComplete="name" />
       <input name="email" type="email" placeholder="Your email" value={form.email} onChange={update} required maxLength={200} autoComplete="email" />
       <input name="company" placeholder="Company (optional)" value={form.company} onChange={update} maxLength={120} autoComplete="organization" />

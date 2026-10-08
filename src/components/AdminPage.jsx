@@ -1,5 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { API_URL } from '../lib/contactApi'
+import { isOwnerDevice, setOwnerDevice } from '../lib/owner'
+import MessagesPanel from './admin/MessagesPanel'
+import VisitsPanel from './admin/VisitsPanel'
+import AnalyticsPanel from './admin/AnalyticsPanel'
+import StatusPanel from './admin/StatusPanel'
+import SecurityPanel from './admin/SecurityPanel'
 import '../admin.css'
 
 const TOKEN_KEY = 'portfolio_admin_token'
@@ -11,9 +17,15 @@ const saveToken = (token) => {
   try { token ? sessionStorage.setItem(TOKEN_KEY, token) : sessionStorage.removeItem(TOKEN_KEY) } catch { /* private mode */ }
 }
 
-const formatDate = (iso) => new Date(iso).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })
+const TABS = [
+  ['messages', 'Messages'],
+  ['visits', 'Recent visits'],
+  ['analytics', 'Analytics'],
+  ['status', 'Status'],
+  ['security', 'Security'],
+]
 
-function Login({ onLogin }) {
+function Login({ onLogin, notice }) {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -42,107 +54,53 @@ function Login({ onLogin }) {
     <form className="admin-login" onSubmit={submit}>
       <h1>Admin</h1>
       <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} autoFocus autoComplete="current-password" />
+      {notice && !error && <div className="admin-notice">{notice}</div>}
       {error && <div className="admin-error">{error}</div>}
       <button className="admin-btn primary" type="submit" disabled={busy || !password}>{busy ? 'Checking…' : 'Sign in'}</button>
     </form>
   )
 }
 
-function VisitsPanel({ data, loading, onPage }) {
-  if (!data) return <div className="admin-empty">{loading ? 'Loading…' : 'No visits recorded yet.'}</div>
-  const { visits, page, pages, total } = data
-
-  return (
-    <>
-      {visits.length === 0 ? (
-        <div className="admin-empty">No visits recorded yet.</div>
-      ) : (
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead>
-              <tr><th>IP address</th><th>Device</th><th>Time zone</th><th>Visits</th><th>Last visit</th></tr>
-            </thead>
-            <tbody>
-              {visits.map((v) => (
-                <tr key={v._id}>
-                  <td className="mono">{v.ip}</td>
-                  <td title={v.userAgent}>{v.device}</td>
-                  <td>{v.timezone}</td>
-                  <td><span className="admin-count">{v.count}</span></td>
-                  <td>{formatDate(v.lastSeen)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-      <div className="admin-pager">
-        <span className="admin-msg-meta">{total} unique {total === 1 ? 'visitor' : 'visitors'}</span>
-        <div className="admin-actions">
-          <button className="admin-btn" onClick={() => onPage(page - 1)} disabled={loading || page <= 1}>Previous</button>
-          <span className="admin-msg-meta">Page {page} of {pages}</span>
-          <button className="admin-btn" onClick={() => onPage(page + 1)} disabled={loading || page >= pages}>Next</button>
-        </div>
-      </div>
-    </>
-  )
-}
-
 export default function AdminPage() {
   const [token, setToken] = useState(readToken)
   const [tab, setTab] = useState('messages')
-  const [messages, setMessages] = useState([])
-  const [visits, setVisits] = useState(null)
-  const [visitPage, setVisitPage] = useState(1)
-  const [filter, setFilter] = useState('all')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [confirmId, setConfirmId] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [unread, setUnread] = useState(0)
+  const [notice, setNotice] = useState('')
+  const [now, setNow] = useState(0)
+  const [excluded, setExcluded] = useState(isOwnerDevice)
 
-  const logout = useCallback(() => {
+  const logout = useCallback((reason = '') => {
     saveToken('')
     setToken('')
-    setMessages([])
-    setVisits(null)
+    setUnread(0)
+    setNotice(reason)
   }, [])
+
+  // The token starts with its expiry time (ms). Sign out by ourselves when it passes, and keep a countdown.
+  const expiresAt = token ? Number(token.split('.')[0]) || 0 : 0
+  useEffect(() => {
+    if (!token) return undefined
+    const tick = () => {
+      const t = Date.now()
+      setNow(t)
+      if (t >= expiresAt) logout('Your session ended. Please sign in again.')
+    }
+    const first = setTimeout(tick, 0)
+    const timer = setInterval(tick, 15000)
+    return () => { clearTimeout(first); clearInterval(timer) }
+  }, [token, expiresAt, logout])
 
   const api = useCallback(async (path, options = {}) => {
     const res = await fetch(`${API_URL}/api/admin${path}`, {
       ...options,
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}`, ...options.headers },
     })
-    if (res.status === 401) { logout(); throw new Error('Session expired. Please sign in again.') }
+    if (res.status === 401) { logout('Your session ended. Please sign in again.'); throw new Error('Session expired. Please sign in again.') }
     const data = await res.json().catch(() => ({}))
     if (!res.ok) throw new Error(data.error || 'Request failed.')
     return data
   }, [token, logout])
-
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await api('/messages')
-      setMessages(data.messages)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [api])
-
-  const loadVisits = useCallback(async (page = 1) => {
-    setLoading(true)
-    setError('')
-    try {
-      const data = await api(`/visits?page=${page}&limit=10`)
-      setVisits(data)
-      setVisitPage(data.page)
-    } catch (err) {
-      setError(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }, [api])
 
   useEffect(() => {
     document.title = 'Admin · Faizan Khan'
@@ -153,105 +111,49 @@ export default function AdminPage() {
     return () => robots.remove()
   }, [])
 
-  useEffect(() => {
-    if (!token) return
-    if (tab === 'messages') load()
-    else loadVisits(1)
-  }, [token, tab, load, loadVisits])
-
-  const toggleRead = async (msg) => {
-    try {
-      const { message } = await api(`/messages/${msg._id}`, { method: 'PATCH', body: JSON.stringify({ read: !msg.read }) })
-      setMessages((list) => list.map((m) => (m._id === message._id ? message : m)))
-    } catch (err) { setError(err.message) }
-  }
-
-  const remove = async (id) => {
-    try {
-      await api(`/messages/${id}`, { method: 'DELETE' })
-      setMessages((list) => list.filter((m) => m._id !== id))
-      setConfirmId(null)
-    } catch (err) { setError(err.message) }
-  }
-
-  const unread = messages.filter((m) => !m.read).length
-  const visible = useMemo(() => messages.filter((m) => {
-    if (filter === 'unread') return !m.read
-    if (filter === 'chat') return m.source === 'ai-chat'
-    if (filter === 'form') return m.source !== 'ai-chat'
-    return true
-  }), [messages, filter])
-
   if (!token) {
     return (
       <div className="admin-page">
-        <Login onLogin={(t) => { saveToken(t); setToken(t) }} />
+        <Login notice={notice} onLogin={(t) => { saveToken(t); setToken(t); setNotice(''); setOwnerDevice(true); setExcluded(true) }} />
       </div>
     )
   }
+
+  const title = TABS.find(([id]) => id === tab)[1]
 
   return (
     <div className="admin-page">
       <div className="admin-wrap">
         <div className="admin-top">
-          <h1>{tab === 'messages' ? 'Messages' : 'Recent visits'} {tab === 'messages' && unread > 0 && <small>{unread} new</small>}</h1>
+          <h1>{title} {tab === 'messages' && unread > 0 && <small>{unread} new</small>}</h1>
           <div className="admin-actions">
-            <button className="admin-btn" onClick={() => (tab === 'messages' ? load() : loadVisits(visitPage))} disabled={loading}>{loading ? 'Loading…' : 'Refresh'}</button>
+            <button className="admin-btn" onClick={() => setRefreshKey((n) => n + 1)}>Refresh</button>
             <a className="admin-btn" href="/">View site</a>
-            <button className="admin-btn" onClick={logout}>Sign out</button>
+            <button className="admin-btn" onClick={() => logout()}>Sign out</button>
           </div>
         </div>
+        {now > 0 && (
+          <div className="admin-session">
+            Session ends in {Math.max(1, Math.ceil((expiresAt - now) / 60000))} min · you will be signed out automatically
+            <span className="admin-session-sep"> · </span>
+            {excluded ? 'Your visits from this device are not counted' : 'Your visits from this device are being counted'}{' '}
+            <button className="adm-linkbtn" onClick={() => { setOwnerDevice(!excluded); setExcluded(!excluded) }}>{excluded ? 'Count them' : 'Stop counting'}</button>
+          </div>
+        )}
 
         <div className="admin-nav">
-          {[['messages', 'Messages'], ['visits', 'Recent visits']].map(([id, label]) => (
-            <button key={id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>{label}</button>
+          {TABS.map(([id, label]) => (
+            <button key={id} className={tab === id ? 'on' : ''} onClick={() => setTab(id)}>
+              {label}{id === 'messages' && unread > 0 ? ` (${unread})` : ''}
+            </button>
           ))}
         </div>
 
-        {tab === 'messages' && (
-          <div className="admin-filters">
-            {[['all', 'All'], ['unread', 'Unread'], ['chat', 'From AI chat'], ['form', 'From form']].map(([id, label]) => (
-              <button key={id} className={filter === id ? 'on' : ''} onClick={() => setFilter(id)}>{label}</button>
-            ))}
-          </div>
-        )}
-
-        {error && <div className="admin-error" style={{ marginBottom: 12 }}>{error}</div>}
-
-        {tab === 'visits' && <VisitsPanel data={visits} loading={loading} onPage={loadVisits} />}
-
-        {tab === 'messages' && (
-          <div className="admin-list">
-            {visible.length === 0 && !loading && <div className="admin-empty">No messages here yet.</div>}
-            {visible.map((m) => (
-              <article key={m._id} className={`admin-msg${m.read ? '' : ' unread'}`}>
-                <div className="admin-msg-head">
-                  <div>
-                    <span className="admin-msg-name">{m.name}</span>
-                    <span className={`admin-tag${m.source === 'ai-chat' ? ' chat' : ''}`}>{m.source === 'ai-chat' ? 'AI chat' : 'Form'}</span>
-                    {m.company && <span className="admin-tag">{m.company}</span>}
-                  </div>
-                  <span className="admin-msg-meta">{formatDate(m.createdAt)}</span>
-                </div>
-                <div className="admin-msg-meta">{m.email}</div>
-                <p>{m.message}</p>
-                {m.emailStatus && <div className={`admin-email-status${m.emailStatus.startsWith('failed') ? ' bad' : ''}`}>Email to you: {m.emailStatus}</div>}
-                <div className="admin-msg-actions">
-                  <a className="admin-btn primary" href={`mailto:${m.email}?subject=${encodeURIComponent('Re: your message on my portfolio')}`}>Reply</a>
-                  <button className="admin-btn" onClick={() => toggleRead(m)}>{m.read ? 'Mark unread' : 'Mark read'}</button>
-                  {confirmId === m._id ? (
-                    <>
-                      <button className="admin-btn danger" onClick={() => remove(m._id)}>Confirm delete</button>
-                      <button className="admin-btn" onClick={() => setConfirmId(null)}>Cancel</button>
-                    </>
-                  ) : (
-                    <button className="admin-btn danger" onClick={() => setConfirmId(m._id)}>Delete</button>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
+        {tab === 'messages' && <MessagesPanel api={api} refreshKey={refreshKey} onUnread={setUnread} />}
+        {tab === 'visits' && <VisitsPanel api={api} refreshKey={refreshKey} />}
+        {tab === 'analytics' && <AnalyticsPanel api={api} refreshKey={refreshKey} />}
+        {tab === 'status' && <StatusPanel api={api} refreshKey={refreshKey} />}
+        {tab === 'security' && <SecurityPanel api={api} refreshKey={refreshKey} />}
       </div>
     </div>
   )

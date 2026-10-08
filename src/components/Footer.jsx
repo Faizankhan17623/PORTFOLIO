@@ -8,8 +8,14 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="footer-inner" ref={revealRef}>
-        <div className="footer-logo footer-reveal">
-          faizan.dev
+        <NowPlaying />
+
+        <VisitorCounter />
+      </div>
+
+      <div className="footer-legal">
+        <div className="footer-logo">
+          <span>faizan<span className="site-brand-muted">.dev</span></span>
           {/* Disguised easter-egg trigger — looks like a blinking terminal cursor.
               Clicking it fires the Konami effect. No one would guess what it does. */}
           <span
@@ -23,14 +29,7 @@ export default function Footer() {
             _
           </span>
         </div>
-
-        <NowPlaying />
-
-        <p className="footer-copy footer-reveal">
-          © {new Date().getFullYear()} Faizan Khan · Built with care
-        </p>
-
-        <VisitorCounter />
+        <p>© {new Date().getFullYear()} All rights reserved, Faizan Khan</p>
       </div>
     </footer>
   )

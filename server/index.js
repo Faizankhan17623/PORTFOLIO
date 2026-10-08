@@ -7,12 +7,21 @@ const rateLimit = require('express-rate-limit')
 const Message = require('./models/Message')
 const Counter = require('./models/Counter')
 const { notifyNewMessage } = require('./lib/mailer')
-const { recordVisit } = require('./lib/visitors')
+const { recordVisit, recordResumeOpen } = require('./lib/visitors')
+const { blockedGuard, refreshBlocklist } = require('./lib/blocklist')
+const { bumpDay } = require('./lib/stats')
+const { logEvent } = require('./lib/events')
+const { alertError } = require('./lib/alerts')
+const { spamReason, shouldLogSpam } = require('./lib/spam')
+const { clientIp } = require('./lib/clientIp')
+const { isOwnerIp } = require('./lib/owner')
 const adminRoutes = require('./routes.admin')
 
 const app = express()
 const PORT = process.env.PORT || 5000
 app.set('trust proxy', 1)
+// Every limiter, lockout, block and visitor record reads req.ip, so make it the real visitor address.
+Object.defineProperty(app.request, 'ip', { configurable: true, get() { return clientIp(this) } })
 
 // ── Middleware ──────────────────────────────────────────
 app.disable('x-powered-by')
@@ -30,7 +39,14 @@ app.use(cors({
   origin: (origin, callback) => callback(null, !origin || ALLOWED_ORIGINS.includes(origin)),
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
 }))
+app.use(blockedGuard)
 app.use(express.json({ limit: '10kb' }))
+
+// Uptime check for monitors: 200 when the database is reachable, 503 otherwise. Reveals nothing else.
+app.get('/health', (_req, res) => {
+  const up = mongoose.connection.readyState === 1
+  res.status(up ? 200 : 503).json({ status: up ? 'ok' : 'degraded', db: up ? 'up' : 'down' })
+})
 
 const limiter = (windowMs, limit, error, extra = {}) => rateLimit({
   windowMs,
@@ -47,7 +63,7 @@ app.use(limiter(15 * 60 * 1000, 600, 'Too many requests. Please slow down.'))
 // ── DB ──────────────────────────────────────────────────
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ MongoDB connected'))
+  .then(() => { console.log('✅ MongoDB connected'); refreshBlocklist() })
   .catch((err) => { console.error('❌ MongoDB error:', err.message); process.exit(1) })
 
 // ── Routes ──────────────────────────────────────────────
@@ -75,9 +91,15 @@ function pruneOnline() {
 // Increment total visits + register this visitor as online.
 app.post('/api/visit', limiter(15 * 60 * 1000, 30, 'Too many requests.'), async (req, res) => {
   try {
-    markOnline(req.body?.id)
     pruneOnline()
-    await recordVisit(req)
+    if (isOwnerIp(req.ip)) {
+      // The site owner's own visits are left out of every number.
+      const current = await Counter.findOne({ key: 'visits' })
+      return res.json({ total: current?.count || 0, online: online.size })
+    }
+    markOnline(req.body?.id)
+    const { isNew, bot } = await recordVisit(req)
+    if (!bot) bumpDay({ visits: 1, newVisitors: isNew ? 1 : 0 })
 
     const doc = await Counter.findOneAndUpdate(
       { key: 'visits' },
@@ -93,7 +115,7 @@ app.post('/api/visit', limiter(15 * 60 * 1000, 30, 'Too many requests.'), async 
 
 // Lightweight heartbeat — keeps a visitor "online" without inflating the total.
 app.post('/api/heartbeat', limiter(15 * 60 * 1000, 120, 'Too many requests.'), (req, res) => {
-  markOnline(req.body?.id)
+  if (!isOwnerIp(req.ip)) markOnline(req.body?.id)
   pruneOnline()
   res.json({ online: online.size })
 })
@@ -167,10 +189,19 @@ app.get('/api/now-playing', async (_req, res) => {
 
 app.use('/api/admin', adminRoutes)
 
+// Called when someone clicks any résumé button. The PDF itself opens straight from the site, so this
+// is fire-and-forget from the browser and never delays the download.
+app.post('/api/resume-open', limiter(15 * 60 * 1000, 20, 'Too many requests.'), async (req, res) => {
+  if (isOwnerIp(req.ip)) return res.json({ ok: true })
+  const counted = await recordResumeOpen(req)
+  if (counted) bumpDay({ resumeOpens: 1 })
+  res.json({ ok: true })
+})
+
 const contactLimit = limiter(60 * 60 * 1000, 5, 'Too many messages. Please try again later.', { skipFailedRequests: true })
 
 app.post('/api/contact', contactLimit, async (req, res) => {
-  const { name, email, message, company, source } = req.body || {}
+  const { name, email, message, company, source, website, elapsed } = req.body || {}
 
   if ([name, email, message].some((v) => typeof v !== 'string' || !v.trim())) {
     return res.status(400).json({ error: 'All fields are required.' })
@@ -182,6 +213,13 @@ app.post('/api/contact', contactLimit, async (req, res) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
   if (!emailRegex.test(email.trim())) {
     return res.status(400).json({ error: 'Invalid email address.' })
+  }
+
+  // Spam gets the same friendly "success" as a real message so bots learn nothing; it is never saved or emailed.
+  const spam = spamReason({ name, message, company, website, elapsed }, req.ip)
+  if (spam) {
+    if (shouldLogSpam(req.ip)) logEvent('spam-blocked', req, spam)
+    return res.status(201).json({ success: true, message: 'Message saved successfully.' })
   }
 
   try {
@@ -196,6 +234,7 @@ app.post('/api/contact', contactLimit, async (req, res) => {
     res.status(201).json({ success: true, message: 'Message saved successfully.' })
   } catch (err) {
     console.error('Save error:', err)
+    alertError(err, 'saving a contact message', req)
     res.status(500).json({ error: 'Server error. Please try again.' })
   }
 })
@@ -203,11 +242,19 @@ app.post('/api/contact', contactLimit, async (req, res) => {
 app.use((_req, res) => res.status(404).json({ error: 'Not found.' }))
 
 // Last resort: never leak stack traces or internals to the client.
-app.use((err, _req, res, _next) => {
+app.use((err, req, res, _next) => {
   if (err.type === 'entity.too.large') return res.status(413).json({ error: 'Request too large.' })
   if (err.type === 'entity.parse.failed') return res.status(400).json({ error: 'Bad request.' })
   console.error('Unhandled error:', err.message)
+  alertError(err, `${req.method} ${req.path}`, req)
   res.status(500).json({ error: 'Server error.' })
+})
+
+// A crash outside a request would otherwise only show up in the host's logs.
+process.on('unhandledRejection', (reason) => alertError(reason instanceof Error ? reason : new Error(String(reason)), 'unhandled promise rejection'))
+process.on('uncaughtException', (err) => {
+  alertError(err, 'uncaught exception')
+  setTimeout(() => process.exit(1), 3000).unref()
 })
 
 app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`))

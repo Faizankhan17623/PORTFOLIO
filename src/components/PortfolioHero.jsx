@@ -7,7 +7,7 @@ import { SOCIAL_ICONS } from './SocialIcons'
 // The 3D scene is its own chunk and only starts loading once the page has painted.
 const HeroScene = lazy(() => import('./three/HeroScene'))
 
-const ROLES = ['Full-stack developer', 'MERN stack developer', 'AI-integrated products']
+const ROLES = ['Full-stack developer', 'MERN stack developer', 'AI-integrated app developer']
 
 // Floating chips around the profile card. --r tilts, --d offsets and --t sets the speed of each bob.
 const NOTES = [
@@ -82,7 +82,7 @@ export default function PortfolioHero() {
           </h1>
 
           <div className="hero-role-row" data-hero-enter>
-            <span className="hero-role-label">Currently</span>
+            <span className="hero-role-label">Currently looking for a job as a</span>
             <span className="hero-role-value" key={roleIndex}>{ROLES[roleIndex]}</span>
           </div>
 

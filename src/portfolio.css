@@ -232,7 +232,7 @@ html::-webkit-scrollbar { display: none; width: 0; }
   font-style: italic;
   letter-spacing: -0.045em;
 }
-.hero-role-row { display: flex; align-items: center; gap: 12px; margin-top: 26px; }
+.hero-role-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 26px; }
 .hero-role-label {
   color: var(--soft-muted);
   font-size: 0.67rem;

@@ -1,0 +1,159 @@
+/* 3D scenes, scan section, big type and film grain. */
+
+/* ---------- Film grain (a very faint moving noise over the whole page) ---------- */
+.film-grain {
+  position: fixed;
+  inset: -80px;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.075;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.9s steps(1) infinite;
+}
+@keyframes grain-shift {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-34px, 22px); }
+  40% { transform: translate(26px, -38px); }
+  60% { transform: translate(-18px, -26px); }
+  80% { transform: translate(40px, 30px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---------- Hero 3D ---------- */
+.hero-canvas { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
+
+/* ---------- Profile scan section ---------- */
+.portfolio-site .portfolio-main > .holo-section { border-top: 0; }
+.holo-wrap { position: relative; height: 320vh; background: #08170f; }
+.holo-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+  color: #eaf6dc;
+  background:
+    radial-gradient(ellipse at 50% 64%, rgba(48, 128, 92, 0.55) 0%, rgba(20, 62, 46, 0.5) 34%, transparent 70%),
+    linear-gradient(180deg, #0a1d15 0%, #0e2a20 55%, #08170f 100%);
+}
+.holo-canvas { position: absolute; inset: 0; }
+.holo-ui { position: absolute; inset: 0; pointer-events: none; font-family: 'Space Grotesk', sans-serif; }
+
+.holo-head { position: absolute; top: 92px; left: 50%; display: grid; justify-items: center; gap: 4px; transform: translateX(-50%); text-align: center; }
+.holo-kicker { color: #d4f27f; font-size: 0.74rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+.holo-status { color: rgba(234, 246, 220, 0.62); font-size: 0.78rem; letter-spacing: 0.04em; }
+
+.holo-card {
+  position: absolute;
+  width: 262px;
+  display: grid;
+  gap: 5px;
+  padding: 15px 18px 16px;
+  border: 1px solid rgba(212, 242, 127, 0.34);
+  border-radius: 14px;
+  background: rgba(14, 42, 32, 0.58);
+  backdrop-filter: blur(7px);
+  box-shadow: 0 0 28px rgba(127, 227, 192, 0.1), inset 0 0 22px rgba(212, 242, 127, 0.05);
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+.holo-card.is-on { opacity: 1; transform: none; }
+.holo-left { right: calc(50% + 200px); }
+.holo-right { left: calc(50% + 200px); }
+.holo-upper { top: 26%; }
+.holo-lower { top: 55%; }
+/* connector line from card to the figure */
+.holo-card::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 84px;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(212, 242, 127, 0.7), rgba(212, 242, 127, 0.1));
+}
+.holo-card::before {
+  content: '';
+  position: absolute;
+  top: calc(50% - 4px);
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #d4f27f;
+  box-shadow: 0 0 12px #d4f27f;
+}
+.holo-left::after { left: 100%; }
+.holo-left::before { left: calc(100% + 80px); }
+.holo-right::after { right: 100%; transform: scaleX(-1); }
+.holo-right::before { right: calc(100% + 80px); }
+
+.holo-card-label { color: rgba(212, 242, 127, 0.8); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; }
+.holo-card-title { display: flex; align-items: center; gap: 8px; color: #fff; font-size: 1.45rem; font-weight: 600; letter-spacing: -0.03em; line-height: 1.15; }
+.holo-card-sub { display: flex; align-items: center; gap: 6px; color: rgba(234, 246, 220, 0.74); font-size: 0.82rem; }
+.holo-card-text { margin: 0; color: rgba(234, 246, 220, 0.86); font-size: 0.86rem; line-height: 1.55; }
+.holo-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 3px; }
+.holo-chips span { padding: 4px 10px; border: 1px solid rgba(212, 242, 127, 0.4); border-radius: 999px; color: #eaf6dc; font-size: 0.74rem; font-weight: 600; }
+.holo-live { width: 9px; height: 9px; border-radius: 50%; background: #d4f27f; box-shadow: 0 0 0 4px rgba(212, 242, 127, 0.18), 0 0 14px #d4f27f; animation: holo-pulse 1.6s ease-in-out infinite; }
+@keyframes holo-pulse { 50% { box-shadow: 0 0 0 8px rgba(212, 242, 127, 0.04), 0 0 14px #d4f27f; } }
+
+.holo-counter {
+  position: absolute;
+  left: 50%;
+  bottom: clamp(18px, 7vh, 64px);
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  padding: 6px 16px;
+  border: 1px solid rgba(212, 242, 127, 0.3);
+  border-radius: 8px;
+  background: rgba(8, 23, 15, 0.7);
+  transform: translateX(-50%);
+}
+.holo-counter span { color: rgba(212, 242, 127, 0.75); font-size: 0.62rem; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; }
+.holo-counter b { min-width: 3.1ch; color: #fff; font: 600 1.35rem 'Space Grotesk', sans-serif; letter-spacing: 0.06em; font-variant-numeric: tabular-nums; }
+
+/* No scroll animation for people who asked for less motion: the finished scan is shown as a normal block. */
+.holo-wrap.is-still { height: auto; }
+.holo-wrap.is-still .holo-sticky { position: relative; min-height: 100svh; }
+.holo-wrap.is-still .holo-card { opacity: 1; transform: none; transition: none; }
+
+@media (max-width: 1100px) {
+  .holo-card { width: 228px; }
+  .holo-left { right: calc(50% + 150px); }
+  .holo-right { left: calc(50% + 150px); }
+  .holo-card::after { width: 54px; }
+  .holo-left::before { left: calc(100% + 50px); }
+  .holo-right::before { right: calc(100% + 50px); }
+}
+@media (max-width: 860px) {
+  .holo-head { top: 84px; }
+  .holo-card { width: calc(50% - 24px); padding: 11px 13px 12px; border-radius: 12px; }
+  .holo-card::after, .holo-card::before { display: none; }
+  .holo-left { right: auto; left: 16px; }
+  .holo-right { left: auto; right: 16px; }
+  .holo-upper { top: 17%; }
+  .holo-left.holo-lower { top: auto; bottom: 3vh; left: 16px; right: 16px; width: auto; }
+  .holo-right.holo-lower, .holo-counter { display: none; }
+  .holo-card-title { font-size: 1.15rem; }
+  .holo-card-sub, .holo-card-text { font-size: 0.72rem; line-height: 1.45; }
+  .holo-chips span { padding: 3px 8px; font-size: 0.66rem; }
+}
+
+/* ---------- Big sliding type ---------- */
+.portfolio-site .portfolio-main > .bigtype-section { overflow: hidden; border-top: 0; background: var(--paper); }
+.bigtype { padding: clamp(56px, 9vw, 120px) 0; }
+.bigtype-row {
+  width: max-content;
+  color: var(--ink);
+  font: 400 clamp(4.6rem, 14vw, 12.5rem)/0.95 'Instrument Serif', Georgia, serif;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  will-change: transform;
+}
+.bigtype-row.is-italic { color: #5a7954; font-style: italic; }
+.bigtype-note { max-width: 330px; margin: clamp(22px, 3.4vw, 44px) auto; padding: 0 20px; color: var(--muted); font-size: 0.95rem; line-height: 1.7; text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  .film-grain { animation: none; }
+  .bigtype-row { width: auto; padding: 0 24px; white-space: normal; text-align: center; }
+}

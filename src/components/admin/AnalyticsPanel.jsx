@@ -12,30 +12,46 @@ function Card({ label, value, sub }) {
   )
 }
 
+const shortDay = (day) => new Date(`${day}T00:00:00Z`).toLocaleDateString(undefined, { month: 'short', day: 'numeric', timeZone: 'UTC' })
+const plural = (n, word) => `${n} ${word}${n === 1 ? '' : 's'}`
+
 function VisitsChart({ series }) {
+  const [active, setActive] = useState(null)
   const max = Math.max(1, ...series.map((d) => d.visits))
   const W = 600
   const H = 150
   const slot = W / series.length
+  const ticks = series.map((d, i) => i).filter((i) => i === series.length - 1 || (i % 7 === 0 && series.length - 1 - i >= 5))
+  const shown = active === null ? null : series[active]
   return (
     <div className="adm-chart">
-      <svg viewBox={`0 -12 ${W} ${H + 34}`} role="img" aria-label="Visits per day over the last 30 days">
+      <div className="adm-chart-readout" aria-live="polite">
+        {shown ? <><b>{shortDay(shown.day)}</b> · {plural(shown.visits, 'visit')} · {plural(shown.resumeOpens, 'résumé open')}</> : 'Hover over (or tap) a bar to see that day.'}
+      </div>
+      <svg viewBox={`0 -30 ${W} ${H + 52}`} role="group" aria-label="Visits per day over the last 30 days">
         {[0.25, 0.5, 0.75, 1].map((f) => <line key={f} x1="0" x2={W} y1={H - H * f} y2={H - H * f} className="adm-grid" />)}
         {series.map((d, i) => {
           const h = (d.visits / max) * H
+          const x = i * slot
           return (
             <g key={d.day}>
-              <rect x={i * slot + 3} y={H - h} width={slot - 6} height={Math.max(h, d.visits ? 2 : 0)} rx="3" className="adm-bar">
-                <title>{`${d.day}: ${d.visits} visit${d.visits === 1 ? '' : 's'}, ${d.resumeOpens} résumé open${d.resumeOpens === 1 ? '' : 's'}`}</title>
-              </rect>
-              {d.resumeOpens > 0 && <circle cx={i * slot + slot / 2} cy={H - h - 7} r="3.5" className="adm-dot" />}
+              <rect x={x + 3} y={H - h} width={slot - 6} height={Math.max(h, d.visits ? 2 : 0)} rx="3" className={`adm-bar${active === i ? ' is-hover' : ''}`} />
+              {d.visits > 0 && <text x={x + slot / 2} y={H - h - 5} className="adm-val">{d.visits}</text>}
+              {d.resumeOpens > 0 && <circle cx={x + slot / 2} cy={H - h - 21} r="3.5" className="adm-dot" />}
+              <rect
+                x={x} y={-30} width={slot} height={H + 30} className="adm-bar-hit" tabIndex={0}
+                aria-label={`${shortDay(d.day)}: ${plural(d.visits, 'visit')}, ${plural(d.resumeOpens, 'résumé open')}`}
+                onMouseEnter={() => setActive(i)} onMouseLeave={() => setActive(null)}
+                onFocus={() => setActive(i)} onBlur={() => setActive(null)} onClick={() => setActive(i)}
+              />
             </g>
           )
         })}
-        <text x="0" y={H + 17} className="adm-axis">{series[0].day}</text>
-        <text x={W} y={H + 17} textAnchor="end" className="adm-axis">{series[series.length - 1].day} (UTC)</text>
+        {ticks.map((i) => (
+          <text key={i} x={i === 0 ? 0 : i === series.length - 1 ? W : i * slot + slot / 2} y={H + 17} textAnchor={i === 0 ? 'start' : i === series.length - 1 ? 'end' : 'middle'} className="adm-axis">{shortDay(series[i].day)}</text>
+        ))}
       </svg>
-      <div className="adm-legend"><span><i className="adm-key bar" /> Visits per day</span><span><i className="adm-key dot" /> Day with résumé opens</span><span className="adm-axis-note">Peak: {max}</span></div>
+      <div className="adm-legend"><span><i className="adm-key bar" /> Visits per day</span><span><i className="adm-key dot" /> Day with résumé opens</span><span className="adm-axis-note">Peak: {max} · days are in UTC</span></div>
     </div>
   )
 }
@@ -132,10 +148,6 @@ export default function AnalyticsPanel({ api, refreshKey }) {
         <BreakdownList title="Top time zones" rows={stats.timezones} empty="No data yet." />
       </div>
       <BreakdownList title="Devices" rows={stats.devices} empty="No data yet." />
-
-      <div className="adm-tip">
-        <b>Tip:</b> add <code>?ref=company-name</code> to any link you send, for example <code>{window.location.origin}/?ref=acme</code>, and that name shows up under “Where visitors came from”.
-      </div>
 
       <ResumeTable api={api} refreshKey={refreshKey} />
     </>

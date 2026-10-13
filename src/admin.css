@@ -90,13 +90,16 @@
 .adm-two-col .adm-panel { margin-bottom: 0; }
 .adm-two-col { margin-bottom: 14px; }
 .adm-small { margin: 4px 0 0; font-size: 0.78rem; }
-.adm-tip { margin-bottom: 14px; padding: 12px 14px; border-radius: 12px; background: #eef4df; color: #2b4a36; font-size: 0.84rem; line-height: 1.55; word-break: break-word; }
-.adm-tip code { padding: 1px 6px; border-radius: 6px; background: rgba(24, 56, 43, 0.1); font-size: 0.8rem; }
 
 .adm-chart svg { width: 100%; height: auto; display: block; }
 .adm-grid { stroke: rgba(29, 42, 36, 0.09); stroke-width: 1; }
 .adm-bar { fill: #3f7a57; }
-.adm-bar:hover { fill: #18382b; }
+.adm-bar.is-hover { fill: #18382b; }
+.adm-bar-hit { fill: transparent; cursor: pointer; outline: none; }
+.adm-bar-hit:focus-visible { fill: rgba(24, 56, 43, 0.1); }
+.adm-val { fill: #18382b; font-size: 11px; font-weight: 700; text-anchor: middle; pointer-events: none; }
+.adm-chart-readout { min-height: 1.5em; margin: 2px 0 8px; color: #44524a; font-size: 0.86rem; }
+.adm-chart-readout b { color: #18382b; }
 .adm-dot { fill: #e97558; }
 .adm-axis { fill: #66726b; font-size: 11px; }
 .adm-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 6px; color: #66726b; font-size: 0.76rem; }

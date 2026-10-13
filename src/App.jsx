@@ -8,6 +8,8 @@ gsap.registerPlugin(ScrollTrigger)
 import Navbar from './components/PortfolioNavbar'
 import Hero from './components/PortfolioHero'
 import About from './components/PortfolioAbout'
+import HologramSection from './components/HologramSection'
+import BigType from './components/BigType'
 import Resume from './components/Resume'
 import Skills from './components/PortfolioSkills'
 import Projects from './components/PortfolioProjects'
@@ -74,11 +76,14 @@ function App() {
     <>
       <ScrollProgressBar />
       <div className="portfolio-site">
+        <div className="film-grain" aria-hidden="true" />
         <a className="skip-link" href="#main-content">Skip to content</a>
         <Navbar onTerminalOpen={() => setTerminalOpen(true)} />
         <main id="main-content" className="portfolio-main">
           <section id="home" className="portfolio-hero-section"><Hero /></section>
           <section id="about"><About /></section>
+          <section id="profile" className="holo-section" aria-label="Profile scan"><HologramSection /></section>
+          <section className="bigtype-section" aria-label="Highlights"><BigType /></section>
           <section id="resume"><Resume /></section>
           <section id="skills"><Skills skills={defaultSkills} /></section>
           <section id="projects"><Projects projects={defaultProjects} /></section>

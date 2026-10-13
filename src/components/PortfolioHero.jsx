@@ -1,8 +1,11 @@
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { CONTACT, SOCIALS } from '../data/contactInfo'
 import { resumeLink } from '../lib/resumeTrack'
 import { SOCIAL_ICONS } from './SocialIcons'
+
+// The 3D scene is its own chunk and only starts loading once the page has painted.
+const HeroScene = lazy(() => import('./three/HeroScene'))
 
 const ROLES = ['Full-stack developer', 'MERN stack developer', 'AI-integrated products']
 
@@ -31,6 +34,12 @@ const PARTICLES = Array.from({ length: 22 }, (_, i) => ({
 export default function PortfolioHero() {
   const [roleIndex, setRoleIndex] = useState(0)
   const rootRef = useRef(null)
+  const [scene3d, setScene3d] = useState(false)
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setScene3d(true), 200)
+    return () => window.clearTimeout(timer)
+  }, [])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
@@ -58,6 +67,7 @@ export default function PortfolioHero() {
 
   return (
     <div className="portfolio-hero" ref={rootRef}>
+      {scene3d && <Suspense fallback={null}><HeroScene /></Suspense>}
       <div className="hero-layout">
         <div className="hero-copy">
           <p className="hero-kicker" data-hero-enter>

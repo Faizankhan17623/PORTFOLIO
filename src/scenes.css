@@ -157,3 +157,35 @@
   .film-grain { animation: none; }
   .bigtype-row { width: auto; padding: 0 24px; white-space: normal; text-align: center; }
 }
+
+/* ---------- Skills orbit ---------- */
+.skills-orbit { position: relative; height: clamp(330px, 46vw, 500px); margin: -6px 0 34px; border: 1px solid var(--line); border-radius: 22px; background: radial-gradient(ellipse at 50% 50%, rgba(212, 242, 127, 0.28), rgba(255, 254, 250, 0.4) 62%); overflow: hidden; }
+.skills-orbit-canvas { position: absolute; inset: 0; }
+.skills-orbit-hint { position: absolute; left: 16px; bottom: 14px; padding: 4px 12px; border-radius: 999px; background: rgba(24, 56, 43, 0.08); color: var(--muted); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; pointer-events: none; }
+
+/* ---------- Headline word reveal ---------- */
+.w-mask { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.1em 0.16em 0; margin: 0 -0.1em -0.16em 0; }
+.w-in { display: inline-block; will-change: transform; }
+
+/* ---------- Cursor ring and label ---------- */
+.cursor-bubble {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 70;
+  width: 26px;
+  height: 26px;
+  display: grid;
+  place-items: center;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  opacity: 0;
+  transition: width 0.25s ease, height 0.25s ease, background 0.25s ease, opacity 0.2s ease;
+}
+.cursor-bubble.is-visible { opacity: 1; }
+.cursor-bubble[data-mode='link'] { width: 46px; height: 46px; background: rgba(255, 255, 255, 0.28); }
+.cursor-bubble[data-mode='label'] { width: 92px; height: 92px; border-color: #18382b; background: #d4f27f; mix-blend-mode: normal; }
+.cursor-bubble span { color: #18382b; font: 700 0.8rem 'Space Grotesk', sans-serif; letter-spacing: 0.02em; }
+@media (hover: none), (prefers-reduced-motion: reduce) { .cursor-bubble { display: none; } }

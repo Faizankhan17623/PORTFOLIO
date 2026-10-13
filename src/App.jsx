@@ -25,10 +25,13 @@ import AchievementToasts from './components/AchievementToasts'
 import Blackout from './components/Blackout'
 import SnakeGame from './components/SnakeGame'
 import SoundFX from './components/SoundFX'
+import ProjectCursor from './components/ProjectCursor'
+import { useWordReveal } from './hooks/useWordReveal'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 
 function App() {
   const [terminalOpen, setTerminalOpen] = useState(false)
+  useWordReveal('.about-statement, .section-title, .contact-title, .gh-title')
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
@@ -93,6 +96,7 @@ function App() {
         <Footer />
       </div>
 
+      <ProjectCursor />
       <AIChat />
       <KonamiEasterEgg />
       <CommandPalette onTerminalOpen={() => setTerminalOpen(true)} />

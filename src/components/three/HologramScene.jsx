@@ -1,17 +1,18 @@
 import { useEffect, useRef } from 'react'
 import {
-  AdditiveBlending, BufferAttribute, BufferGeometry, CapsuleGeometry, CircleGeometry, Color, CylinderGeometry,
+  AdditiveBlending, BufferAttribute, BufferGeometry, CircleGeometry, Color, CylinderGeometry,
   DirectionalLight, DoubleSide, Group, Mesh, MeshBasicMaterial, MeshStandardMaterial, PMREMGenerator, Plane,
-  PlaneGeometry, Points, PointsMaterial, ShaderMaterial, SphereGeometry, TorusGeometry, Vector3,
+  PlaneGeometry, Points, PointsMaterial, ShaderMaterial, TorusGeometry, Vector3,
 } from 'three'
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js'
 import { mountScene, trackPointer } from '../../lib/three-utils'
+import { createRobot } from './robot'
 
 const LIME = new Color('#d4f27f')
 const MINT = new Color('#7fe3c0')
-const AVATAR_TOP = 3.75
+const AVATAR_TOP = 4.25
 
-// Everything below the scan height is drawn as a glowing hologram; everything above stays solid clay.
+// The robot builds up from the feet: everything below the scan height is solid, everything above is still the glowing skeleton hologram.
 const holoVertex = /* glsl */ `
   varying vec3 vWorld;
   varying vec3 vNormalView;
@@ -34,10 +35,10 @@ const holoFragment = /* glsl */ `
   varying vec3 vNormalView;
   varying vec3 vViewDir;
   void main() {
-    if (vWorld.y > uScan) discard;
+    if (vWorld.y < uScan) discard;
     float fresnel = pow(1.0 - abs(dot(normalize(vNormalView), normalize(vViewDir))), 2.2);
     float lines = 0.5 + 0.5 * sin(vWorld.y * 95.0 - uTime * 2.5);
-    float edge = smoothstep(uScan - 0.4, uScan, vWorld.y);
+    float edge = 1.0 - smoothstep(uScan, uScan + 0.4, vWorld.y);
     vec3 color = mix(uColor, uColor2, edge);
     float alpha = (0.16 + fresnel * 0.95) * (0.45 + 0.55 * lines) + edge * 0.75;
     gl_FragColor = vec4(color * (0.7 + fresnel), alpha);
@@ -121,7 +122,7 @@ export default function HologramScene({ progressRef, onFrame }) {
 
       const scanUniform = { value: 0 }
       const timeUniform = { value: 0 }
-      const solidPlane = new Plane(new Vector3(0, 1, 0), 0) // keeps everything above the scan height
+      const solidPlane = new Plane(new Vector3(0, -1, 0), 0) // keeps everything below the scan height
       const holoMaterial = keep(new ShaderMaterial({
         uniforms: { uScan: scanUniform, uTime: timeUniform, uColor: { value: LIME }, uColor2: { value: new Color('#f4ffd0') } },
         vertexShader: holoVertex,
@@ -131,44 +132,17 @@ export default function HologramScene({ progressRef, onFrame }) {
         blending: AdditiveBlending,
       }))
 
-      // ---- the avatar, built from simple clay shapes ----
-      const solid = (color, roughness = 0.6) => keep(new MeshStandardMaterial({ color, roughness, side: DoubleSide, clippingPlanes: [solidPlane] }))
-      const skin = solid('#d9a37c', 0.7)
-      const hairMat = solid('#241915', 0.5)
-      const shirt = solid('#2f6a50', 0.7)
-      const pants = solid('#1f2c36', 0.75)
-      const shoeMat = solid('#f6efe0', 0.6)
-      const dark = solid('#16100e', 0.4)
-      const white = solid('#ffffff', 0.4)
-
-      const avatar = new Group()
-      const part = (geometry, material, x, y, z, scale = [1, 1, 1]) => {
-        const mesh = new Mesh(keep(geometry), material)
-        mesh.position.set(x, y, z)
-        mesh.scale.set(...scale)
-        avatar.add(mesh)
-        return mesh
-      }
-      ;[-1, 1].forEach((side) => {
-        part(new CapsuleGeometry(0.17, 0.6, 12, 24), pants, side * 0.22, 0.78, 0)
-        part(new SphereGeometry(0.26, 24, 16), shoeMat, side * 0.23, 0.14, 0.1, [1, 0.55, 1.5])
-        const arm = part(new CapsuleGeometry(0.13, 0.62, 12, 24), shirt, side * 0.62, 1.92, 0)
-        arm.rotation.z = -side * 0.12
-        part(new SphereGeometry(0.15, 20, 14), skin, side * 0.67, 1.43, 0)
-        part(new SphereGeometry(0.12, 20, 14), skin, side * 0.55, 3.08, 0.02, [0.7, 1, 0.8]) // ear
-        part(new SphereGeometry(0.075, 20, 14), dark, side * 0.2, 3.12, 0.47) // eye
-        part(new SphereGeometry(0.025, 12, 10), white, side * 0.18, 3.15, 0.53) // eye shine
-      })
-      part(new CapsuleGeometry(0.42, 0.55, 16, 28), shirt, 0, 1.85, 0, [1, 1, 0.78])
-      part(new CylinderGeometry(0.14, 0.16, 0.22, 20), skin, 0, 2.6, 0)
-      part(new SphereGeometry(0.55, 40, 28), skin, 0, 3.1, 0, [1, 1.02, 0.96]) // head
-      part(new SphereGeometry(0.575, 40, 28, 0, Math.PI * 2, 0, 1.3), hairMat, 0, 3.15, -0.02, [1, 1, 0.98]) // hair cap
-      part(new SphereGeometry(0.3, 24, 16), hairMat, 0.12, 3.62, 0.3, [1.1, 0.5, 0.7]) // fringe
-      const smile = part(new TorusGeometry(0.13, 0.017, 10, 24, Math.PI), dark, 0, 2.96, 0.5)
-      smile.rotation.z = Math.PI
+      // ---- the robot (shared with the hero scene) ----
+      const solid = (color, roughness = 0.45, extra = {}) => keep(new MeshStandardMaterial({ color, roughness, side: DoubleSide, clippingPlanes: [solidPlane], ...extra }))
+      const robot = createRobot(solid)
+      robot.geometries.forEach(keep)
+      const avatar = robot.root
+      const blinkers = robot.blinkers
 
       // Hologram copies: same shapes, drawn by the scan shader as children so they share every transform.
-      avatar.children.slice().forEach((mesh) => {
+      const solidMeshes = []
+      avatar.traverse((object) => { if (object.isMesh) solidMeshes.push(object) })
+      solidMeshes.forEach((mesh) => {
         const hologram = new Mesh(mesh.geometry, holoMaterial)
         hologram.renderOrder = 2
         mesh.add(hologram)
@@ -233,16 +207,20 @@ export default function HologramScene({ progressRef, onFrame }) {
 
           const scanY = -0.2 + (AVATAR_TOP + 0.25) * state.p
           scanUniform.value = scanY
-          solidPlane.constant = -scanY
+          solidPlane.constant = scanY
           scanGroup.position.y = scanY
           scanGroup.visible = state.p > 0.015 && state.p < 0.985
           scanGroup.scale.setScalar(1 + Math.sin(time * 3) * 0.03)
 
+          const blink = time % 4 < 0.14 ? 0.1 : 1
+          blinkers.forEach((eye) => { eye.scale.y = blink })
+          robot.head.rotation.y = smooth.x * 0.35
+          robot.head.rotation.x = -smooth.y * 0.18
           avatar.rotation.y = Math.sin(time * 0.5) * 0.16 + smooth.x * 0.3
-          const distance = state.narrow ? 14.8 : 12.4
+          const distance = state.narrow ? 15.8 : 13.4
           const theta = (state.p - 0.5) * 0.8 + smooth.x * 0.22
           camera.position.set(Math.sin(theta) * distance, 2.2 + smooth.y * 0.35 + (0.5 - state.p) * 0.4, Math.cos(theta) * distance)
-          lookAt.y = state.narrow ? 2.35 : 1.95
+          lookAt.y = state.narrow ? 2.6 : 2.15
           camera.lookAt(lookAt)
 
           for (let i = 0; i < COUNT; i += 1) {

@@ -8,7 +8,7 @@ const HologramScene = lazy(() => import('./three/HologramScene'))
 // `at` is the scan progress (0-1) at which each card switches on.
 const CARDS = [
   { id: 'name', side: 'left', row: 'upper', at: 0.1, label: 'Name', title: 'Faizan Khan', sub: 'Pune, Maharashtra, India', pin: true },
-  { id: 'about', side: 'left', row: 'lower', at: 0.34, label: 'What I do', text: 'Builds full-stack products and AI-integrated apps that are fast, clear, and reliable.' },
+  { id: 'about', side: 'left', row: 'lower', at: 0.34, label: 'What I do', text: 'Made full-stack products with AI integration in them.' },
   { id: 'stack', side: 'right', row: 'upper', at: 0.55, label: 'Core stack', chips: ['React', 'Node.js', 'Express', 'MongoDB'] },
   { id: 'status', side: 'right', row: 'lower', at: 0.78, label: 'Status', title: 'Available', sub: 'Ready to join immediately', live: true },
 ]
@@ -32,7 +32,7 @@ export default function HologramSection() {
   useEffect(() => {
     const wrap = wrapRef.current
     if (!wrap) return undefined
-    if (still) { progressRef.current = 0.88; return undefined }
+    if (still) { progressRef.current = 1; return undefined }
     const trigger = ScrollTrigger.create({
       trigger: wrap,
       start: 'top top',

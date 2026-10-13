@@ -1,4 +1,5 @@
 import { useGsapReveal } from '../hooks/useGsapReveal'
+import SkillsOrbit from './SkillsOrbit'
 
 const LABELS = {
   languages: 'Languages',
@@ -25,6 +26,8 @@ export default function PortfolioSkills({ skills }) {
         </div>
         <p className="section-description">The tools I reach for to design, build, connect, and ship useful products.</p>
       </div>
+
+      <SkillsOrbit skills={skills} />
 
       <div className="skills-grid">
         {groups.map(([category, items]) => (

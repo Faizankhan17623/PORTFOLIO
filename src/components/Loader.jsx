@@ -4,7 +4,7 @@ import { finishLoader, heroReady, isLoaderDone, wakeBackend } from '../lib/loade
 import { prefersReducedMotion } from '../lib/motion'
 
 const MIN_MS = 4000 // the loader always plays for at least this long, so it feels intentional
-const CAP_MS = 12000 // and never holds the page longer than this, even if the free server is still asleep
+const CAP_MS = 10000 // and never holds the page longer than this, even if the free server is still asleep
 
 // What the loader waits for, and how much each part counts towards the bar.
 const WEIGHTS = { fonts: 0.15, scene: 0.4, server: 0.45 }
@@ -51,15 +51,20 @@ export default function Loader() {
         .to(root, { yPercent: -100, duration: 0.9, ease: 'power4.inOut' }, '+=0.05')
     }
 
+    let lastNow = start
     const tick = (now) => {
       const elapsed = now - start
+      const dt = Math.min((now - lastNow) / 1000, 0.25) // eased by real time, so slow devices are not left crawling
+      lastNow = now
       const real = Object.entries(ready).reduce((sum, [key, ok]) => sum + (ok ? WEIGHTS[key] : 0), 0)
       const allReady = real >= 0.999
       const timedOut = elapsed >= CAP_MS
       // The bar follows the clock but never runs ahead of what has really finished.
       const ceiling = allReady || timedOut ? 1 : 0.15 + real * 0.75
       const target = Math.min(Math.min(elapsed / minMs, 1), ceiling)
-      shown += (target - shown) * 0.07
+      shown += (target - shown) * (1 - Math.exp(-dt * 4.5))
+      const forced = elapsed >= CAP_MS + 800 // hard stop: whatever is still loading carries on behind the page
+      if (forced) shown = 1
       if (barRef.current) barRef.current.style.transform = `scaleX(${shown.toFixed(4)})`
       if (percentRef.current) percentRef.current.textContent = `${String(Math.round(shown * 100)).padStart(3, '0')}%`
 
@@ -68,7 +73,7 @@ export default function Loader() {
       else if (!ready.scene) status = 'Loading the 3D scene…'
       if (statusRef.current && status !== lastStatus) { statusRef.current.textContent = status; lastStatus = status }
 
-      if ((allReady && elapsed >= minMs && shown > 0.985) || (timedOut && shown > 0.9)) { close(); return }
+      if (forced || (allReady && elapsed >= minMs && shown > 0.985) || (timedOut && shown > 0.9)) { close(); return }
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)

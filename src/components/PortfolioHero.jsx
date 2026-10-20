@@ -2,7 +2,7 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { CONTACT, SOCIALS } from '../data/contactInfo'
 import { resumeLink } from '../lib/resumeTrack'
-import { onLoaderDone } from '../lib/loader'
+import { isLoaderDone, onLoaderDone } from '../lib/loader'
 import ScrambleText from './ScrambleText'
 import { SOCIAL_ICONS } from './SocialIcons'
 
@@ -39,7 +39,8 @@ export default function PortfolioHero() {
   const [scene3d, setScene3d] = useState(false)
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setScene3d(true), 200)
+    // Behind the opening loader there is nothing to protect, so the 3D scene starts at once; otherwise it waits a beat.
+    const timer = window.setTimeout(() => setScene3d(true), isLoaderDone() ? 200 : 0)
     return () => window.clearTimeout(timer)
   }, [])
 

@@ -15,10 +15,12 @@ const isPrivateRoute = window.location.pathname.replace(/\/+$/, '') === privateP
 
 // The private page is its own chunk, so it is never downloaded by regular visitors.
 if (isPrivateRoute) {
+  document.getElementById('boot')?.remove() // the boot screen in index.html is only for the public site
   import('./components/AdminPage.jsx').then((mod) => {
     const AdminPage = mod.default
     root.render(<StrictMode><AdminPage /></StrictMode>)
   })
 } else {
+  import('./components/three/HeroScene.jsx') // start downloading the 3D scene right away instead of after the page is up
   root.render(<StrictMode><App /></StrictMode>)
 }

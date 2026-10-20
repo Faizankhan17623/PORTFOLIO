@@ -15,6 +15,7 @@ function ProjectCard({ project, index }) {
         if (url) window.open(url, '_blank', 'noopener,noreferrer')
       }}
     >
+      <span className="border-trail" aria-hidden="true" />
       <div className="project-art" aria-hidden="true">
         <span className="project-art-shape" />
         <span className="project-art-word">{project.category === 'AI / CV' ? 'AI' : project.title.slice(0, 2).toUpperCase()}</span>

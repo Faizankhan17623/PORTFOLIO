@@ -1,0 +1,30 @@
+#!/bin/sh
+# Runs before every commit and stops it if private data is about to go into the public repo.
+# Real values belong in .env files (git-ignored), never in code. The *.example templates are skipped.
+fail=0
+
+# 1. files that must never be committed
+for file in $(git diff --cached --name-only --diff-filter=ACMR); do
+  case "$file" in
+    *.example) ;;
+    .env|.env.*|*/.env|*/.env.*|*.pem|*.key|*.p12|*.pfx|*.local)
+      echo "BLOCKED: $file looks like a private file and must stay on your computer."
+      fail=1
+      ;;
+  esac
+done
+
+# 2. secret-looking text in the lines being added (the values themselves are never printed)
+added=$(git diff --cached -U0 --diff-filter=ACMR -- . ':!*.example' ':!package-lock.json' ':!server/package-lock.json' | grep -E '^\+' | grep -vE '^\+\+\+')
+hits=$(printf '%s\n' "$added" | grep -nE '\bre_[A-Za-z0-9]{20,}|\bsk-[A-Za-z0-9_-]{20,}|\bgsk_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{30,}|\bghp_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{20,}|\bAKIA[0-9A-Z]{16}|\btvly-[A-Za-z0-9]{16,}|-----BEGIN [A-Z ]*PRIVATE KEY-----|mongodb(\+srv)?://[^[:space:]:@/<>]+:[^[:space:]@<>]+@')
+if [ -n "$hits" ]; then
+  echo "BLOCKED: the staged changes contain what looks like a secret (value hidden):"
+  printf '%s\n' "$hits" | sed -E 's/^([0-9]+):.*/  at line \1 of the staged changes/'
+  fail=1
+fi
+
+if [ "$fail" -ne 0 ]; then
+  echo "Put the value in an .env file (those are git-ignored) and commit again."
+  exit 1
+fi
+exit 0

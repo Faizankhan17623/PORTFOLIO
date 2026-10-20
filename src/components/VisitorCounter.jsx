@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useGsapReveal } from '../hooks/useGsapReveal'
 import { isOwnerDevice } from '../lib/owner'
+import AnimatedNumber from './AnimatedNumber'
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
@@ -96,11 +97,11 @@ export default function VisitorCounter() {
     <div className="visitor-counter reveal">
       <span className="vc-item">
         <span className="vc-dot online" />
-        <span className="vc-num">{stats.online ?? '—'}</span> online now
+        <span className="vc-num"><AnimatedNumber value={stats.online} /></span> online now
       </span>
       <span className="vc-sep">·</span>
       <span className="vc-item">
-        <span className="vc-num">{stats.total?.toLocaleString()}</span> total visits
+        <span className="vc-num"><AnimatedNumber value={stats.total} /></span> total visits
       </span>
     </div>
     </span>

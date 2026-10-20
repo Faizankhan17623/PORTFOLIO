@@ -9,6 +9,7 @@ import { mountScene, trackPointer, valueNoise } from '../../lib/three-utils'
 import { defaultProjects } from '../../data/portfolioData'
 import { createDesk } from './desk'
 import { createRobot } from './robot'
+import { markHeroReady, onLoaderDone } from '../../lib/loader'
 
 // A desk with two monitors and a waving robot, surrounded by soft, slow clay shapes and one iridescent glass sphere.
 // Each item is placed as a fraction of the visible half-width/height so it fits any screen:
@@ -88,7 +89,9 @@ export default function HeroScene() {
       // Clicking (or tapping) the robot makes it hop and wave again. It also waves hello when the page opens.
       const raycaster = new Raycaster()
       const ndc = new Vector2()
-      const moves = { jumpStart: -10, waveUntil: reduced ? 0 : 4.5, now: 0 }
+      // The robot waves hello once the opening loader has lifted (straight away if there was no loader).
+      const moves = { jumpStart: -10, waveUntil: 0, now: 0 }
+      const stopWaiting = onLoaderDone(() => { if (!reduced) moves.waveUntil = moves.now + 4.5 })
       const onClick = (event) => {
         const rect = host.getBoundingClientRect()
         ndc.set(((event.clientX - rect.left) / rect.width) * 2 - 1, -(((event.clientY - rect.top) / rect.height) * 2 - 1))
@@ -187,6 +190,7 @@ export default function HeroScene() {
         },
         dispose() {
           window.removeEventListener('click', onClick)
+          stopWaiting()
           desk.dispose()
           robot.geometries.forEach((geometry) => geometry.dispose())
           robotMaterials.forEach((material) => material.dispose())
@@ -197,7 +201,7 @@ export default function HeroScene() {
           pmrem.dispose()
         },
       }
-    })
+    }, { onReady: markHeroReady })
   }, [])
 
   return <div className="hero-canvas" ref={hostRef} aria-hidden="true" />

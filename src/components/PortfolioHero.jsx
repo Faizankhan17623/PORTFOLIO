@@ -2,6 +2,8 @@ import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { CONTACT, SOCIALS } from '../data/contactInfo'
 import { resumeLink } from '../lib/resumeTrack'
+import { onLoaderDone } from '../lib/loader'
+import ScrambleText from './ScrambleText'
 import { SOCIAL_ICONS } from './SocialIcons'
 
 // The 3D scene is its own chunk and only starts loading once the page has painted.
@@ -52,11 +54,16 @@ export default function PortfolioHero() {
   useEffect(() => {
     const root = rootRef.current
     if (!root || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
+    // The hero content waits (hidden) for the opening loader, then slides in as the loader lifts.
+    let stopWaiting = () => {}
     const ctx = gsap.context(() => {
-      gsap.fromTo('[data-hero-enter]', { autoAlpha: 0, y: 24 }, { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.11, ease: 'power3.out', delay: 0.12 })
+      gsap.set('[data-hero-enter]', { autoAlpha: 0, y: 24 })
+      stopWaiting = onLoaderDone(() => {
+        gsap.to('[data-hero-enter]', { autoAlpha: 1, y: 0, duration: 0.8, stagger: 0.11, ease: 'power3.out', delay: 0.12 })
+      })
       gsap.to('.hero-orbit-ring', { rotate: 360, duration: 42, ease: 'none', repeat: -1, transformOrigin: '50% 50%' })
     }, root)
-    return () => ctx.revert()
+    return () => { stopWaiting(); ctx.revert() }
   }, [])
 
   const scrollTo = (id) => {
@@ -71,7 +78,7 @@ export default function PortfolioHero() {
         <div className="hero-copy">
           <p className="hero-kicker" data-hero-enter>
             <span className="availability-dot" />
-            Available immediately <span className="hero-kicker-divider">/</span> Pune, Maharashtra
+            <ScrambleText text="Available immediately" /> <span className="hero-kicker-divider">/</span> Pune, Maharashtra
           </p>
 
           <h1 className="hero-title" data-hero-enter>
@@ -83,7 +90,13 @@ export default function PortfolioHero() {
 
           <div className="hero-role-row" data-hero-enter>
             <span className="hero-role-label">Currently looking for a job as a</span>
-            <span className="hero-role-value" key={roleIndex}>{ROLES[roleIndex]}</span>
+            <span className="hero-role-value" key={roleIndex} aria-label={ROLES[roleIndex]}>
+              <span className="roll-word" aria-hidden="true">
+                {[...ROLES[roleIndex]].map((char, i) => (
+                  <span className="roll-char" style={{ '--i': i }} key={i}>{char === ' ' ? ' ' : char}</span>
+                ))}
+              </span>
+            </span>
           </div>
 
           <p className="hero-intro" data-hero-enter>

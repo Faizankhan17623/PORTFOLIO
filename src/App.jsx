@@ -26,12 +26,18 @@ import Blackout from './components/Blackout'
 import SnakeGame from './components/SnakeGame'
 import SoundFX from './components/SoundFX'
 import ProjectCursor from './components/ProjectCursor'
+import Loader from './components/Loader'
+import BackToTop from './components/BackToTop'
+import EdgeBlur from './components/EdgeBlur'
+import ImageTrail from './components/ImageTrail'
+import { initInteractions } from './lib/interactions'
 import { useWordReveal } from './hooks/useWordReveal'
 import { defaultSkills, defaultProjects } from './data/portfolioData'
 
 function App() {
   const [terminalOpen, setTerminalOpen] = useState(false)
   useWordReveal('.about-statement, .section-title, .contact-title, .gh-title')
+  useEffect(() => initInteractions(), [])
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
@@ -77,6 +83,7 @@ function App() {
 
   return (
     <>
+      <Loader />
       <ScrollProgressBar />
       <div className="portfolio-site">
         <div className="film-grain" aria-hidden="true" />
@@ -97,6 +104,9 @@ function App() {
       </div>
 
       <ProjectCursor />
+      <ImageTrail />
+      <EdgeBlur />
+      <BackToTop />
       <AIChat />
       <KonamiEasterEgg />
       <CommandPalette onTerminalOpen={() => setTerminalOpen(true)} />

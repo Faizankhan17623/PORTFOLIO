@@ -28,13 +28,17 @@ export function valueNoise(x, y, z) {
  * The loop only runs while the container is on screen and the tab is visible; with reduced motion it
  * renders a single still frame. Returns a cleanup function. Never throws: with no WebGL it just does nothing.
  */
-export function mountScene(container, setup, { fov = 32, maxDpr = 1.75 } = {}) {
+export function mountScene(container, setup, { fov = 32, maxDpr = 1.75, onReady } = {}) {
   let renderer
   try {
     renderer = new WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
   } catch {
+    onReady?.() // nothing to wait for without WebGL
     return () => {}
   }
+  // `onReady` fires once, right after the first picture has been drawn.
+  let ready = false
+  const markReady = () => { if (!ready) { ready = true; onReady?.() } }
 
   const reduced = prefersReducedMotion()
   const lowPower = isLowPower()
@@ -71,6 +75,7 @@ export function mountScene(container, setup, { fov = 32, maxDpr = 1.75 } = {}) {
     }
     api.update((now - clock.start) / 1000, dt)
     renderer.render(scene, camera)
+    markReady()
   }
   const sync = () => {
     const shouldRun = visible && !document.hidden && !reduced
@@ -97,7 +102,7 @@ export function mountScene(container, setup, { fov = 32, maxDpr = 1.75 } = {}) {
   const resize = () => {
     const [width, height] = applySize()
     api.resize?.(width, height)
-    if (!running) { api.update(1.2, 0); renderOnce() }
+    if (!running) { api.update(1.2, 0); renderOnce(); markReady() }
   }
 
   const resizeObserver = new ResizeObserver(resize)
